@@ -3,7 +3,7 @@
     "@babel/plugin-proposal-optional-chaining"
   ],
   "presets": [
-    ["@babel/preset-env", {
+    ["es2015", "stage-0", "@babel/preset-env", {
       "useBuiltIns": "usage",
       "corejs": 3,
       "targets": {

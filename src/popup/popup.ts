@@ -3,9 +3,9 @@ import App from './App';
 import store from '../store';
 import router from './router';
 
-global.browser = require('webextension-polyfill');
+(global as any).browser = require('webextension-polyfill');
 
-Vue.prototype.$browser = global.browser;
+Vue.prototype.$browser = (global as any).browser;
 
 /* eslint-disable no-new */
 new Vue({
