@@ -23,7 +23,8 @@
     "vue": "^2.6.10",
     "vue-router": "^3.0.1",
     "vuex": "^3.0.1",
-    "webextension-polyfill": "^0.3.1"
+    "webextension-polyfill": "^0.3.1",
+    "@galtproject/frontend-core": "git://github.com/galtspace/galtproject-frontend-core.git#973cdac"
   },
   "devDependencies": {
     "@types/chai": "^4.1.3",

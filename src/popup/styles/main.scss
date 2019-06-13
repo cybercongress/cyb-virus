@@ -1,0 +1,98 @@
+//@import '~vue-material/src/components/MdElevation/elevation';
+
+@font-face {
+  font-family: Play;
+  src: url('../assets/fonts/Play.woff2');
+  src: url('../assets/fonts/Play.eot'); /* IE9 Compat Modes */
+  src: url('../assets/fonts/Play.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */ url('../assets/fonts/Play.woff2') format('woff2'),
+    /* Super Modern Browsers */ url('../assets/fonts/Play.woff') format('woff'), /* Pretty Modern Browsers */ url('../assets/fonts/Play.ttf') format('truetype'),
+    /* Safari, Android, iOS */ url('../assets/fonts/Play.svg#Play') format('svg'); /* Legacy iOS */
+}
+
+body {
+  font-family: Play;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5 {
+  line-height: 1;
+  font-family: Play;
+}
+
+#popup {
+  width: 357px;
+  height: 600px;
+  border: 1px solid grey;
+  background: rgb(0, 0, 0);
+  color: rgb(124, 124, 124);
+}
+
+.input-absolute-container {
+  z-index: 9999;
+  position: absolute;
+  background: #474e88;
+}
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  height: 66px;
+  padding: 12px;
+  .logo {
+    width: 42px;
+    height: 42px;
+    img {
+      max-width: 100%;
+    }
+  }
+}
+
+button {
+  color: rgb(54, 214, 174);
+  background: linear-gradient(to top, rgb(24, 24, 24), rgb(0, 0, 0));
+  //background: grey;
+  border: 1px solid rgb(58, 183, 147);
+  border-radius: 4px;
+  padding: 5px 13px;
+  outline-color: rgb(54, 214, 174);
+  font-size: 18px;
+  &:focus {
+    box-shadow: rgb(56, 214, 174) 0px 0px 10px 0px;
+  }
+}
+
+input {
+  caret-color: #36d6ae !important;
+  box-shadow: inset 0 0 0 1px #36d6ae83 !important;
+  color: #3ab793 !important;
+  outline: 0 !important;
+  outline-offset: 0 !important;
+  background-color: transparent !important;
+}
+
+#new-wallet-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+
+  #welcome {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    .logo {
+      width: 125px;
+      height: 125px;
+      img {
+        max-width: 100%;
+      }
+    }
+    & > * {
+      max-width: 200px;
+      text-align: center;
+    }
+  }
+}

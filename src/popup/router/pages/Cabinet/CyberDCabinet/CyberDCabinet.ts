@@ -1,5 +1,5 @@
 export default {
-  template: require('./index.html'),
+  template: require('./CyberDCabinet.html'),
   data() {
     return {};
   },

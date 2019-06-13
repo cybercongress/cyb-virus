@@ -12,10 +12,9 @@
     "default_popup": "popup/popup.html"
   },
   "background": {
-    "scripts": [
-      "background.js"
-    ]
+    "scripts": ["background.js"]
   },
+  "permissions": ["storage"],
   "options_ui": {
     "page": "options/options.html",
     "chrome_style": true
