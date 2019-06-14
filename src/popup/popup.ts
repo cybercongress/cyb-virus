@@ -1,6 +1,10 @@
 import Vue from 'vue';
 import router from './router';
+
+import 'vue-material/dist/vue-material.min.css';
+import 'vue-material/dist/theme/default.css';
 import './styles/main.scss';
+
 import App from './App';
 
 (global as any).browser = require('webextension-polyfill');

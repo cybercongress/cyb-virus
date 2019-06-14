@@ -72,10 +72,10 @@ export default {
   watch: {},
   computed: {
     currentNetwork() {
-      return this.$store.state.currentNetwork;
+      return this.$store.state.network;
     },
-    networksList() {
-      return this.$store.state.networksList;
+    networkList() {
+      return this.$store.state.networkList;
     },
   },
   data: function() {

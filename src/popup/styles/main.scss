@@ -1,5 +1,8 @@
 //@import '~vue-material/src/components/MdElevation/elevation';
 
+@import 'loading';
+@import 'elements';
+
 @font-face {
   font-family: Play;
   src: url('../assets/fonts/Play.woff2');
@@ -18,7 +21,7 @@ h2,
 h3,
 h4,
 h5 {
-  line-height: 1;
+  line-height: 1.2;
   font-family: Play;
 }
 
@@ -50,34 +53,23 @@ h5 {
   }
 }
 
-button {
-  color: rgb(54, 214, 174);
-  background: linear-gradient(to top, rgb(24, 24, 24), rgb(0, 0, 0));
-  //background: grey;
-  border: 1px solid rgb(58, 183, 147);
-  border-radius: 4px;
-  padding: 5px 13px;
-  outline-color: rgb(54, 214, 174);
-  font-size: 18px;
-  &:focus {
-    box-shadow: rgb(56, 214, 174) 0px 0px 10px 0px;
-  }
-}
-
-input {
-  caret-color: #36d6ae !important;
-  box-shadow: inset 0 0 0 1px #36d6ae83 !important;
-  color: #3ab793 !important;
-  outline: 0 !important;
-  outline-offset: 0 !important;
-  background-color: transparent !important;
-}
-
 #new-wallet-page {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100%;
+
+  .header-logo {
+    //align-self: flex-start;
+    //justify-self: flex-start;
+    flex-direction: column;
+    display: flex;
+    align-items: center;
+    img {
+      height: 60px;
+      //margin-right: 15px;
+    }
+  }
 
   #welcome {
     display: flex;
@@ -93,6 +85,40 @@ input {
     & > * {
       max-width: 200px;
       text-align: center;
+    }
+  }
+
+  #new-wallet-method {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    text-align: center;
+    .methods {
+      & > div:first-child {
+        margin-bottom: 40px;
+      }
+    }
+  }
+
+  #create-wallet {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    //text-align: center;
+
+    & > * {
+      max-width: 80%;
+    }
+
+    .button-container {
+      width: 80%;
+      margin-top: 15px;
+      display: flex;
+      justify-content: flex-end;
+    }
+    .password-container h4 {
+      margin-bottom: 10px;
+      margin-top: 40px;
     }
   }
 }

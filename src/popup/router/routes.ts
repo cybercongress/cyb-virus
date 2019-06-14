@@ -6,6 +6,8 @@ import Login from './pages/Cabinet/Login/Login';
 import NewWallet from './pages/NewWallet/NewWallet';
 import Welcome from './pages/NewWallet/Welcome/Welcome';
 import ChooseMethod from './pages/NewWallet/ChooseMethod/ChooseMethod';
+import CreateWallet from './pages/NewWallet/CreateWallet/CreateWallet';
+import ImportWallet from './pages/NewWallet/ImportWallet/ImportWallet';
 
 export default [
   {
@@ -47,6 +49,16 @@ export default [
         path: '/choose-method',
         name: 'new-wallet-method',
         component: ChooseMethod,
+      },
+      {
+        path: '/create-wallet',
+        name: 'new-wallet-create',
+        component: CreateWallet,
+      },
+      {
+        path: '/import-wallet',
+        name: 'new-wallet-import',
+        component: ImportWallet,
       },
     ],
   },

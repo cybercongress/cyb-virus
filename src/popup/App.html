@@ -1,3 +1,11 @@
 <div id="popup">
-  <router-view></router-view>
+  <router-view v-if="ready"></router-view>
+
+  <div v-else class="loading-container">
+    <div class="lds-facebook">
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+  </div>
 </div>

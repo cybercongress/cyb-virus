@@ -1,38 +1,49 @@
 import Vue from 'vue';
-import storePlugin from '@galtproject/frontend-core/services/store.plugin';
+import storePlugin from '../services/permanentStore.plugin';
 
-import { MdElevation } from 'vue-material/dist/components';
-import 'vue-material/dist/vue-material.min.css';
-import 'vue-material/dist/theme/default.css';
-import { Network, PermanentStorage } from '../services/data';
+import { MdElevation, MdCheckbox } from 'vue-material/dist/components';
+import { Network, PermanentStorage, StorageVars } from '../services/data';
+
+Vue.use(MdCheckbox);
 
 const _ = require('lodash');
 
 Vue.use(storePlugin, {
-  currentNetwork: Network.CyberD,
-  networksList: [{ title: 'CyberD', value: Network.CyberD }, { title: 'Geesome', value: Network.Geesome }],
-  currentAccount: null,
+  [StorageVars.Network]: Network.CyberD,
+  [StorageVars.NetworkList]: [{ title: 'CyberD', value: Network.CyberD }, { title: 'Geesome', value: Network.Geesome }],
+  [StorageVars.Account]: null,
+  [StorageVars.Path]: null,
+  [StorageVars.EncryptedSeed]: null,
 });
 
 export default {
   template: require('./App.html'),
 
   async created() {
-    const encryptedSeed = await PermanentStorage.getValue('encryptedSeed');
-    console.log('encryptedSeed', encryptedSeed);
-
-    if (!encryptedSeed) {
-      return this.$router.push({ name: 'new-wallet-welcome' });
-      // return (global as any).chrome.tabs.create({url: (global as any).extension.getURL('popup.html#window')});
-    }
-    this.setNetwork();
+    this.init();
   },
 
   methods: {
+    async init() {
+      if (!this.ready) {
+        return;
+      }
+      const path = await PermanentStorage.getValue(StorageVars.Path);
+      if (path) {
+        this.$router.push(path);
+        return;
+      }
+      const encryptedSeed = await PermanentStorage.getValue(StorageVars.EncryptedSeed);
+
+      if (!encryptedSeed) {
+        return this.$router.push({ name: 'new-wallet-welcome' });
+        // return (global as any).chrome.tabs.create({url: (global as any).extension.getURL('popup.html#window')});
+      }
+    },
     setNetwork() {
-      this.networksList.some(network => {
+      this.networkList.some(network => {
         if (_.includes(this.$route.name, network.value)) {
-          this.$store.commit('currentNetwork', network.value);
+          this.$store.commit(StorageVars.Network, network.value);
           return true;
         }
         return false;
@@ -42,14 +53,21 @@ export default {
 
   watch: {
     '$route.name'() {
-      // this.setNetwork()
+      this.setNetwork();
+      PermanentStorage.setValue(StorageVars.Path, this.$route.fullPath);
     },
     currentNetwork() {},
+    ready() {
+      this.init();
+    },
   },
 
   computed: {
-    networksList() {
-      return this.$store.state.networksList;
+    networkList() {
+      return this.$store.state.networkList;
+    },
+    ready() {
+      return this.$store.state.ready;
     },
   },
   data() {

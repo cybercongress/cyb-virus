@@ -1,6 +1,17 @@
+const sjcl = require('sjcl');
+const _ = require('lodash');
+
 export enum Network {
   Geesome = 'geesome',
   CyberD = 'cyberd',
+}
+
+export enum StorageVars {
+  EncryptedSeed = 'encryptedSeed',
+  Path = 'path',
+  Network = 'network',
+  NetworkList = 'networkList',
+  Account = 'account',
 }
 
 export class PermanentStorage {
@@ -11,6 +22,9 @@ export class PermanentStorage {
       if (!(global as any).chrome.storage) {
         this.pseudoStorage[name] = value;
         return resolve();
+      }
+      if (_.isObject(value)) {
+        value = JSON.stringify(value);
       }
       (global as any).chrome.storage.sync.set({ [name]: value }, function() {
         resolve();
@@ -27,5 +41,14 @@ export class PermanentStorage {
         resolve(result[name]);
       });
     });
+  }
+}
+
+export class AppCrypto {
+  static encrypt(data, password) {
+    return sjcl.encrypt(password, data);
+  }
+  static decrypt(encryptedData, password) {
+    return sjcl.decrypt(password, encryptedData);
   }
 }

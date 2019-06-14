@@ -1,0 +1,47 @@
+button {
+  color: rgb(54, 214, 174);
+  background: linear-gradient(to top, rgb(24, 24, 24), rgb(0, 0, 0));
+  //background: grey;
+  border: 1px solid rgb(58, 183, 147);
+  border-radius: 4px;
+  padding: 5px 13px;
+  outline-color: rgb(54, 214, 174);
+  font-size: 18px;
+  &:focus {
+    box-shadow: rgb(56, 214, 174) 0px 0px 10px 0px;
+  }
+  &[disabled] {
+    color: grey;
+    border: 1px solid grey;
+  }
+}
+
+input {
+  caret-color: #36d6ae !important;
+  box-shadow: inset 0 0 0 1px #36d6ae83 !important;
+  color: #3ab793 !important;
+  outline: 0 !important;
+  outline-offset: 0 !important;
+  outline-color: rgb(58, 183, 147);
+  background-color: transparent !important;
+  border: 1px solid rgb(58, 183, 147);
+  border-radius: 4px;
+  padding: 5px 13px;
+  font-size: 18px;
+}
+
+.card {
+  box-shadow: rgb(54, 214, 174) 0px 0px 10px 1px;
+  background-color: rgb(0, 0, 0);
+  border-radius: 5px;
+  color: rgb(78, 214, 174);
+  padding: 10px;
+  &:hover {
+    box-shadow: rgb(54, 214, 174) 0px 0px 40px 2px;
+  }
+}
+
+#popup .md-checkbox.md-theme-default .md-checkbox-container {
+  border-color: rgba(78, 214, 174, 0.64);
+  background: transparent;
+}

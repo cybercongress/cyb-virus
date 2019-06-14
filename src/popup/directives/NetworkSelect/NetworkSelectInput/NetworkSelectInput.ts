@@ -14,7 +14,7 @@
 import { EventBus, NETWORK_SELECT_HIDE, NETWORK_SELECT_PREVENT_CLOSE, NETWORK_SELECT_SHOW } from '../../../../services/events';
 
 export default {
-  name: ' network-select-input',
+  name: 'network-select-input',
   template: require('./NetworkSelectInput.html'),
   props: ['value', 'disabled', 'emptyLabel', 'items'],
   async created() {
