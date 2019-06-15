@@ -39,11 +39,10 @@ export default {
   components: { NetworkSelectContainer, AccountSelectContainer },
 
   async created() {
-    (global as any).chrome.runtime.sendMessage({ type: 'popup-get-action' }, function(response) {
-      console.log('response', response);
-    });
     this.init();
   },
+
+  async mounted() {},
 
   methods: {
     async init() {
@@ -54,6 +53,11 @@ export default {
       const path = await PermanentStorage.getValue(StorageVars.Path);
       if (path) {
         this.$router.push(path);
+
+        (global as any).chrome.runtime.sendMessage({ type: 'popup-get-action' }, response => {
+          console.log('response', response);
+          this.$router.push({ name: 'cabinet-cyberd-link', query: { contentHash: response.data.contentHash, keywords: response.data.keywords } });
+        });
         return;
       }
       const encryptedSeed = await PermanentStorage.getValue(StorageVars.EncryptedSeed);

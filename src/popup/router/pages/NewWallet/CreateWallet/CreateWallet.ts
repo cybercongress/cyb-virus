@@ -1,5 +1,4 @@
 import { AppWallet } from '../../../../../services/data';
-import EthData from '@galtproject/frontend-core/libs/EthData';
 import Helper from '@galtproject/frontend-core/services/helper';
 
 export default {

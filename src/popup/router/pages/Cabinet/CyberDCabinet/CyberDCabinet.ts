@@ -1,4 +1,4 @@
-import { AppCrypto, AppWallet, CoinType, PermanentStorage, StorageVars } from '../../../../../services/data';
+import { AppWallet, CoinType, StorageVars } from '../../../../../services/data';
 import { CyberD } from '../../../../../services/cyberd';
 
 export default {

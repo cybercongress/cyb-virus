@@ -9,6 +9,7 @@ import ChooseMethod from './pages/NewWallet/ChooseMethod/ChooseMethod';
 import CreateWallet from './pages/NewWallet/CreateWallet/CreateWallet';
 import ImportWallet from './pages/NewWallet/ImportWallet/ImportWallet';
 import ImportAccount from './pages/Cabinet/CyberDCabinet/ImportAccount/ImportAccount';
+import LinkHashes from './pages/Cabinet/CyberDCabinet/LinkHashes/LinkHashes';
 
 export default [
   {
@@ -34,6 +35,11 @@ export default [
         path: '/cyberd/import',
         name: 'cabinet-cyberd-import',
         component: ImportAccount,
+      },
+      {
+        path: '/cyberd/link',
+        name: 'cabinet-cyberd-link',
+        component: LinkHashes,
       },
       {
         path: '/geesome',

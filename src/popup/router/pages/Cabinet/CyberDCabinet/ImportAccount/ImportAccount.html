@@ -9,10 +9,8 @@
   </md-field>
 
   <div v-if="importMethod === 'privateKey'">
-    <div>
-      <label>Input private key</label>
-      <input v-model="privateKey" />
-    </div>
+    <div><label>Input private key</label></div>
+    <input v-model="privateKey" />
 
     <button style="margin-top: 15px;" @click="importAccount()">Add new account</button>
   </div>
