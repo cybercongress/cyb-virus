@@ -56,6 +56,9 @@ export default {
 
         (global as any).chrome.runtime.sendMessage({ type: 'popup-get-action' }, response => {
           console.log('response', response);
+          if (!response) {
+            return;
+          }
           this.$router.push({ name: 'cabinet-cyberd-link', query: { contentHash: response.data.contentHash, keywords: response.data.keywords } });
         });
         return;

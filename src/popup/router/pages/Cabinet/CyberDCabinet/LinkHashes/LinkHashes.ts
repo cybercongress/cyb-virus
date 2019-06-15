@@ -8,14 +8,14 @@ export default {
   template: require('./LinkHashes.html'),
   methods: {
     async link() {
-      const results = await pIteration.mapSeries(this.keywords, async keyword => {
+      const results = await pIteration.mapSeries(this.resultKeywords, async keyword => {
         return CyberD.link(
           {
             address: this.currentAccount.address,
             privateKey: await AppWallet.decryptByPassword(this.currentAccount.encryptedPrivateKey),
           },
           await getIpfsHash(keyword),
-          this.contentHash
+          this.resultContentHash
         );
       });
       console.log('link results', results);
@@ -29,21 +29,32 @@ export default {
     },
   },
   computed: {
+    resultContentHash() {
+      return this.contentHash || this.inputContentHash;
+    },
+    resultKeywords() {
+      return this.keywords || this.inputKeywordsStr.split(/[ ,]+/);
+    },
     contentHash() {
       return this.$route.query.contentHash;
     },
     keywords() {
-      console.log('this.$route.query', this.$route.query);
       return this.$route.query.keywords;
     },
     keywordsStr() {
-      return this.keywords.join(', ');
+      return this.keywords ? this.keywords.join(', ') : '';
     },
     currentAccount() {
       return this.$store.state[StorageVars.Account];
     },
+    disableLink() {
+      return !(this.contentHash || this.inputContentHash) || !(this.keywordsStr || this.inputKeywordsStr);
+    },
   },
   data() {
-    return {};
+    return {
+      inputContentHash: '',
+      inputKeywordsStr: '',
+    };
   },
 };

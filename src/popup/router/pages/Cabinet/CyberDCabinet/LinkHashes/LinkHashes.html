@@ -1,11 +1,23 @@
 <div id="import-account" class="padding-container">
   <h2>Link Keywords</h2>
 
-  <h3>IPFS hash:</h3>
-  <div><pretty-hex :hex="contentHash"></pretty-hex></div>
+  <div v-if="contentHash">
+    <h3>IPFS hash:</h3>
+    <div><pretty-hex :hex="contentHash"></pretty-hex></div>
+  </div>
+  <div v-else>
+    <h3>IPFS hash:</h3>
+    <input type="text" v-model="inputContentHash" />
+  </div>
 
-  <h3>Keywords:</h3>
-  <div>{{keywordsStr}}</div>
+  <div v-if="keywordsStr">
+    <h3>Keywords:</h3>
+    <div>{{keywordsStr}}</div>
+  </div>
+  <div v-else>
+    <h3>Keywords: (separate by comma)</h3>
+    <input type="text" v-model="inputKeywordsStr" />
+  </div>
 
-  <button style="margin-top: 15px;" @click="link()">Link</button>
+  <button style="margin-top: 15px;" @click="link()" :disabled="disableLink">Link</button>
 </div>
