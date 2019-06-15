@@ -44,11 +44,11 @@ export class CyberD {
     });
 
     if (!addressInfo.data.result) {
-      return console.log('error');
+      return console.error('error: addressInfo.data.result undefined');
     }
     const account = addressInfo.data.result.account;
     if (!account) {
-      return console.log('error');
+      return console.error('error: addressInfo.data.result.account undefined');
     }
 
     const acc = {
@@ -72,7 +72,7 @@ export class CyberD {
       method: 'get',
       url: `${node}/submit_signed_link?data="${signedSendHex}"`,
     })
-      .then(res => response => response.data)
-      .catch(error => console.log('Cannot send', error));
+      .then(response => response.data)
+      .catch(error => console.error('Cannot send', error));
   }
 }

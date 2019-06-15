@@ -8,15 +8,17 @@ export default {
   template: require('./LinkHashes.html'),
   methods: {
     async link() {
-      await pIteration.forEachSeries(this.keywords, async keyword => {
+      const results = await pIteration.mapSeries(this.keywords, async keyword => {
         return CyberD.link(
           {
-            privateKey: AppWallet.encryptByPassword(this.currentAccount.privateKey),
+            address: this.currentAccount.address,
+            privateKey: await AppWallet.decryptByPassword(this.currentAccount.encryptedPrivateKey),
           },
           this.contentHash,
           keyword
         );
       });
+      console.log('link results', results);
 
       this.$notify({
         type: 'success',
