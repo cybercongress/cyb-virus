@@ -21,7 +21,6 @@
   "dependencies": {
     "@cybercongress/js-amino": "git+ssh://git@github.com:cybercongress/js-amino.git",
     "@galtproject/frontend-core": "git://github.com/galtspace/galtproject-frontend-core.git#340aba9",
-    "@litvintech/cosmos-js": "git+ssh://git@github.com:litvintech/cosmos-js.git",
     "autoprefixer": "^9.6.0",
     "axios": "^0.19.0",
     "bip39": "^3.0.2",

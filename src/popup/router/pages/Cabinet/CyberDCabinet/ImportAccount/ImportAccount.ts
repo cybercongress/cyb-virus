@@ -9,6 +9,7 @@ export default {
       if (this.importMethod === 'privateKey') {
         const account = await AppWallet.getAccountByPrivateKey(CoinType.Cosmos, this.privateKey);
         await AppWallet.addAccount(StorageVars.CyberDAccounts, account.address, account.privateKey);
+        this.$store.commit(StorageVars.CurrentAccounts, this.$store.state[StorageVars.CyberDAccounts]);
         this.$router.push({ name: 'cabinet-cyberd' });
       }
     },

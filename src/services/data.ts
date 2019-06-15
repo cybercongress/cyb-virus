@@ -114,9 +114,10 @@ export class AppWallet {
       };
     } else if (coinType === CoinType.Cosmos) {
       let keyPair = ShrKeys.fromPrivate(privateKey);
+      console.log('keyPair', keyPair);
       return {
         address: keyPair.address,
-        privateKey: keyPair.privKey,
+        privateKey: keyPair.privateKey,
       };
     }
     return null;
@@ -140,7 +141,7 @@ export class AppWallet {
   }
 
   static async addAccount(storageVar, address, privateKey, additionalData = {}) {
-    const accounts = _.clone(this.$store[storageVar]) || [];
+    const accounts = _.clone(this.$store.state[storageVar]) || [];
 
     const newAccount = _.extend(
       {
