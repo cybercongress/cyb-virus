@@ -1,4 +1,6 @@
 import { AppWallet } from '../../../../../services/data';
+import EthData from '@galtproject/frontend-core/libs/EthData';
+import Helper from '@galtproject/frontend-core/services/helper';
 
 export default {
   template: require('./CreateWallet.html'),
@@ -9,6 +11,13 @@ export default {
     async save() {
       AppWallet.setSeed(this.seedPhrase, this.password);
       this.$router.push({ name: 'cabinet-cyberd' });
+    },
+    copyToClipboard() {
+      Helper.copyToClipboard(this.seedPhrase);
+      this.$notify({
+        type: 'success',
+        title: 'Copied to clipboard!',
+      });
     },
   },
   computed: {

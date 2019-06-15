@@ -7,7 +7,7 @@
   <div class="seed-container">
     <h4>This is your new seed phrase. Please store it in password manager like 1Password</h4>
 
-    <div class="seed-phrase card">
+    <div class="seed-phrase card" @click="copyToClipboard()">
       {{seedPhrase}}
     </div>
 
