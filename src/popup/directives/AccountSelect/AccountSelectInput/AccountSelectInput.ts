@@ -11,7 +11,7 @@
  * [Basic Agreement](http://cyb.ai/QmaCiXUmSrP16Gz8Jdzq6AJESY1EAANmmwha15uR3c1bsS:ipfs)).
  */
 
-import { EventBus, ACCOUNT_SELECT_HIDE, ACCOUNT_SELECT_PREVENT_CLOSE, ACCOUNT_SELECT_SHOW } from '../../../../services/events';
+import { EventBus, ACCOUNT_SELECT_HIDE, ACCOUNT_SELECT_PREVENT_CLOSE, ACCOUNT_SELECT_SHOW, ACCOUNT_SELECT_ITEM } from '../../../../services/events';
 import { StorageVars } from '../../../../services/data';
 
 export default {
@@ -27,6 +27,12 @@ export default {
       if (this.uniqId != data.uniqId) return;
 
       this.preventClose();
+    });
+
+    EventBus.$on(ACCOUNT_SELECT_ITEM, item => {
+      if (this.uniqId != item.uniqId) return;
+
+      this.$store.commit(StorageVars.Account, item.account);
     });
   },
   mounted() {

@@ -660,23 +660,6 @@
     martinez-polygon-clipping "^0.5.0"
     ngeohash "^0.6.0"
 
-"@litvintech/cosmos-js@git+ssh://git@github.com:litvintech/cosmos-js.git":
-  version "0.0.1"
-  resolved "git+ssh://git@github.com:litvintech/cosmos-js.git#19903dd2b18a95878c03bd61268316d9615ee3eb"
-  dependencies:
-    axios "^0.18.0"
-    base-64 "^0.1.0"
-    bech32 "^1.1.3"
-    camelcase "^5.0.0"
-    crypto-js "^3.1.9-1"
-    js-amino "git+https://bitbucket.org/shareringvn/js-amino.git#master"
-    ndjson "^1.5.0"
-    old "^0.2.0"
-    pumpify "^1.5.1"
-    shr-keys "git+https://bitbucket.org/shareringvietnam/bc_shrcrypto.git#platform/web_bech32"
-    utf8 "^3.0.0"
-    websocket-stream "^5.1.2"
-
 "@mapbox/geojson-area@^0.2.2":
   version "0.2.2"
   resolved "https://registry.yarnpkg.com/@mapbox/geojson-area/-/geojson-area-0.2.2.tgz#18d7814aa36bf23fbbcc379f8e26a22927debf10"
@@ -1212,13 +1195,6 @@ axios@^0.16.2:
   dependencies:
     follow-redirects "^1.2.3"
     is-buffer "^1.1.5"
-
-axios@^0.18.0:
-  version "0.18.1"
-  resolved "https://registry.yarnpkg.com/axios/-/axios-0.18.1.tgz#ff3f0de2e7b5d180e757ad98000f1081b87bcea3"
-  dependencies:
-    follow-redirects "1.5.10"
-    is-buffer "^2.0.2"
 
 axios@^0.19.0:
   version "0.19.0"
@@ -1869,10 +1845,6 @@ babylon@^6.18.0:
 balanced-match@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/balanced-match/-/balanced-match-1.0.0.tgz#89b4d199ab2bee49de164ea02b89ce462d71b767"
-
-base-64@^0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/base-64/-/base-64-0.1.0.tgz#780a99c84e7d600260361511c4877613bf24f6bb"
 
 base-x@3.0.4:
   version "3.0.4"
@@ -3282,7 +3254,7 @@ duplexer3@^0.1.4:
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/duplexer3/-/duplexer3-0.1.4.tgz#ee01dd1cac0ed3cbc7fdbea37dc0a8f1ce002ce2"
 
-duplexify@^3.4.2, duplexify@^3.5.1, duplexify@^3.6.0:
+duplexify@^3.4.2, duplexify@^3.6.0:
   version "3.7.1"
   resolved "https://registry.yarnpkg.com/duplexify/-/duplexify-3.7.1.tgz#2a4df5317f6ccfd91f86d6fd25d8d8a103b88309"
   dependencies:
@@ -5085,17 +5057,6 @@ javascript-obfuscator@^0.18.1:
     string-template "1.0.0"
     tslib "1.9.3"
 
-"js-amino@git+https://bitbucket.org/shareringvn/js-amino.git#master":
-  version "1.0.0"
-  resolved "git+https://bitbucket.org/shareringvn/js-amino.git#081b13aebc467e944e3670b273c9daf91577a804"
-  dependencies:
-    int53 "^0.2.4"
-    js-sha256 "^0.9.0"
-    nanoseconds "^1.0.1"
-    safe-buffer "^5.1.2"
-    signed-varint "^2.0.1"
-    varint "^5.0.0"
-
 js-base64@^2.1.8:
   version "2.5.1"
   resolved "https://registry.yarnpkg.com/js-base64/-/js-base64-2.5.1.tgz#1efa39ef2c5f7980bb1784ade4a8af2de3291121"
@@ -5171,7 +5132,7 @@ json-stable-stringify-without-jsonify@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/json-stable-stringify-without-jsonify/-/json-stable-stringify-without-jsonify-1.0.1.tgz#9db7b59496ad3f3cfef30a75142d2d930ad72651"
 
-json-stringify-safe@^5.0.1, json-stringify-safe@~5.0.1:
+json-stringify-safe@~5.0.1:
   version "5.0.1"
   resolved "https://registry.yarnpkg.com/json-stringify-safe/-/json-stringify-safe-5.0.1.tgz#1296a2d58fd45f19a0f6ce01d65701e2c735b6eb"
 
@@ -5804,15 +5765,6 @@ natural-compare@^1.4.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/natural-compare/-/natural-compare-1.4.0.tgz#4abebfeed7541f2c27acfb29bdbbd15c8d5ba4f7"
 
-ndjson@^1.5.0:
-  version "1.5.0"
-  resolved "https://registry.yarnpkg.com/ndjson/-/ndjson-1.5.0.tgz#ae603b36b134bcec347b452422b0bf98d5832ec8"
-  dependencies:
-    json-stringify-safe "^5.0.1"
-    minimist "^1.2.0"
-    split2 "^2.1.0"
-    through2 "^2.0.3"
-
 nedb@^1.8.0:
   version "1.8.0"
   resolved "https://registry.yarnpkg.com/nedb/-/nedb-1.8.0.tgz#0e3502cd82c004d5355a43c9e55577bd7bd91d88"
@@ -6110,12 +6062,6 @@ object.pick@^1.3.0:
   resolved "https://registry.yarnpkg.com/object.pick/-/object.pick-1.3.0.tgz#87a10ac4c1694bd2e1cbf53591a66141fb5dd747"
   dependencies:
     isobject "^3.0.1"
-
-old@^0.2.0:
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/old/-/old-0.2.0.tgz#ae75a9f33bae7cb3fe06312899b7ae5a73ba24ef"
-  dependencies:
-    object-assign "^4.1.0"
 
 on-finished@~2.3.0:
   version "2.3.0"
@@ -6650,7 +6596,7 @@ pump@^3.0.0:
     end-of-stream "^1.1.0"
     once "^1.3.1"
 
-pumpify@^1.3.3, pumpify@^1.5.1:
+pumpify@^1.3.3:
   version "1.5.1"
   resolved "https://registry.yarnpkg.com/pumpify/-/pumpify-1.5.1.tgz#36513be246ab27570b1a374a5ce278bfd74370ce"
   dependencies:
@@ -7496,12 +7442,6 @@ split-string@^3.0.1, split-string@^3.0.2:
   dependencies:
     extend-shallow "^3.0.0"
 
-split2@^2.1.0:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/split2/-/split2-2.2.0.tgz#186b2575bcf83e85b7d18465756238ee4ee42493"
-  dependencies:
-    through2 "^2.0.2"
-
 sprintf-js@~1.0.2:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/sprintf-js/-/sprintf-js-1.0.3.tgz#04e6926f662895354f3dd015203633b857297e2c"
@@ -7820,7 +7760,7 @@ text-table@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/text-table/-/text-table-0.2.0.tgz#7f5ee823ae805207c00af2df4a84ec3fcfa570b4"
 
-through2@^2.0.0, through2@^2.0.2, through2@^2.0.3:
+through2@^2.0.0:
   version "2.0.5"
   resolved "https://registry.yarnpkg.com/through2/-/through2-2.0.5.tgz#01c1e39eb31d07cb7d03a96a70823260b23132cd"
   dependencies:
@@ -8233,10 +8173,6 @@ useragent@^2.3.0:
 utf8@2.1.1:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/utf8/-/utf8-2.1.1.tgz#2e01db02f7d8d0944f77104f1609eb0c304cf768"
-
-utf8@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/utf8/-/utf8-3.0.0.tgz#f052eed1364d696e769ef058b183df88c87f69d1"
 
 util-deprecate@^1.0.1, util-deprecate@~1.0.1:
   version "1.0.2"
@@ -8688,17 +8624,6 @@ webpack@^4.20.2:
     watchpack "^1.5.0"
     webpack-sources "^1.3.0"
 
-websocket-stream@^5.1.2:
-  version "5.5.0"
-  resolved "https://registry.yarnpkg.com/websocket-stream/-/websocket-stream-5.5.0.tgz#9827f2846fc0d2b4dca7aab8f92980b2548b868e"
-  dependencies:
-    duplexify "^3.5.1"
-    inherits "^2.0.1"
-    readable-stream "^2.3.3"
-    safe-buffer "^5.1.2"
-    ws "^3.2.0"
-    xtend "^4.0.0"
-
 websocket@^1.0.28:
   version "1.0.28"
   resolved "https://registry.yarnpkg.com/websocket/-/websocket-1.0.28.tgz#9e5f6fdc8a3fe01d4422647ef93abdd8d45a78d3"
@@ -8777,7 +8702,7 @@ write@1.0.3:
   dependencies:
     mkdirp "^0.5.1"
 
-ws@^3.0.0, ws@^3.2.0:
+ws@^3.0.0:
   version "3.3.3"
   resolved "https://registry.yarnpkg.com/ws/-/ws-3.3.3.tgz#f1cf84fe2d5e901ebce94efaece785f187a228f2"
   dependencies:

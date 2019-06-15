@@ -21,6 +21,7 @@
   "dependencies": {
     "@cybercongress/js-amino": "git+ssh://git@github.com:cybercongress/js-amino.git",
     "@galtproject/frontend-core": "git://github.com/galtspace/galtproject-frontend-core.git#340aba9",
+    "shr-keys": "git+https://bitbucket.org/shareringvietnam/bc_shrcrypto.git#platform/web_bech32",
     "autoprefixer": "^9.6.0",
     "axios": "^0.19.0",
     "bip39": "^3.0.2",
