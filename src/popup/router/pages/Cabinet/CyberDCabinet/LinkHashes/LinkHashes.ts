@@ -1,4 +1,4 @@
-import { AppWallet, CoinType, StorageVars } from '../../../../../../services/data';
+import { AppWallet, CoinType, getIpfsHash, StorageVars } from '../../../../../../services/data';
 import { CyberD } from '../../../../../../services/cyberd';
 
 const _ = require('lodash');
@@ -14,8 +14,8 @@ export default {
             address: this.currentAccount.address,
             privateKey: await AppWallet.decryptByPassword(this.currentAccount.encryptedPrivateKey),
           },
-          this.contentHash,
-          keyword
+          await getIpfsHash(keyword),
+          this.contentHash
         );
       });
       console.log('link results', results);

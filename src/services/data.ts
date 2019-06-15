@@ -2,6 +2,10 @@ const sjcl = require('sjcl');
 const _ = require('lodash');
 const ethers = require('ethers');
 const bip39 = require('bip39');
+
+const Unixfs = require('ipfs-unixfs');
+const { DAGNode, util: DAGUtil } = require('ipld-dag-pb');
+
 const cyberjsCrypto = require('@litvintech/cyberjs/crypto');
 
 export enum CoinType {
@@ -152,4 +156,21 @@ export class AppWallet {
   static async decryptByPassword(encryptedData) {
     return AppCrypto.decrypt(encryptedData, await this.getPassword());
   }
+}
+
+export function getIpfsHash(string) {
+  return new Promise((resolve, reject) => {
+    const unixFsFile = new Unixfs('file', Buffer.from(string));
+    const buffer = unixFsFile.marshal();
+
+    DAGNode.create(buffer, (err, dagNode) => {
+      if (err) {
+        reject(new Error('Cannot create ipfs DAGNode'));
+      }
+
+      DAGUtil.cid(dagNode, (error, cid) => {
+        resolve(cid.toBaseEncodedString());
+      });
+    });
+  });
 }

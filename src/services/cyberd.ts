@@ -36,7 +36,7 @@ export class CyberD {
     return this.getStatus().then(data => data.node_info.network);
   }
 
-  static async link(txOptions, from, to) {
+  static async link(txOptions, keywordHash, contentHash) {
     const chainId = await this.getNetworkId();
     const addressInfo = await axios({
       method: 'get',
@@ -60,8 +60,8 @@ export class CyberD {
 
     const sendRequest = {
       acc,
-      fromCid: from,
-      toCid: to,
+      fromCid: keywordHash,
+      toCid: contentHash,
       type: 'link',
     };
 
