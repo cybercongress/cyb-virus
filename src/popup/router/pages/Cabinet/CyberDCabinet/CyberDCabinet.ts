@@ -1,23 +1,16 @@
-import { AppCrypto, AppWallet, PermanentStorage, StorageVars } from '../../../../../services/data';
+import { AppCrypto, AppWallet, CoinType, PermanentStorage, StorageVars } from '../../../../../services/data';
 import { CyberD } from '../../../../../services/cyberd';
 
 export default {
   template: require('./CyberDCabinet.html'),
   async created() {
     if (!this.accounts.length) {
-      const accounts = [];
       const index = 0;
-      const newAccount = await AppWallet.getAccount('cosmos', index);
-      accounts.push({
-        address: newAccount.address,
-        encryptedPrivateKey: await AppWallet.encryptByPassword(newAccount.privateKey),
-        index,
-      });
-      this.$store.commit(StorageVars.AccountList, accounts);
-      this.$store.commit(StorageVars.Account, accounts[0]);
-    } else {
-      this.getBalance();
+      const newAccount = await AppWallet.generateAccount(CoinType.Cosmos, index);
+      await AppWallet.addAccount(StorageVars.CyberDAccounts, newAccount.address, newAccount.privateKey, { index });
     }
+    this.$store.commit(StorageVars.CurrentAccounts, this.$store.state[StorageVars.CyberDAccounts]);
+    this.getBalance();
   },
   watch: {
     currentAccount() {
@@ -39,7 +32,7 @@ export default {
       return this.$store.state[StorageVars.Account];
     },
     accounts() {
-      return this.$store.state[StorageVars.AccountList] || [];
+      return this.$store.state[StorageVars.CurrentAccounts] || [];
     },
     balanceStr() {
       return this.balance === null ? '...' : this.balance;

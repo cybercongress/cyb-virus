@@ -44,7 +44,7 @@ h5 {
   left: 10%;
   width: 80%;
   .background {
-    background: rgba(0, 0, 0, 0.7);
+    background: rgba(0, 0, 0, 0.8);
     position: absolute;
     top: 0;
     right: 0;
@@ -53,11 +53,16 @@ h5 {
     z-index: 9999;
   }
   .content {
+    box-shadow: rgb(54, 214, 174) 0px 0px 10px 1px;
     position: relative;
     z-index: 99999;
     color: rgb(54, 214, 174);
     padding: 20px 30px;
   }
+}
+
+.padding-container {
+  padding: 0 20px;
 }
 
 .toolbar {

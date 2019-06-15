@@ -1,5 +1,7 @@
-<div>
+<div style="text-align: center;">
   <p>CyberD cabinet</p>
+
+  <h3><pretty-hex :hex="currentAccount.address"></pretty-hex></h3>
   <h3>Balance:</h3>
   <h2>
     {{balanceStr}} <md-button class="md-icon-button small-button" @click="getBalance"><md-icon class="fas fa-sync"></md-icon></md-button>

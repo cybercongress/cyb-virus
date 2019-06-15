@@ -5,18 +5,26 @@ const ethers = require('ethers');
 const bip39 = require('bip39');
 const KeyPair = require('shr-keys').KeyPair;
 
+export enum CoinType {
+  Cosmos = 'cosmos',
+  Ether = 'ether',
+}
+
 export enum Network {
   Geesome = 'geesome',
   CyberD = 'cyberd',
 }
 
 export enum StorageVars {
+  Ready = 'ready',
   EncryptedSeed = 'encryptedSeed',
   Path = 'path',
+  CoinType = 'coinType',
   Network = 'network',
   NetworkList = 'networkList',
   Account = 'account',
-  AccountList = 'cyberd:accounts',
+  CurrentAccounts = 'current:accounts',
+  CyberDAccounts = 'cyberd:accounts',
   GeesomeAccounts = 'geesome:accounts',
 }
 
@@ -68,18 +76,18 @@ export class AppWallet {
     this.$store = $store;
   }
 
-  static async getAccount(coinType, index) {
+  static async generateAccount(coinType, index) {
     const encryptedSeed = await PermanentStorage.getValue(StorageVars.EncryptedSeed);
     const password = await this.getPassword();
     const seed = AppCrypto.decrypt(encryptedSeed, password);
 
-    if (coinType === 'ether') {
+    if (coinType === CoinType.Ether) {
       const wallet = ethers.Wallet.fromMnemonic(seed, `m/44'/60'/0'/0/${index}`);
       return {
         address: wallet.address,
         privateKey: wallet.privateKey,
       };
-    } else if (coinType === 'cosmos') {
+    } else if (coinType === CoinType.Cosmos) {
       //TODO: use index
       let keyPair = KeyPair.fromMnemonic(seed);
       return {
@@ -94,6 +102,23 @@ export class AppWallet {
     //   privateKey: childkey.privateExtendedKey,
     //   publicKey: childkey.publicExtendedKey
     // }
+  }
+
+  static async getAccountByPrivateKey(coinType, privateKey) {
+    if (coinType === CoinType.Ether) {
+      const wallet = new ethers.Wallet(privateKey);
+      return {
+        address: wallet.address,
+        privateKey: wallet.privateKey,
+      };
+    } else if (coinType === CoinType.Cosmos) {
+      let keyPair = KeyPair.fromPrivate(privateKey);
+      return {
+        address: keyPair.address,
+        privateKey: keyPair.privKey,
+      };
+    }
+    return null;
   }
 
   static async setPassword(password) {
@@ -111,6 +136,22 @@ export class AppWallet {
   static async setSeed(seed, password) {
     this.$store.commit(StorageVars.EncryptedSeed, AppCrypto.encrypt(seed, password));
     return this.setPassword(password);
+  }
+
+  static async addAccount(storageVar, address, privateKey, additionalData = {}) {
+    const accounts = _.clone(this.$store[storageVar]) || [];
+
+    const newAccount = _.extend(
+      {
+        address: address,
+        encryptedPrivateKey: await this.encryptByPassword(privateKey),
+      },
+      additionalData
+    );
+
+    accounts.push(newAccount);
+    this.$store.commit(storageVar, accounts);
+    this.$store.commit(StorageVars.Account, newAccount);
   }
 
   static async encryptByPassword(data) {

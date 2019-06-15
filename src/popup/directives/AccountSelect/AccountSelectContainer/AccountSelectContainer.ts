@@ -14,6 +14,7 @@
 import { EventBus, ACCOUNT_SELECT_HIDE, ACCOUNT_SELECT_PREVENT_CLOSE, ACCOUNT_SELECT_SHOW } from '../../../../services/events';
 import { StorageVars } from '../../../../services/data';
 import EthData from '@galtproject/frontend-core/libs/EthData';
+const _ = require('lodash');
 
 export default {
   name: 'account-select-container',
@@ -33,7 +34,7 @@ export default {
       // this.localValue = this.value;
 
       let inputOffset = this.getElOffset(config.input);
-      this.top = inputOffset.top + this.getElHeight(config.input) + 'px';
+      this.top = inputOffset.top + this.getElHeight(config.input) + 5 + 'px';
       this.left = inputOffset.left + 'px';
 
       const drawer = document.querySelectorAll('.md-app-drawer');
@@ -77,10 +78,11 @@ export default {
       return this.$store.state[StorageVars.Account];
     },
     accountList() {
-      return this.$store.state[StorageVars.AccountList] || [];
+      return this.$store.state[StorageVars.CurrentAccounts] || [];
     },
     accountListDisplay() {
       return this.accountList.map(account => {
+        account = _.clone(account);
         account.prettyAddress = EthData.cutHex(account.address);
         return account;
       });

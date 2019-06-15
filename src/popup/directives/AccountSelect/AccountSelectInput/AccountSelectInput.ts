@@ -70,7 +70,12 @@ export default {
       this.$emit('change', value);
     },
   },
-  watch: {},
+  watch: {
+    '$route.name'() {
+      this.showList = false;
+      EventBus.$emit(ACCOUNT_SELECT_HIDE, { uniqId: this.uniqId });
+    },
+  },
   computed: {
     currentNetwork() {
       return this.$store.state[StorageVars.Network];

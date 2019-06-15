@@ -1,25 +1,37 @@
 import Vue from 'vue';
 import storePlugin from '../services/permanentStore.plugin';
 
-import { MdElevation, MdCheckbox, MdButton, MdIcon } from 'vue-material/dist/components';
-import { AppWallet, Network, PermanentStorage, StorageVars } from '../services/data';
+import { MdElevation, MdCheckbox, MdButton, MdIcon, MdField, MdMenu, MdList } from 'vue-material/dist/components';
+import { AppWallet, CoinType, Network, PermanentStorage, StorageVars } from '../services/data';
 import NetworkSelectContainer from './directives/NetworkSelect/NetworkSelectContainer/NetworkSelectContainer';
 import AccountSelectContainer from './directives/AccountSelect/AccountSelectContainer/AccountSelectContainer';
+import PrettyHex from '@galtproject/frontend-core/directives/PrettyHex/PrettyHex';
+import Notifications from 'vue-notification';
+
+Vue.use(Notifications);
 
 Vue.use(MdCheckbox);
 Vue.use(MdButton);
 Vue.use(MdIcon);
+Vue.use(MdField);
+Vue.use(MdMenu);
+Vue.use(MdList);
+
+Vue.component('pretty-hex', PrettyHex);
 
 const _ = require('lodash');
 
 Vue.use(storePlugin, {
+  [StorageVars.Ready]: false,
+  [StorageVars.CoinType]: CoinType.Cosmos,
   [StorageVars.Network]: Network.CyberD,
   [StorageVars.NetworkList]: [{ title: 'CyberD', value: Network.CyberD }, { title: 'Geesome', value: Network.Geesome }],
   [StorageVars.Account]: null,
   [StorageVars.Path]: null,
   [StorageVars.EncryptedSeed]: null,
-  [StorageVars.AccountList]: null,
-  // [StorageVars.GeesomeAccounts]: null,
+  [StorageVars.CurrentAccounts]: null,
+  [StorageVars.CyberDAccounts]: null,
+  [StorageVars.GeesomeAccounts]: null,
 });
 
 export default {
@@ -52,6 +64,11 @@ export default {
       this.networkList.some(network => {
         if (_.includes(this.$route.name, network.value)) {
           this.$store.commit(StorageVars.Network, network.value);
+          let coinType = null;
+          if (network.value === 'cyberd') {
+            coinType = CoinType.Cosmos;
+          }
+          this.$store.commit(StorageVars.CoinType, coinType);
           return true;
         }
         return false;
@@ -71,8 +88,11 @@ export default {
   },
 
   computed: {
+    currentNetwork() {
+      return this.$store.state[StorageVars.Network];
+    },
     networkList() {
-      return this.$store.state.networkList;
+      return this.$store.state[StorageVars.NetworkList];
     },
     ready() {
       return this.$store.state.ready;

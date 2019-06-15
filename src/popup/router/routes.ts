@@ -8,6 +8,7 @@ import Welcome from './pages/NewWallet/Welcome/Welcome';
 import ChooseMethod from './pages/NewWallet/ChooseMethod/ChooseMethod';
 import CreateWallet from './pages/NewWallet/CreateWallet/CreateWallet';
 import ImportWallet from './pages/NewWallet/ImportWallet/ImportWallet';
+import ImportAccount from './pages/Cabinet/CyberDCabinet/ImportAccount/ImportAccount';
 
 export default [
   {
@@ -28,6 +29,11 @@ export default [
         path: '/cyberd',
         name: 'cabinet-cyberd',
         component: CyberDCabinet,
+      },
+      {
+        path: '/cyberd/import',
+        name: 'cabinet-cyberd-import',
+        component: ImportAccount,
       },
       {
         path: '/geesome',

@@ -1,3 +1,12 @@
+a .md-icon.md-theme-default.md-icon-font {
+  color: rgb(54, 214, 174);
+  width: 15px;
+  min-width: 15px;
+  height: 15px;
+  font-size: 15px !important;
+  position: relative;
+  bottom: 2px;
+}
 button {
   &,
   .md-icon.md-theme-default.md-icon-font {
@@ -32,7 +41,7 @@ button.small-button {
   }
 }
 
-input {
+input:not(.md-select-value) {
   caret-color: #36d6ae !important;
   box-shadow: inset 0 0 0 1px #36d6ae83 !important;
   color: #3ab793 !important;
@@ -60,4 +69,17 @@ input {
 #popup .md-checkbox.md-theme-default .md-checkbox-container {
   border-color: rgba(78, 214, 174, 0.64);
   background: transparent;
+}
+
+#popup .md-field.md-theme-default {
+  margin-bottom: 10px;
+  label {
+    color: #7c7c7c;
+  }
+  input.md-input {
+    -webkit-text-fill-color: rgb(54, 214, 174);
+  }
+  &::before {
+    background-color: rgb(54, 214, 174);
+  }
 }
