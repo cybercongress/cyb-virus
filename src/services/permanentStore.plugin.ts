@@ -43,8 +43,11 @@ export default {
 
     pIteration
       .forEach(keys, async key => {
-        const value = await PermanentStorage.getValue(key);
+        let value: any = await PermanentStorage.getValue(key);
         if (value) {
+          try {
+            value = JSON.parse(value);
+          } catch (e) {}
           $store.commit(key, value);
         }
       })

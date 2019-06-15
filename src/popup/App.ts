@@ -1,10 +1,12 @@
 import Vue from 'vue';
 import storePlugin from '../services/permanentStore.plugin';
 
-import { MdElevation, MdCheckbox } from 'vue-material/dist/components';
+import { MdElevation, MdCheckbox, MdButton, MdIcon } from 'vue-material/dist/components';
 import { AppWallet, Network, PermanentStorage, StorageVars } from '../services/data';
 
 Vue.use(MdCheckbox);
+Vue.use(MdButton);
+Vue.use(MdIcon);
 
 const _ = require('lodash');
 

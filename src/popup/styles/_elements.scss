@@ -1,5 +1,8 @@
 button {
-  color: rgb(54, 214, 174);
+  &,
+  .md-icon.md-theme-default.md-icon-font {
+    color: rgb(54, 214, 174);
+  }
   background: linear-gradient(to top, rgb(24, 24, 24), rgb(0, 0, 0));
   //background: grey;
   border: 1px solid rgb(58, 183, 147);
@@ -13,6 +16,19 @@ button {
   &[disabled] {
     color: grey;
     border: 1px solid grey;
+  }
+}
+
+button.small-button {
+  width: 25px;
+  min-width: 25px;
+  height: 25px;
+  margin: 0 6px;
+  .md-icon.md-theme-default.md-icon-font {
+    width: 15px;
+    min-width: 15px;
+    height: 15px;
+    font-size: 15px !important;
   }
 }
 

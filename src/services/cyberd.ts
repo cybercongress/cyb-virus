@@ -1,6 +1,6 @@
-const cosmosJs = require('litvintech/cosmos-js');
+const cosmosJs = require('@litvintech/cosmos-js');
 
-const { Codec, FieldOptions, TypeFactory, Utils, Types, WireTypes } = require('../index');
+const { Codec, FieldOptions, TypeFactory, Utils, Types, WireTypes } = require('@cybercongress/js-amino');
 
 let StdTx = TypeFactory.create('StdTx', [
   {
@@ -97,19 +97,22 @@ let coin = new Coin('cyb', '10000');
 
 let crypto = require('shr-keys');
 const KeyPair = require('shr-keys').KeyPair;
-let ShareLedger = require('./index.js');
-let Client = ShareLedger.Client;
+let Client = cosmosJs.Client;
 let client = new Client('http://86.57.254.202:36657');
 let clientSocket = new Client('ws://86.57.254.202:36657');
 
 export class CyberD {
+  static async getBalance(address) {
+    console.log('getBalance', address);
+    return cosmosJs.getBalance(client, address);
+  }
   /**
    * Link the hashes
    * @param from
    * @param firstHash
    * @param secondHash
    */
-  static link(from, firstHash, secondHash) {
+  static async link(from, firstHash, secondHash) {
     // let privateKey = "ab83994cf95abe45b9d8610524b3f8f8fd023d69f79449011cb5320d2ca180c5";
 
     let keyPair = crypto.KeyPair.fromPrivateKey(from.privateKey);

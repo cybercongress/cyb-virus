@@ -60,10 +60,28 @@ const config = {
         test: /\.css$/,
         use: [MiniCssExtractPlugin.loader, 'css-loader'],
       },
+      // {
+      //   test: /\.scss$/,
+      //   use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'],
+      // },
       {
         test: /\.scss$/,
-        use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'],
+        use: [
+          // MiniCssExtractPlugin.loader,
+          {
+            loader: 'file-loader',
+            options: {
+              // TODO: build into popup.css
+              name: 'popup/app.css',
+            },
+          },
+          'extract-loader',
+          'css-loader?-url',
+          'postcss-loader',
+          'sass-loader',
+        ],
       },
+
       {
         test: /\.sass$/,
         use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader?indentedSyntax'],
@@ -94,8 +112,9 @@ const config = {
     }),
     new CopyWebpackPlugin([
       { from: 'icons', to: 'icons', ignore: ['icon.xcf'] },
-      { from: 'popup/assets/fonts', to: 'popup/fonts' },
+      { from: 'popup/assets', to: 'assets' },
       { from: 'popup/assets', to: 'popup/assets' },
+      { from: '../node_modules/font-awesome/webfonts', to: 'popup/webfonts' },
       { from: 'popup/popup.html', to: 'popup/popup.html', transform: transformHtml },
       { from: 'popup/popup.html', to: 'popup/index.html', transform: transformHtml },
       { from: 'options/options.html', to: 'options/options.html', transform: transformHtml },

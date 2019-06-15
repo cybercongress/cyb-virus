@@ -1,5 +1,9 @@
 //@import '~vue-material/src/components/MdElevation/elevation';
 
+$fa-font-path: 'webfonts';
+@import '~font-awesome/scss/solid';
+@import '~font-awesome/scss/fontawesome';
+
 @import 'loading';
 @import 'elements';
 

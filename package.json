@@ -19,13 +19,17 @@
     }
   },
   "dependencies": {
+    "@cybercongress/js-amino": "git+ssh://git@github.com:cybercongress/js-amino.git",
     "@galtproject/frontend-core": "git://github.com/galtspace/galtproject-frontend-core.git#973cdac",
-    "litvintech/cosmos-js": "git+ssh://git@github.com:litvintech/cosmos-js.git",
+    "@litvintech/cosmos-js": "git+ssh://git@github.com:litvintech/cosmos-js.git",
+    "autoprefixer": "^9.6.0",
     "axios": "^0.19.0",
     "bip39": "^3.0.2",
     "ethers": "^4.0.30",
+    "font-awesome": "https://github.com/FortAwesome/Font-Awesome.git",
     "hdkey": "^1.1.1",
     "p-iteration": "^1.1.8",
+    "postcss-loader": "^3.0.0",
     "simple-crypto-js": "^2.0.2",
     "sjcl": "^1.0.8",
     "vue": "^2.6.10",
