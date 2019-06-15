@@ -39,6 +39,9 @@ export default {
   components: { NetworkSelectContainer, AccountSelectContainer },
 
   async created() {
+    (global as any).chrome.runtime.sendMessage({ type: 'popup-get-action' }, function(response) {
+      console.log('response', response);
+    });
     this.init();
   },
 

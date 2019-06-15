@@ -11,6 +11,7 @@ const config = {
   context: `${__dirname}/src`,
   entry: {
     background: './background.ts',
+    contentScript: './contentScript.ts',
     'popup/popup': './popup/popup.ts',
     'options/options': './options/options.ts',
   },

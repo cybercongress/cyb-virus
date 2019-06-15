@@ -2,4 +2,15 @@
 
 (global as any).browser = require('webextension-polyfill');
 
-// alert(`Hello ${store.getters.foo}!`);
+let lastAction;
+(global as any).browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.type === 'page-action') {
+    lastAction = request;
+    (global as any).chrome.browserAction.setBadgeText({ text: '!' });
+  }
+  if (request.type === 'popup-get-action') {
+    sendResponse(lastAction);
+    lastAction = null;
+    (global as any).chrome.browserAction.setBadgeText({ text: '' });
+  }
+});

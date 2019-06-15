@@ -14,7 +14,13 @@
   "background": {
     "scripts": ["background.js"]
   },
-  "permissions": ["storage"],
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["contentScript.js"]
+    }
+  ],
+  "permissions": ["http://*/*", "https://*/*", "tabs", "webNavigation", "activeTab", "storage"],
   "options_ui": {
     "page": "options/options.html",
     "chrome_style": true
