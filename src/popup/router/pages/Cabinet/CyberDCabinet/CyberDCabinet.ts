@@ -13,7 +13,7 @@ export default {
         encryptedPrivateKey: await AppWallet.encryptByPassword(newAccount.privateKey),
         index,
       });
-      this.$store.commit(StorageVars.CyberDAccounts, accounts);
+      this.$store.commit(StorageVars.AccountList, accounts);
       this.$store.commit(StorageVars.Account, accounts[0]);
     } else {
       this.getBalance();
@@ -39,7 +39,7 @@ export default {
       return this.$store.state[StorageVars.Account];
     },
     accounts() {
-      return this.$store.state[StorageVars.CyberDAccounts] || [];
+      return this.$store.state[StorageVars.AccountList] || [];
     },
     balanceStr() {
       return this.balance === null ? '...' : this.balance;

@@ -3,6 +3,8 @@ import storePlugin from '../services/permanentStore.plugin';
 
 import { MdElevation, MdCheckbox, MdButton, MdIcon } from 'vue-material/dist/components';
 import { AppWallet, Network, PermanentStorage, StorageVars } from '../services/data';
+import NetworkSelectContainer from './directives/NetworkSelect/NetworkSelectContainer/NetworkSelectContainer';
+import AccountSelectContainer from './directives/AccountSelect/AccountSelectContainer/AccountSelectContainer';
 
 Vue.use(MdCheckbox);
 Vue.use(MdButton);
@@ -16,12 +18,13 @@ Vue.use(storePlugin, {
   [StorageVars.Account]: null,
   [StorageVars.Path]: null,
   [StorageVars.EncryptedSeed]: null,
-  [StorageVars.CyberDAccounts]: null,
-  [StorageVars.GeesomeAccounts]: null,
+  [StorageVars.AccountList]: null,
+  // [StorageVars.GeesomeAccounts]: null,
 });
 
 export default {
   template: require('./App.html'),
+  components: { NetworkSelectContainer, AccountSelectContainer },
 
   async created() {
     this.init();

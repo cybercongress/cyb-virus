@@ -1,9 +1,10 @@
-<div class="input-absolute-container network-select-container md-elevation-5" ref="container" xmlns:v-on="http://www.w3.org/1999/xhtml" :style="{'top': top, 'left': left}">
-  <div v-if="showContainer">
+<div class="input-absolute-container network-select-container md-elevation-5" ref="container" xmlns:v-on="http://www.w3.org/1999/xhtml" :style="{'top': top}">
+  <div class="content" v-if="showContainer">
     <h3>Networks</h3>
 
     <div class="networks-list">
       <div v-for="network in networkList" :class="{'active': network.value === currentNetwork}">{{network.title}}</div>
     </div>
   </div>
+  <div class="background" v-if="showContainer"></div>
 </div>

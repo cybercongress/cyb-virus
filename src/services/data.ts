@@ -16,7 +16,7 @@ export enum StorageVars {
   Network = 'network',
   NetworkList = 'networkList',
   Account = 'account',
-  CyberDAccounts = 'cyberd:accounts',
+  AccountList = 'cyberd:accounts',
   GeesomeAccounts = 'geesome:accounts',
 }
 

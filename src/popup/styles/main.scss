@@ -40,7 +40,24 @@ h5 {
 .input-absolute-container {
   z-index: 9999;
   position: absolute;
-  background: #474e88;
+  top: 46px;
+  left: 10%;
+  width: 80%;
+  .background {
+    background: rgba(0, 0, 0, 0.7);
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 9999;
+  }
+  .content {
+    position: relative;
+    z-index: 99999;
+    color: rgb(54, 214, 174);
+    padding: 20px 30px;
+  }
 }
 
 .toolbar {
@@ -62,6 +79,9 @@ h5 {
     border: 2px solid rgba(255, 255, 255, 0.9);
     border-radius: 4px;
     display: block;
+  }
+  .right-group {
+    display: flex;
   }
 }
 
