@@ -101,10 +101,15 @@ const KeyPair = require('shr-keys').KeyPair;
 // let client = new Client('http://86.57.254.202:36657');
 // let clientSocket = new Client('ws://86.57.254.202:36657');
 
+const axios = require('axios');
+const node = 'http://86.57.254.202:36657';
+
 export class CyberD {
   static async getBalance(address) {
-    console.log('getBalance', address);
-    // return cosmosJs.getBalance(client, address);
+    return axios({
+      method: 'get',
+      url: `${node}/account?address="${address}"`,
+    }).then(response => response.result.account.coins[0].amount);
   }
   /**
    * Link the hashes
