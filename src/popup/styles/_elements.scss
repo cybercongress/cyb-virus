@@ -1,3 +1,11 @@
+.md-theme-default a:not(.md-button) {
+  color: rgb(54, 214, 174);
+  text-decoration: underline;
+  &:hover {
+    text-decoration: none;
+    color: rgb(54, 214, 174);
+  }
+}
 a .md-icon.md-theme-default.md-icon-font {
   color: rgb(54, 214, 174);
   width: 15px;

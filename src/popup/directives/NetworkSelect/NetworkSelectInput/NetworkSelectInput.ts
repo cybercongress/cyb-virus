@@ -11,7 +11,7 @@
  * [Basic Agreement](http://cyb.ai/QmaCiXUmSrP16Gz8Jdzq6AJESY1EAANmmwha15uR3c1bsS:ipfs)).
  */
 
-import { EventBus, NETWORK_SELECT_HIDE, NETWORK_SELECT_PREVENT_CLOSE, NETWORK_SELECT_SHOW } from '../../../../services/events';
+import { ACCOUNT_SELECT_HIDE, EventBus, NETWORK_SELECT_HIDE, NETWORK_SELECT_PREVENT_CLOSE, NETWORK_SELECT_SHOW } from '../../../../services/events';
 import { StorageVars } from '../../../../services/data';
 
 export default {
@@ -70,7 +70,12 @@ export default {
       this.$emit('change', value);
     },
   },
-  watch: {},
+  watch: {
+    '$route.name'() {
+      this.showList = false;
+      EventBus.$emit(NETWORK_SELECT_HIDE, { uniqId: this.uniqId });
+    },
+  },
   computed: {
     currentNetwork() {
       return this.$store.state[StorageVars.Network];
