@@ -51,6 +51,14 @@ h5 {
       max-width: 100%;
     }
   }
+  .avatar {
+    width: 42px;
+    height: 42px;
+    background-size: contain;
+    border: 2px solid rgba(255, 255, 255, 0.9);
+    border-radius: 4px;
+    display: block;
+  }
 }
 
 #new-wallet-page {

@@ -2,7 +2,7 @@ import Vue from 'vue';
 import storePlugin from '../services/permanentStore.plugin';
 
 import { MdElevation, MdCheckbox } from 'vue-material/dist/components';
-import { Network, PermanentStorage, StorageVars } from '../services/data';
+import { AppWallet, Network, PermanentStorage, StorageVars } from '../services/data';
 
 Vue.use(MdCheckbox);
 
@@ -14,6 +14,8 @@ Vue.use(storePlugin, {
   [StorageVars.Account]: null,
   [StorageVars.Path]: null,
   [StorageVars.EncryptedSeed]: null,
+  [StorageVars.CyberDAccounts]: null,
+  [StorageVars.GeesomeAccounts]: null,
 });
 
 export default {
@@ -28,6 +30,7 @@ export default {
       if (!this.ready) {
         return;
       }
+      AppWallet.setStore(this.$store);
       const path = await PermanentStorage.getValue(StorageVars.Path);
       if (path) {
         this.$router.push(path);

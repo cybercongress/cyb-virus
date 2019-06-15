@@ -1,15 +1,16 @@
-import { AppCrypto, StorageVars } from '../../../../../services/data';
+import { AppCrypto, AppWallet, PermanentStorage, StorageVars } from '../../../../../services/data';
 
 const bip39 = require('bip39');
 
 export default {
   template: require('./CreateWallet.html'),
   created() {
-    this.seedPhrase = bip39.generateMnemonic();
+    this.seedPhrase = AppWallet.generateSeed();
   },
   methods: {
     async save() {
-      this.$store.commit(StorageVars.EncryptedSeed, AppCrypto.encrypt(this.seedPhrase, this.password));
+      AppWallet.setSeed(this.seedPhrase, this.password);
+      this.$router.push({ name: 'cabinet-cyberd' });
     },
   },
   computed: {

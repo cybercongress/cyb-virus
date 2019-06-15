@@ -12,6 +12,7 @@
  */
 
 import { EventBus, NETWORK_SELECT_HIDE, NETWORK_SELECT_PREVENT_CLOSE, NETWORK_SELECT_SHOW } from '../../../../services/events';
+import { StorageVars } from '../../../../services/data';
 
 export default {
   name: 'network-select-input',
@@ -72,7 +73,7 @@ export default {
   watch: {},
   computed: {
     currentNetwork() {
-      return this.$store.state.currentNetwork;
+      return this.$store.state[StorageVars.Network];
     },
   },
   data() {

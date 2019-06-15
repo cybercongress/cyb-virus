@@ -28,6 +28,7 @@ export default {
     _.forEach(options, (value, key) => {
       keys.push(key);
       mutations[key] = (state, newValue) => {
+        console.log('commit', key, newValue);
         state[key] = newValue;
         PermanentStorage.setValue(key, newValue);
       };
