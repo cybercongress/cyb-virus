@@ -1,5 +1,7 @@
 // const cosmosJs = require('@litvintech/cosmos-js');
 
+import EthData from '@galtproject/frontend-core/libs/EthData';
+
 const { Codec, FieldOptions, TypeFactory, Utils, Types, WireTypes } = require('@cybercongress/js-amino');
 
 let StdTx = TypeFactory.create('StdTx', [
@@ -109,7 +111,19 @@ export class CyberD {
     return axios({
       method: 'get',
       url: `${node}/account?address="${address}"`,
-    }).then(response => response.result.account.coins[0].amount);
+    }).then(response => response.data.result.account.coins[0].amount);
+  }
+
+  static async getGigaBalance(address) {
+    return this.getBalance(address).then(cyb => {
+      cyb = EthData.weiToDecimals(cyb, 9);
+
+      const strSplit = cyb.toString().split('.');
+      if (strSplit.length === 1) {
+        return cyb;
+      }
+      return parseFloat(strSplit[0] + '.' + strSplit[1].slice(0, 2));
+    });
   }
   /**
    * Link the hashes

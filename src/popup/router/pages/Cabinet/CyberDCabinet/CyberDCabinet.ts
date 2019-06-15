@@ -24,7 +24,7 @@ export default {
         return;
       }
       console.log('this.currentAccount', this.currentAccount);
-      this.balance = await CyberD.getBalance(this.currentAccount.address);
+      this.balance = await CyberD.getGigaBalance(this.currentAccount.address);
     },
   },
   computed: {

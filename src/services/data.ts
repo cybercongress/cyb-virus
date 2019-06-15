@@ -1,10 +1,7 @@
 const sjcl = require('sjcl');
-// const SimpleCrypto = require("simple-crypto-js").default;
 const _ = require('lodash');
 const ethers = require('ethers');
 const bip39 = require('bip39');
-const KeyPair = require('shr-keys').KeyPair;
-const ShrKeys = require('shr-keys');
 const cyberjsCrypto = require('@litvintech/cyberjs/crypto');
 
 export enum CoinType {
@@ -92,11 +89,6 @@ export class AppWallet {
     } else if (coinType === CoinType.Cosmos) {
       //TODO: use index
       return cyberjsCrypto.recover(seed, 'en');
-      // console.log('generateAccount', privateKey);
-      // const imported = cyberjsCrypto.import(privateKey);
-      // console.log('imported', imported);
-      // imported.privateKey = '1234';
-      // return imported;
     }
     return null;
     // const hdkey = HDKey.fromMasterSeed(Buffer.from(seed, 'hex'));
@@ -115,11 +107,7 @@ export class AppWallet {
         privateKey: wallet.privateKey,
       };
     } else if (coinType === CoinType.Cosmos) {
-      // console.log('getAccountByPrivateKey', cyberjsCrypto.import(privateKey));
       return cyberjsCrypto.importAccount(privateKey);
-      // console.log('imported', imported);
-      // imported.privateKey = '1234';
-      // return imported;
     }
     return null;
   }
