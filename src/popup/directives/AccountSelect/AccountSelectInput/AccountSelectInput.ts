@@ -33,6 +33,8 @@ export default {
       if (this.uniqId != item.uniqId) return;
 
       this.$store.commit(StorageVars.Account, item.account);
+      this.showList = false;
+      EventBus.$emit(ACCOUNT_SELECT_HIDE, { uniqId: this.uniqId });
     });
   },
   mounted() {

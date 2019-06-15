@@ -11,7 +11,7 @@
  * [Basic Agreement](http://cyb.ai/QmaCiXUmSrP16Gz8Jdzq6AJESY1EAANmmwha15uR3c1bsS:ipfs)).
  */
 
-import { EventBus, ACCOUNT_SELECT_HIDE, ACCOUNT_SELECT_PREVENT_CLOSE, ACCOUNT_SELECT_SHOW } from '../../../../services/events';
+import { EventBus, ACCOUNT_SELECT_HIDE, ACCOUNT_SELECT_PREVENT_CLOSE, ACCOUNT_SELECT_SHOW, ACCOUNT_SELECT_ITEM } from '../../../../services/events';
 import { StorageVars } from '../../../../services/data';
 import EthData from '@galtproject/frontend-core/libs/EthData';
 const _ = require('lodash');
@@ -70,6 +70,9 @@ export default {
     },
     preventClose() {
       EventBus.$emit(ACCOUNT_SELECT_PREVENT_CLOSE, { uniqId: this.uniqId });
+    },
+    selectAccountByIndex(index) {
+      EventBus.$emit(ACCOUNT_SELECT_ITEM, { uniqId: this.uniqId, account: this.accountList[index] });
     },
   },
   watch: {},
