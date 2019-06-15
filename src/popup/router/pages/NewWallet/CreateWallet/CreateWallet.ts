@@ -1,6 +1,4 @@
-import { AppCrypto, AppWallet, PermanentStorage, StorageVars } from '../../../../../services/data';
-
-const bip39 = require('bip39');
+import { AppWallet } from '../../../../../services/data';
 
 export default {
   template: require('./CreateWallet.html'),

@@ -1,21 +1,31 @@
-<div id="new-wallet-method">
-  <div class="logo">
+<div id="create-wallet">
+  <div class="header-logo">
     <img src="assets/img/logo_lg.png" />
     <!--<h3>Cyb Extension</h3>-->
   </div>
 
-  <h3>New to Cyb?</h3>
-  <div class="methods">
+  <div class="seed-container" style="margin-top: 25px;">
     <div>
-      <h4>Yes, let's get set up!</h4>
-      <p>This will create a new wallet and seed phrase</p>
-      <button>Create Wallet</button>
+      <label>Enter your seed phrase</label>
+      <textarea v-model="seedPhrase"></textarea>
+    </div>
+  </div>
+
+  <div class="password-container">
+    <h4>Your seed phrase will be encrypted by this password.</h4>
+
+    <div>
+      <label>Enter password (min 8 chars)</label>
+      <input v-model="password" type="password" />
     </div>
 
     <div>
-      <h4>No, I already have a seed phrase</h4>
-      <p>Import your existing wallet using a 12 word seed phrase</p>
-      <button>Import Wallet</button>
+      <label>Repeat password</label>
+      <input v-model="confirmPassword" type="password" />
     </div>
+  </div>
+
+  <div class="button-container">
+    <button @click="save" :disabled="saveDisabled">Save</button>
   </div>
 </div>
