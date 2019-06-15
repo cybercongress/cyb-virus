@@ -4,6 +4,7 @@ const _ = require('lodash');
 const ethers = require('ethers');
 const bip39 = require('bip39');
 const KeyPair = require('shr-keys').KeyPair;
+const ShrKeys = require('shr-keys');
 
 export enum CoinType {
   Cosmos = 'cosmos',
@@ -112,7 +113,7 @@ export class AppWallet {
         privateKey: wallet.privateKey,
       };
     } else if (coinType === CoinType.Cosmos) {
-      let keyPair = KeyPair.fromPrivate(privateKey);
+      let keyPair = ShrKeys.fromPrivate(privateKey);
       return {
         address: keyPair.address,
         privateKey: keyPair.privKey,
