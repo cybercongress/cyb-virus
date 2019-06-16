@@ -64,6 +64,9 @@ let lastAction;
     // geesome.saveData(request.content, request.filename).then(ipfsHash => {
     //   setAction({ type: 'page-action', method: 'link', data: { contentHash: ipfsHash, keywords: null } });
     //
+    // (global as any).chrome.runtime.sendMessage({
+    //   type: 'loading-end',
+    // });
     //   (global as any).chrome.runtime.sendMessage(
     //     {
     //       type: 'page-action',
@@ -83,6 +86,10 @@ let lastAction;
     ipfs.add([{ content }]).then(async result => {
       await ipfs.pin.add(result[0].hash);
       setAction({ type: 'page-action', method: 'link', data: { contentHash: result[0].hash, keywords: null } });
+
+      (global as any).chrome.runtime.sendMessage({
+        type: 'loading-end',
+      });
 
       (global as any).chrome.runtime.sendMessage(
         {

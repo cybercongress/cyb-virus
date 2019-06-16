@@ -45,9 +45,6 @@ module.exports = {
           name: filename,
         })
         .then(response => {
-          (global as any).chrome.runtime.sendMessage({
-            type: 'loading-end',
-          });
           console.log('save-data', response.data);
           const contentIpfsHash = response.data.storageId;
 
