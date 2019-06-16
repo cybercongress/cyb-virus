@@ -1,5 +1,5 @@
 <div id="popup">
-  <router-view v-if="ready"></router-view>
+  <router-view v-if="ready && !loading"></router-view>
 
   <div v-else class="loading-container">
     <div class="lds-facebook">

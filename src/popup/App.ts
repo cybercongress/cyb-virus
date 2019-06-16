@@ -61,6 +61,20 @@ export default {
           }
           this.$router.push({ name: 'cabinet-cyberd-link', query: { contentHash: response.data.contentHash, keywords: response.data.keywords } });
         });
+
+        (global as any).chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+          if (!request || !request.type) {
+            return;
+          }
+          console.log('request', request);
+          if (request.type === 'loading') {
+            this.loading = true;
+          } else if (request.type === 'loading-end') {
+            this.loading = false;
+          } else if (request.type === 'page-action') {
+            this.$router.push({ name: 'cabinet-cyberd-link', query: { contentHash: request.data.contentHash, keywords: request.data.keywords } });
+          }
+        });
         return;
       }
       const encryptedSeed = await PermanentStorage.getValue(StorageVars.EncryptedSeed);
@@ -105,10 +119,12 @@ export default {
       return this.$store.state[StorageVars.NetworkList];
     },
     ready() {
-      return this.$store.state.ready;
+      return this.$store.state[StorageVars.Ready];
     },
   },
   data() {
-    return {};
+    return {
+      loading: false,
+    };
   },
 };
