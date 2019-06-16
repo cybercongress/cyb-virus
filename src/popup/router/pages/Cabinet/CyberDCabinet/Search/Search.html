@@ -9,6 +9,8 @@
     </div>
   </div>
   <div v-else>
-    <div v-for="item in searchResults" style="margin-top: 15px;"><pretty-hex :hex="item.cid"></pretty-hex></div>
+    <div v-for="item in searchResults" style="margin-top: 15px;">
+      <a :href="'https://cloudflare-ipfs.com/ipfs/' + item.cid" target="_blank"><pretty-hex :hex="item.cid"></pretty-hex></a>
+    </div>
   </div>
 </div>
