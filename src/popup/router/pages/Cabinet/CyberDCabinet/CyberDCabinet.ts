@@ -25,6 +25,7 @@ export default {
       }
       console.log('this.currentAccount', this.currentAccount);
       this.balance = await CyberD.getGigaBalance(this.currentAccount.address);
+      this.bandwidth = await CyberD.getBandwidth(this.currentAccount.address);
     },
     downloadPage() {
       (global as any).chrome.runtime.sendMessage({ type: 'download-page' }, response => {});
@@ -44,6 +45,7 @@ export default {
   data() {
     return {
       balance: null,
+      bandwidth: null,
     };
   },
 };

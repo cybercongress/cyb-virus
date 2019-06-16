@@ -7,6 +7,12 @@
     {{balanceStr}} GCYB
     <md-button class="md-icon-button small-button" @click="getBalance"><md-icon class="fas fa-sync"></md-icon></md-button>
   </h2>
+  <div v-if="bandwidth">
+    <h3>Bandwidth:</h3>
+    <h2>
+      {{bandwidth.remained}} / {{bandwidth.maxValue}}
+    </h2>
+  </div>
 
   <router-link :to="{name: 'cabinet-cyberd-link'}" tag="button">Link</router-link>
 

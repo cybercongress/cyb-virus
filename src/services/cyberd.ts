@@ -25,6 +25,13 @@ export class CyberD {
     });
   }
 
+  static async getBandwidth(address) {
+    return axios({
+      method: 'get',
+      url: `${node}/account_bandwidth?address="${address}"`,
+    }).then(response => (response.data.result ? { remained: response.data.result.remained, maxValue: response.data.result.max_value } : { error: 'unknown' }));
+  }
+
   static async getStatus() {
     return axios({
       method: 'get',
