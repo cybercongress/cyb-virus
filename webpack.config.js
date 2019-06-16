@@ -114,6 +114,7 @@ const config = {
     new CopyWebpackPlugin([
       { from: 'icons', to: 'icons', ignore: ['icon.xcf'] },
       { from: 'popup/assets', to: 'assets' },
+      { from: 'singlefile', to: 'singlefile' },
       { from: 'popup/assets', to: 'popup/assets' },
       { from: '../node_modules/font-awesome/webfonts', to: 'popup/webfonts' },
       { from: 'popup/popup.html', to: 'popup/popup.html', transform: transformHtml },

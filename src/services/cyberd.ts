@@ -10,7 +10,7 @@ export class CyberD {
     return axios({
       method: 'get',
       url: `${node}/account?address="${address}"`,
-    }).then(response => response.data.result.account.coins[0].amount);
+    }).then(response => (response.data.result ? response.data.result.account.coins[0].amount : 0));
   }
 
   static async getGigaBalance(address) {

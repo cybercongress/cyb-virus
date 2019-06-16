@@ -9,9 +9,11 @@
 (global as any).browser = require('webextension-polyfill');
 
 let curTabId;
+let curTab;
 
 (global as any).chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
-  curTabId = tabs[0].id;
+  curTab = tabs[0];
+  curTabId = curTab.id;
 });
 
 let lastAction;
@@ -26,6 +28,10 @@ let lastAction;
     (global as any).chrome.browserAction.setBadgeText({ text: '' });
     // alert('send popup-opened ' + curTabId + ' ' + JSON.stringify((global as any).chrome.tabs.sendMessage));
     (global as any).chrome.tabs.sendMessage(curTabId, { type: 'popup-opened' });
+  }
+  if (request.type === 'download-page') {
+    // alert('download-page ' + JSON.stringify((global as any).singlefile.extension.core.bg.business));
+    (global as any).singlefile.extension.core.bg.business.saveTab(curTab);
   }
   // if (request.type === 'get-ipfs') {
   //   sendResponse(lastAction);

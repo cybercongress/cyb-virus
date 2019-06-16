@@ -12,14 +12,73 @@
     "default_popup": "popup/popup.html"
   },
   "background": {
-    "scripts": ["background.js"]
+    "scripts": [
+      "singlefile/index.js",
+      "singlefile/chrome-browser-polyfill.js",
+      "singlefile/fetch-resources.js",
+      "singlefile/content-fetch-resources.js",
+      "singlefile/frame-tree.js",
+      "singlefile/config.js",
+      "singlefile/tabs-data.js",
+      "singlefile/business.js",
+      "singlefile/messages.js",
+      "singlefile/tabs.js",
+      "singlefile/downloads.js",
+      "singlefile/autosave.js",
+      "singlefile/ui-main.js",
+      "singlefile/ui-menus.js",
+      "singlefile/ui-commands.js",
+      "singlefile/ui-button.js",
+      "singlefile/lazy-timeout.js",
+      "singlefile/css-minifier.js",
+      "singlefile/css-tree.js",
+      "singlefile/css-media-query-parser.js",
+      "singlefile/html-srcset-parser.js",
+      "singlefile/css-font-property-parser.js",
+      "singlefile/single-file-util.js",
+      "singlefile/single-file-helper.js",
+      "singlefile/css-fonts-minifier.js",
+      "singlefile/css-fonts-alt-minifier.js",
+      "singlefile/css-medias-alt-minifier.js",
+      "singlefile/css-matched-rules.js",
+      "singlefile/css-rules-minifier.js",
+      "singlefile/html-minifier.js",
+      "singlefile/html-serializer.js",
+      "singlefile/html-images-alt-minifier.js",
+      "singlefile/single-file-core.js",
+      "singlefile/single-file.js",
+      "background.js"
+    ]
   },
   "content_scripts": [
     {
-      "matches": ["http://*/*", "https://*/*"],
+      "matches": ["<all_urls>"],
       "js": ["contentScript.js"]
+    },
+    {
+      "matches": ["<all_urls>"],
+      "run_at": "document_start",
+      "js": [
+        "singlefile/index.js",
+        "singlefile/chrome-browser-polyfill.js",
+        "singlefile/content-hooks-frames.js",
+        "singlefile/single-file-helper.js",
+        "singlefile/content-frame-tree.js"
+      ],
+      "all_frames": true,
+      "match_about_blank": true
+    },
+    {
+      "matches": ["<all_urls>"],
+      "js": ["singlefile/index.js", "singlefile/content-ui-infobar.js"]
+    },
+    {
+      "matches": ["<all_urls>"],
+      "run_at": "document_start",
+      "js": ["singlefile/index.js", "singlefile/content-hooks.js", "singlefile/content-bootstrap.js"]
     }
   ],
+  "web_accessible_resources": ["singlefile/content-hooks-web.js", "singlefile/content-hooks-frames-web.js"],
   "permissions": ["http://*/*", "https://*/*", "tabs", "webNavigation", "activeTab", "storage"],
   "options_ui": {
     "page": "options/options.html",
