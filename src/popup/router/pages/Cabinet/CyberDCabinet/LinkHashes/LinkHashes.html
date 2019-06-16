@@ -3,7 +3,9 @@
 
   <div v-if="contentHash">
     <h3>IPFS hash:</h3>
-    <div><pretty-hex :hex="contentHash"></pretty-hex></div>
+    <div>
+      <a :href="'https://cloudflare-ipfs.com/ipfs/' + contentHash" target="_blank"><pretty-hex :hex="contentHash"></pretty-hex></a>
+    </div>
   </div>
   <div v-else>
     <h3>IPFS hash:</h3>
