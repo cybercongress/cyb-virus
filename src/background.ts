@@ -34,17 +34,19 @@ function setAction(action) {
 
 let lastAction;
 (global as any).browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  // if(request.type) {
+  //   alert(request.type);
+  // }
   if (request.type === 'page-action') {
     setAction(request);
+    return;
   }
   if (request.type === 'popup-get-action') {
-    if (!sendResponse) {
-      return;
-    }
-    sendResponse(lastAction);
+    (global as any).chrome.runtime.sendMessage(lastAction);
     setAction(null);
     // alert('send popup-opened ' + curTabId + ' ' + JSON.stringify((global as any).chrome.tabs.sendMessage));
     (global as any).chrome.tabs.sendMessage(curTabId, { type: 'popup-opened' });
+    return;
   }
   if (request.type === 'download-page') {
     // alert('download-page ' + JSON.stringify((global as any).singlefile.extension.core.bg.business));
@@ -54,6 +56,7 @@ let lastAction;
       curTabId = curTab.id;
       (global as any).singlefile.extension.core.bg.business.saveTab(curTab);
     });
+    return;
   }
   if (request.method && request.method.endsWith('.download')) {
     // console.log('my message.content', request.content);

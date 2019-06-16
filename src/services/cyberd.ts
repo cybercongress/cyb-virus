@@ -3,8 +3,8 @@ import EthData from '@galtproject/frontend-core/libs/EthData';
 const cyberjsBuilder = require('@litvintech/cyberjs/builder');
 const cyberjsCodec = require('@litvintech/cyberjs/codec');
 const axios = require('axios');
-const node = 'http://86.57.254.202:36657';
-const indexedNode = 'http://earth.cybernode.ai:34657';
+const node = 'http://88.198.36.117:26657';
+const indexedNode = 'http://88.198.36.117:26657';
 
 export class CyberD {
   static async getBalance(address) {
@@ -83,15 +83,18 @@ export class CyberD {
     const txRequest = cyberjsBuilder.buildAndSignTxRequest(sendRequest, txOptions.privateKey, chainId);
     const signedSendHex = cyberjsCodec.hex.stringToHex(JSON.stringify(txRequest));
 
-    let websocket = new WebSocket('ws://earth.cybernode.ai:34657/websocket');
-    websocket.send(
-      JSON.stringify({
-        method: 'subscribe',
-        params: ["tm.event='NewBlockHeader'"],
-        id: '1',
-        jsonrpc: '2.0',
-      })
-    );
+    // let websocket = new WebSocket('ws://earth.cybernode.ai:34657/websocket');
+    // websocket.onmessage = function(msg) {
+    //   console.log('onmessage', msg);
+    // };
+    // websocket.send(
+    //   JSON.stringify({
+    //     method: 'subscribe',
+    //     params: ["tm.event='NewBlockHeader'"],
+    //     id: '1',
+    //     jsonrpc: '2.0',
+    //   })
+    // );
 
     return axios({
       method: 'get',

@@ -56,13 +56,7 @@ export default {
         console.log('storage query', query);
         this.$router.push({ path, query });
 
-        (global as any).chrome.runtime.sendMessage({ type: 'popup-get-action' }, response => {
-          console.log('response', response);
-          if (!response) {
-            return;
-          }
-          this.$router.push({ name: 'cabinet-cyberd-link', query: { contentHash: response.data.contentHash, keywords: response.data.keywords } });
-        });
+        (global as any).chrome.runtime.sendMessage({ type: 'popup-get-action' });
 
         (global as any).chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
           if (!request || !request.type) {
