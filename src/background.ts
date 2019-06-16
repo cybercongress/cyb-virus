@@ -5,44 +5,10 @@
 // node.on('ready', () => {
 //   //ready to use
 // })
-
+const ipfsClient = require('ipfs-http-client');
+const ipfs = ipfsClient('localhost', '8080', { protocol: 'http' });
 const _ = require('lodash');
-const axios = require('axios');
-let $http = axios.create({});
-$http.defaults.baseURL = 'https://geesome.galtproject.io:7722';
-
-let cybFolderId;
-
-const loginPromise = $http.post('/v1/login', { username: 'admin', password: 'admin' });
-if (loginPromise && loginPromise.then) {
-  loginPromise.then(response => {
-    $http.defaults.headers['Authorization'] = 'Bearer ' + response.data.apiKey;
-
-    $http
-      .get(`/v1/user/file-catalog/`, {
-        params: {
-          parentItemId: null,
-          type: 'folder',
-          sortField: 'updatedAt',
-          sortDir: 'desc',
-          limit: 100,
-          offset: 0,
-        },
-      })
-      .then(response => {
-        const cybFolder = _.find(response.data, { name: 'cyb' });
-        if (cybFolder) {
-          cybFolderId = cybFolder.id;
-          console.log('cyb folder found', cybFolderId);
-        } else {
-          $http.post(`/v1/user/file-catalog/create-folder`, { parentItemId: null, name: 'cyb' }).then(response => {
-            cybFolderId = response.data.id;
-            console.log('cyb folder found', cybFolderId);
-          });
-        }
-      });
-  });
-}
+// const geesome = require('./services/geesome');
 
 (global as any).browser = require('webextension-polyfill');
 
@@ -94,35 +60,43 @@ let lastAction;
     (global as any).chrome.runtime.sendMessage({
       type: 'loading',
     });
-    $http
-      .post('/v1/user/save-data', {
-        content: request.content,
-        folderId: cybFolderId,
-        name: request.filename,
-      })
-      .then(response => {
-        (global as any).chrome.runtime.sendMessage({
-          type: 'loading-end',
-        });
-        console.log('save-data', response.data);
-        const contentIpfsHash = response.data.storageId;
 
-        setAction({ type: 'page-action', method: 'link', data: { contentHash: contentIpfsHash, keywords: null } });
+    // geesome.saveData(request.content, request.filename).then(ipfsHash => {
+    //   setAction({ type: 'page-action', method: 'link', data: { contentHash: ipfsHash, keywords: null } });
+    //
+    //   (global as any).chrome.runtime.sendMessage(
+    //     {
+    //       type: 'page-action',
+    //       method: 'link',
+    //       data: {
+    //         contentHash: ipfsHash,
+    //         keywords: null,
+    //       },
+    //     },
+    //     response => {
+    //       setAction(null);
+    //     }
+    //   );
+    // });
 
-        (global as any).chrome.runtime.sendMessage(
-          {
-            type: 'page-action',
-            method: 'link',
-            data: {
-              contentHash: contentIpfsHash,
-              keywords: null,
-            },
+    const content = Buffer.from(request.content, 'utf8');
+    this.node.add([{ content }]).then(async result => {
+      await this.node.pin.add(result[0].hash);
+      setAction({ type: 'page-action', method: 'link', data: { contentHash: result[0].hash, keywords: null } });
+
+      (global as any).chrome.runtime.sendMessage(
+        {
+          type: 'page-action',
+          method: 'link',
+          data: {
+            contentHash: result[0].hash,
+            keywords: null,
           },
-          response => {
-            setAction(null);
-            // alert('sendMessage response');
-          }
-        );
-      });
+        },
+        response => {
+          setAction(null);
+        }
+      );
+    });
   }
 });
