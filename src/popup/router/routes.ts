@@ -10,6 +10,7 @@ import CreateWallet from './pages/NewWallet/CreateWallet/CreateWallet';
 import ImportWallet from './pages/NewWallet/ImportWallet/ImportWallet';
 import ImportAccount from './pages/Cabinet/CyberDCabinet/ImportAccount/ImportAccount';
 import LinkHashes from './pages/Cabinet/CyberDCabinet/LinkHashes/LinkHashes';
+import Search from './pages/Cabinet/CyberDCabinet/Search/Search';
 
 export default [
   {
@@ -40,6 +41,11 @@ export default [
         path: '/cyberd/link',
         name: 'cabinet-cyberd-link',
         component: LinkHashes,
+      },
+      {
+        path: '/cyberd/search',
+        name: 'cabinet-cyberd-search',
+        component: Search,
       },
       {
         path: '/geesome',

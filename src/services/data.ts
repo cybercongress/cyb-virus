@@ -22,6 +22,7 @@ export enum StorageVars {
   Ready = 'ready',
   EncryptedSeed = 'encryptedSeed',
   Path = 'path',
+  Query = 'query',
   CoinType = 'coinType',
   Network = 'network',
   NetworkList = 'networkList',

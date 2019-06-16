@@ -1,0 +1,14 @@
+<div id="import-account" class="padding-container">
+  <h2>Search Content</h2>
+
+  <div v-if="loading" class="loading-container">
+    <div class="lds-facebook">
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+  </div>
+  <div v-else>
+    <div v-for="item in searchResults" style="margin-top: 15px;"><pretty-hex :hex="item.cid"></pretty-hex></div>
+  </div>
+</div>

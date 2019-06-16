@@ -4,6 +4,7 @@ const cyberjsBuilder = require('@litvintech/cyberjs/builder');
 const cyberjsCodec = require('@litvintech/cyberjs/codec');
 const axios = require('axios');
 const node = 'http://86.57.254.202:36657';
+const indexedNode = 'http://earth.cybernode.ai:34657';
 
 export class CyberD {
   static async getBalance(address) {
@@ -37,6 +38,13 @@ export class CyberD {
       method: 'get',
       url: `${node}/status`,
     }).then(response => response.data.result);
+  }
+
+  static async search(keywordHash) {
+    return axios({
+      method: 'get',
+      url: `${indexedNode}/search?cid=%22${keywordHash}%22&page=0&perPage=10`,
+    }).then(response => response.data.result.cids);
   }
 
   static async getNetworkId() {
@@ -74,6 +82,16 @@ export class CyberD {
 
     const txRequest = cyberjsBuilder.buildAndSignTxRequest(sendRequest, txOptions.privateKey, chainId);
     const signedSendHex = cyberjsCodec.hex.stringToHex(JSON.stringify(txRequest));
+
+    let websocket = new WebSocket('ws://earth.cybernode.ai:34657/websocket');
+    websocket.send(
+      JSON.stringify({
+        method: 'subscribe',
+        params: ["tm.event='NewBlockHeader'"],
+        id: '1',
+        jsonrpc: '2.0',
+      })
+    );
 
     return axios({
       method: 'get',

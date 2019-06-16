@@ -52,7 +52,9 @@ export default {
       AppWallet.setStore(this.$store);
       const path = await PermanentStorage.getValue(StorageVars.Path);
       if (path) {
-        this.$router.push(path);
+        const query = JSON.parse((await PermanentStorage.getValue(StorageVars.Query)) as any);
+        console.log('storage query', query);
+        this.$router.push({ path, query });
 
         (global as any).chrome.runtime.sendMessage({ type: 'popup-get-action' }, response => {
           console.log('response', response);
@@ -104,6 +106,9 @@ export default {
     '$route.name'() {
       this.setNetwork();
       PermanentStorage.setValue(StorageVars.Path, this.$route.fullPath);
+    },
+    '$route.query'() {
+      PermanentStorage.setValue(StorageVars.Query, JSON.stringify(this.$route.query));
     },
     currentNetwork() {},
     ready() {
