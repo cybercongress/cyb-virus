@@ -6,7 +6,7 @@
 //   //ready to use
 // })
 const ipfsClient = require('ipfs-http-client');
-const ipfs = ipfsClient('localhost', '8080', { protocol: 'http' });
+const ipfs = ipfsClient('localhost', '5001', { protocol: 'http' });
 const _ = require('lodash');
 // const geesome = require('./services/geesome');
 
@@ -80,8 +80,8 @@ let lastAction;
     // });
 
     const content = Buffer.from(request.content, 'utf8');
-    this.node.add([{ content }]).then(async result => {
-      await this.node.pin.add(result[0].hash);
+    ipfs.add([{ content }]).then(async result => {
+      await ipfs.pin.add(result[0].hash);
       setAction({ type: 'page-action', method: 'link', data: { contentHash: result[0].hash, keywords: null } });
 
       (global as any).chrome.runtime.sendMessage(
