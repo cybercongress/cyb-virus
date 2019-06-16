@@ -44,7 +44,7 @@ export class CyberD {
     return axios({
       method: 'get',
       url: `${indexedNode}/search?cid=%22${keywordHash}%22&page=0&perPage=10`,
-    }).then(response => response.data.result.cids);
+    }).then(response => (response.data.result ? response.data.result.cids : []));
   }
 
   static async getNetworkId() {

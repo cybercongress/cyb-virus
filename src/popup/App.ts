@@ -7,6 +7,7 @@ import NetworkSelectContainer from './directives/NetworkSelect/NetworkSelectCont
 import AccountSelectContainer from './directives/AccountSelect/AccountSelectContainer/AccountSelectContainer';
 import PrettyHex from '@galtproject/frontend-core/directives/PrettyHex/PrettyHex';
 import Notifications from 'vue-notification';
+import PrettyHash from './directives/PrettyHash/PrettyHash';
 
 Vue.use(Notifications);
 
@@ -18,6 +19,7 @@ Vue.use(MdMenu);
 Vue.use(MdList);
 
 Vue.component('pretty-hex', PrettyHex);
+Vue.component('pretty-hash', PrettyHash);
 
 const _ = require('lodash');
 
