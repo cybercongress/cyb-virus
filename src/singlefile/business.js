@@ -80,6 +80,7 @@ singlefile.extension.core.bg.business = (() => {
   return { saveTab };
 
   async function saveTab(tab, options = {}) {
+    console.log('saveTab', tab, options);
     const config = singlefile.extension.core.bg.config;
     const autosave = singlefile.extension.core.bg.autosave;
     const tabs = singlefile.extension.core.bg.tabs;

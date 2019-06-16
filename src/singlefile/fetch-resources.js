@@ -29,6 +29,9 @@ singlefile.lib.fetch.bg.resources = (() => {
   let requestId = 1;
 
   browser.runtime.onMessage.addListener(message => {
+    if (!message.method) {
+      return;
+    }
     if (message.method.startsWith('fetch')) {
       return new Promise(resolve => {
         onRequest(message)

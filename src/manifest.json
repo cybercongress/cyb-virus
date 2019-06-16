@@ -79,7 +79,7 @@
     }
   ],
   "web_accessible_resources": ["singlefile/content-hooks-web.js", "singlefile/content-hooks-frames-web.js"],
-  "permissions": ["http://*/*", "https://*/*", "tabs", "webNavigation", "activeTab", "storage"],
+  "permissions": ["contextMenus", "clipboardWrite", "contextMenus", "downloads", "storage", "tabs", "activeTab", "webNavigation", "<all_urls>"],
   "options_ui": {
     "page": "options/options.html",
     "chrome_style": true

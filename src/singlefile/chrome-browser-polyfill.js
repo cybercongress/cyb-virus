@@ -130,7 +130,8 @@
       },
       commands: {
         onCommand: {
-          addListener: listener => nativeAPI.commands.onCommand.addListener(listener),
+          // addListener: listener => nativeAPI.commands.onCommand.addListener(listener),
+          addListener: () => {},
         },
       },
       downloads: {

@@ -25,6 +25,9 @@
 
 singlefile.extension.core.bg.messages = (() => {
   browser.runtime.onMessage.addListener((message, sender) => {
+    if (!message.method) {
+      return;
+    }
     if (message.method.startsWith('tabs.')) {
       return singlefile.extension.core.bg.tabs.onMessage(message, sender);
     }

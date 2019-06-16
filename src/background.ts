@@ -23,6 +23,9 @@ let lastAction;
     (global as any).chrome.browserAction.setBadgeText({ text: '!' });
   }
   if (request.type === 'popup-get-action') {
+    if (!sendResponse) {
+      return;
+    }
     sendResponse(lastAction);
     lastAction = null;
     (global as any).chrome.browserAction.setBadgeText({ text: '' });
@@ -31,7 +34,12 @@ let lastAction;
   }
   if (request.type === 'download-page') {
     // alert('download-page ' + JSON.stringify((global as any).singlefile.extension.core.bg.business));
-    (global as any).singlefile.extension.core.bg.business.saveTab(curTab);
+
+    (global as any).chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+      curTab = tabs[0];
+      curTabId = curTab.id;
+      (global as any).singlefile.extension.core.bg.business.saveTab(curTab);
+    });
   }
   // if (request.type === 'get-ipfs') {
   //   sendResponse(lastAction);

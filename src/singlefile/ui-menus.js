@@ -454,7 +454,7 @@ singlefile.extension.ui.bg.menus = (() => {
           promises.push(updateTitleValue(MENU_ID_ASSOCIATE_WITH_PROFILE, title));
         }
       }
-      await Promise.all(promises);
+      await Promise.all(promises).catch(() => console.error('refresh failed'));
     }
   }
 
