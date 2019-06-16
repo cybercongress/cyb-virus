@@ -43,6 +43,8 @@ singlefile.extension.core.bg.downloads = (() => {
   };
 
   async function onMessage(message, sender) {
+    // download implemented in another place, you can search ut by .endsWith('.download') query
+    return;
     if (message.method.endsWith('.download')) {
       let contents;
       if (message.truncated) {
