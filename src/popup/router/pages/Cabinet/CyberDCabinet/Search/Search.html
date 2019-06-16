@@ -11,6 +11,7 @@
   <div v-else>
     <div v-for="item in searchResults" style="margin-top: 15px;">
       <a :href="'https://cloudflare-ipfs.com/ipfs/' + item.cid" target="_blank"><pretty-hex :hex="item.cid"></pretty-hex></a>
+      <span style="margin-left: 5px;">({{item.rank}})</span>
     </div>
   </div>
 </div>
