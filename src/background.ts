@@ -61,9 +61,26 @@ onMessage((request, sender, sendResponse) => {
     });
     return;
   }
-  if (request.type === BackgroundRequest.ShowContentList) {
+  if (request.type === BackgroundRequest.SaveContentToList) {
+    databaseService
+      .addContent(request.data)
+      .then(data => {
+        sendPopupMessage({ type: BackgroundResponse.SaveContentToList, data });
+      })
+      .catch(err => {
+        sendPopupMessage({ type: BackgroundResponse.SaveContentToList, err: err && err.message });
+      });
+    return;
+  }
+  if (request.type === BackgroundRequest.GetContentList) {
     databaseService.getContentList().then(data => {
-      sendPopupMessage({ type: BackgroundResponse.ShowContentList, data });
+      sendPopupMessage({ type: BackgroundResponse.GetContentList, data });
+    });
+    return;
+  }
+  if (request.type === BackgroundRequest.GetContentByHash) {
+    databaseService.getContentByHash(request.data).then(data => {
+      sendPopupMessage({ type: BackgroundResponse.GetContentByHash, data });
     });
     return;
   }
@@ -100,39 +117,45 @@ onMessage((request, sender, sendResponse) => {
         sendPopupMessage({ type: BackgroundResponse.SetSettings });
       })
       .catch(err => {
-        console.error('catch', err);
         sendPopupMessage({ type: BackgroundResponse.SetSettings, err: err && err.message });
       });
     return;
   }
+  if (request.type === BackgroundRequest.AddIpfsContentArray) {
+    pIteration
+      .map(request.data, content => ipfsService.saveContent(content).then(res => res.hash))
+      .then(data => {
+        sendPopupMessage({ type: BackgroundResponse.AddIpfsContentArray, data });
+      })
+      .catch(err => {
+        sendPopupMessage({ type: BackgroundResponse.AddIpfsContentArray, err: err && err.message });
+      });
+    return;
+  }
+  if (request.type === BackgroundRequest.GetIpfsFileStats) {
+    ipfsService
+      .getFileStats(request.data)
+      .then(data => {
+        sendPopupMessage({ type: BackgroundResponse.GetIpfsFileStats, data });
+      })
+      .catch(err => {
+        sendPopupMessage({ type: BackgroundResponse.GetIpfsFileStats, err: err && err.message });
+      });
+    return;
+  }
   if (request.method && _.endsWith(request.method, '.download')) {
-    sendPopupMessage({
-      type: 'loading',
-    });
+    sendPopupMessage({ type: 'loading' });
 
     ipfsService.saveContent(request.content).then(result => {
-      databaseService.addContent({
-        contentHash: result.hash,
-        size: result.size,
-        description: request.filename,
+      const data = { contentHash: result.hash, keywords: null, description: request.filename, size: result.size };
+
+      setAction({ type: 'page-action', method: 'save-and-link', data });
+
+      sendPopupMessage({ type: 'loading-end' });
+
+      sendPopupMessage({ type: 'page-action', method: 'save-and-link', data }, response => {
+        setAction(null);
       });
-
-      setAction({ type: 'page-action', method: 'link', data: { contentHash: result.hash, keywords: null } });
-
-      sendPopupMessage({
-        type: 'loading-end',
-      });
-
-      sendPopupMessage(
-        {
-          type: 'page-action',
-          method: 'link',
-          data: { contentHash: result.hash, keywords: null },
-        },
-        response => {
-          setAction(null);
-        }
-      );
     });
   }
 });

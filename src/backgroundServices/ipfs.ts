@@ -1,4 +1,5 @@
 const ipfsClient = require('ipfs-http-client');
+const pull = require('pull-stream');
 let ipfs;
 
 module.exports = {
@@ -11,6 +12,23 @@ module.exports = {
     return ipfs.add([{ content: bufferContent }]).then(async result => {
       await ipfs.pin.add(result[0].hash);
       return result[0];
+    });
+  },
+  async getFileStats(file) {
+    //TODO: make it work
+    // return ipfs.files.stat('/' + file);
+    return new Promise((resolve, reject) => {
+      pull(
+        ipfs.lsPullStream(file),
+        pull.collect((err, files) => {
+          if (err) {
+            throw err;
+          }
+
+          console.log('result', file, files);
+          return resolve(files[0]);
+        })
+      );
     });
   },
   getPeersList() {

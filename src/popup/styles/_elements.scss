@@ -105,6 +105,9 @@ textarea {
 #popup .md-checkbox.md-theme-default .md-checkbox-container {
   border-color: rgba(78, 214, 174, 0.64);
   background: transparent;
+  &:after {
+    border-color: #3ab793;
+  }
 }
 
 #popup .md-field.md-theme-default {

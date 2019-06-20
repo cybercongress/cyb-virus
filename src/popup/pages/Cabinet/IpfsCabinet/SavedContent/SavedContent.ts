@@ -1,9 +1,9 @@
-import { showContent } from '../../../../../services/backgroundGateway';
+import { getContentList } from '../../../../../services/backgroundGateway';
 
 export default {
   template: require('./SavedContent.html'),
   created() {
-    showContent().then(data => {
+    getContentList().then(data => {
       this.list = data;
       this.loading = false;
     });

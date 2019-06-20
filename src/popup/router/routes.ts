@@ -9,10 +9,11 @@ import ChooseMethod from '../pages/NewWallet/ChooseMethod/ChooseMethod';
 import CreateWallet from '../pages/NewWallet/CreateWallet/CreateWallet';
 import ImportWallet from '../pages/NewWallet/ImportWallet/ImportWallet';
 import ImportAccount from '../pages/Cabinet/CyberDCabinet/ImportAccount/ImportAccount';
-import LinkHashes from '../pages/Cabinet/CyberDCabinet/LinkHashes/LinkHashes';
+import SaveAndLinkContent from '../pages/Cabinet/CyberDCabinet/SaveAndLinkContent/SaveAndLinkContent';
 import Search from '../pages/Cabinet/CyberDCabinet/Search/Search';
 import SavedContent from '../pages/Cabinet/IpfsCabinet/SavedContent/SavedContent';
 import Settings from '../pages/Cabinet/Settings/Settings';
+import LinkContent from '../pages/Cabinet/CyberDCabinet/LinkContent/LinkContent';
 
 export default [
   {
@@ -42,7 +43,12 @@ export default [
       {
         path: '/cyberd/link',
         name: 'cabinet-cyberd-link',
-        component: LinkHashes,
+        component: LinkContent,
+      },
+      {
+        path: '/cyberd/save-and-link',
+        name: 'cabinet-cyberd-save-and-link',
+        component: SaveAndLinkContent,
       },
       {
         path: '/cyberd/search',

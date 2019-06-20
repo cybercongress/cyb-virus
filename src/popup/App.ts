@@ -40,6 +40,28 @@ Vue.use(storePlugin, {
   [StorageVars.GeesomeAccounts]: null,
 });
 
+Vue.filter('prettySize', function(bytesSize) {
+  bytesSize = parseInt(bytesSize);
+  if (!bytesSize) {
+    return '0';
+  }
+
+  function round(number) {
+    return Math.round(number * 1000) / 1000;
+  }
+
+  if (bytesSize < 1024 * 100) {
+    return round(bytesSize / 1024) + ' Kb';
+  }
+  if (bytesSize < 1024 ** 2 * 100) {
+    return round(bytesSize / 1024 ** 2) + ' Mb';
+  }
+  if (bytesSize < 1024 ** 3 * 100) {
+    return round(bytesSize / 1024 ** 3) + ' Gb';
+  }
+  return round(bytesSize / 1024 ** 4) + ' Tb';
+});
+
 export default {
   template: require('./App.html'),
   components: { NetworkSelectContainer, AccountSelectContainer },
@@ -71,8 +93,8 @@ export default {
             this.loading = true;
           } else if (request.type === 'loading-end') {
             this.loading = false;
-          } else if (request.type === 'page-action') {
-            this.$router.push({ name: 'cabinet-cyberd-link', query: { contentHash: request.data.contentHash, keywords: request.data.keywords } });
+          } else if (request.type === 'page-action' && request.method === 'save-and-link') {
+            this.$router.push({ name: 'cabinet-cyberd-save-and-link', query: request.data });
           }
         });
 

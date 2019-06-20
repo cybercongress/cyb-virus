@@ -12,12 +12,14 @@
           {{item.createdAt | beautyDate}}
         </div>
       </div>
-      <div style="display: flex;">
-        <div style="width: 80%;">
+      <div style="display: flex; justify-content: space-between;">
+        <div style="width: 70%;">
           {{item.description}}
         </div>
         <div>
-          <button class="small-btn">Details/Link</button>
+          <router-link class="small-btn" :to="{name: 'cabinet-cyberd-link', query: {contentHash: item.contentHash, keywords: item.keywords}}" tag="button"
+            >Details/Link</router-link
+          >
         </div>
       </div>
       <!--<span style="margin-left: 5px;">({{item.rank}})</span>-->

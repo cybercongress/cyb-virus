@@ -1,23 +1,31 @@
-import { AppWallet, CoinType, getIpfsHash, StorageVars } from '../../../../../services/data';
+import { AppWallet, StorageVars } from '../../../../../services/data';
 import { CyberD } from '../../../../../services/cyberd';
+import { addIpfsContentArray } from '../../../../../services/backgroundGateway';
+import ContentDetails from '../../../../directives/ContentDetails/ContentDetails';
 
-const _ = require('lodash');
 const pIteration = require('p-iteration');
 
 export default {
-  template: require('./LinkHashes.html'),
+  template: require('./LinkContent.html'),
+  components: { ContentDetails },
+  created() {
+    this.inputKeywordsStr = this.keywordsStr;
+  },
   methods: {
     async link() {
-      const results = await pIteration.mapSeries(this.resultKeywords, async keyword => {
+      const keywordHashes = await addIpfsContentArray(this.resultKeywords);
+
+      const results = await pIteration.mapSeries(keywordHashes, async keywordHash => {
         return CyberD.link(
           {
             address: this.currentAccount.address,
             privateKey: await AppWallet.decryptByPassword(this.currentAccount.encryptedPrivateKey),
           },
-          await getIpfsHash(keyword),
+          keywordHash,
           this.resultContentHash
         );
       });
+
       console.log('link results', results);
 
       this.$notify({
@@ -53,7 +61,9 @@ export default {
   },
   data() {
     return {
+      contentDetails: null,
       inputContentHash: '',
+      inputDescription: '',
       inputKeywordsStr: '',
       saveToGeesome: false,
     };

@@ -18,23 +18,55 @@ function onMessagePromise(type) {
 }
 
 export enum BackgroundRequest {
-  ShowContentList = 'show-content-list:request',
+  SaveContentToList = 'save-content-to-list:request',
+  GetContentList = 'get-content-list:request',
+  GetContentByHash = 'get-content-by-hash:request',
   GetPeersList = 'get-peers-list:request',
   GetSettings = 'get-settings:request',
   SetSettings = 'set-settings:request',
+  AddIpfsContentArray = 'add-ipfs-content-array:request',
+  GetIpfsFileStats = 'get-ipfs-file-stats:request',
 }
 
 export enum BackgroundResponse {
-  ShowContentList = 'show-content-list:response',
+  SaveContentToList = 'save-content-to-list:response',
+  GetContentList = 'get-content-list:response',
+  GetContentByHash = 'get-content-by-hash:response',
   GetPeersList = 'get-peers-list:response',
   GetSettings = 'get-settings:response',
   SetSettings = 'set-settings:response',
+  AddIpfsContentArray = 'add-ipfs-content-array:response',
+  GetIpfsFileStats = 'get-ipfs-file-stats:response',
 }
 
-export function showContent() {
-  const resultPromise = onMessagePromise(BackgroundResponse.ShowContentList);
+export function saveContent(data) {
+  const resultPromise = onMessagePromise(BackgroundResponse.SaveContentToList);
 
-  sendMessage({ type: BackgroundRequest.ShowContentList });
+  sendMessage({ type: BackgroundRequest.SaveContentToList, data });
+
+  return resultPromise;
+}
+
+export function getContentList() {
+  const resultPromise = onMessagePromise(BackgroundResponse.GetContentList);
+
+  sendMessage({ type: BackgroundRequest.GetContentList });
+
+  return resultPromise;
+}
+
+export function getContentByHash(hash) {
+  const resultPromise = onMessagePromise(BackgroundResponse.GetContentByHash);
+
+  sendMessage({ type: BackgroundRequest.GetContentByHash, data: hash });
+
+  return resultPromise;
+}
+
+export function getIpfsFileStats(file) {
+  const resultPromise = onMessagePromise(BackgroundResponse.GetIpfsFileStats);
+
+  sendMessage({ type: BackgroundRequest.GetIpfsFileStats, data: file });
 
   return resultPromise;
 }
@@ -59,6 +91,14 @@ export function setSettings(settingsNameValueArr) {
   const resultPromise = onMessagePromise(BackgroundResponse.SetSettings);
 
   sendMessage({ type: BackgroundRequest.SetSettings, data: settingsNameValueArr });
+
+  return resultPromise;
+}
+
+export function addIpfsContentArray(contentList) {
+  const resultPromise = onMessagePromise(BackgroundResponse.AddIpfsContentArray);
+
+  sendMessage({ type: BackgroundRequest.AddIpfsContentArray, data: contentList });
 
   return resultPromise;
 }
