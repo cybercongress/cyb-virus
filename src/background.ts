@@ -5,8 +5,9 @@
 // node.on('ready', () => {
 //   //ready to use
 // })
-const ipfsClient = require('ipfs-http-client');
-const ipfs = ipfsClient('localhost', '5001', { protocol: 'http' });
+const ipfsService = require('./services/ipfs');
+const databaseService = require('./services/database');
+databaseService.init();
 const _ = require('lodash');
 // const geesome = require('./services/geesome');
 
@@ -34,9 +35,7 @@ function setAction(action) {
 
 let lastAction;
 (global as any).browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  // if(request.type) {
-  //   alert(request.type);
-  // }
+  console.log('request', request);
   if (request.type === 'page-action') {
     setAction(request);
     return;
@@ -49,8 +48,6 @@ let lastAction;
     return;
   }
   if (request.type === 'download-page') {
-    // alert('download-page ' + JSON.stringify((global as any).singlefile.extension.core.bg.business));
-
     (global as any).chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
       curTab = tabs[0];
       curTabId = curTab.id;
@@ -58,8 +55,18 @@ let lastAction;
     });
     return;
   }
-  if (request.method && request.method.endsWith('.download')) {
-    // console.log('my message.content', request.content);
+  if (request.type === 'get-content-list') {
+    console.log('onMessage', 'get-content-list');
+    databaseService.getContent().then(contentList => {
+      console.log('getContent', contentList);
+      (global as any).chrome.runtime.sendMessage({
+        type: 'show-content-list',
+        data: contentList,
+      });
+    });
+    return;
+  }
+  if (request.method && _.endsWith(request.method, '.download')) {
     (global as any).chrome.runtime.sendMessage({
       type: 'loading',
     });
@@ -85,10 +92,13 @@ let lastAction;
     //   );
     // });
 
-    const content = Buffer.from(request.content, 'utf8');
-    ipfs.add([{ content }]).then(async result => {
-      await ipfs.pin.add(result[0].hash);
-      setAction({ type: 'page-action', method: 'link', data: { contentHash: result[0].hash, keywords: null } });
+    ipfsService.saveContent(request.content).then(result => {
+      databaseService.addContent({
+        contentHash: result.hash,
+        size: result.size,
+      });
+
+      setAction({ type: 'page-action', method: 'link', data: { contentHash: result.hash, keywords: null } });
 
       (global as any).chrome.runtime.sendMessage({
         type: 'loading-end',
@@ -98,10 +108,7 @@ let lastAction;
         {
           type: 'page-action',
           method: 'link',
-          data: {
-            contentHash: result[0].hash,
-            keywords: null,
-          },
+          data: { contentHash: result.hash, keywords: null },
         },
         response => {
           setAction(null);

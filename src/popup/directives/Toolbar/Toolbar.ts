@@ -39,6 +39,7 @@ export default {
   data() {
     return {
       search: '',
+      showNavigation: false,
     };
   },
 };

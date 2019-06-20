@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import storePlugin from '../services/permanentStore.plugin';
 
-import { MdElevation, MdCheckbox, MdButton, MdIcon, MdField, MdMenu, MdList } from 'vue-material/dist/components';
+import { MdElevation, MdCheckbox, MdButton, MdIcon, MdField, MdMenu, MdList, MdDrawer } from 'vue-material/dist/components';
 import { AppWallet, CoinType, Network, PermanentStorage, StorageVars } from '../services/data';
 import NetworkSelectContainer from './directives/NetworkSelect/NetworkSelectContainer/NetworkSelectContainer';
 import AccountSelectContainer from './directives/AccountSelect/AccountSelectContainer/AccountSelectContainer';
@@ -17,6 +17,7 @@ Vue.use(MdIcon);
 Vue.use(MdField);
 Vue.use(MdMenu);
 Vue.use(MdList);
+Vue.use(MdDrawer);
 
 Vue.component('pretty-hex', PrettyHex);
 Vue.component('pretty-hash', PrettyHash);
@@ -58,8 +59,6 @@ export default {
         console.log('storage query', query);
         this.$router.push({ path, query });
 
-        (global as any).chrome.runtime.sendMessage({ type: 'popup-get-action' });
-
         (global as any).chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
           if (!request || !request.type) {
             return;
@@ -73,6 +72,8 @@ export default {
             this.$router.push({ name: 'cabinet-cyberd-link', query: { contentHash: request.data.contentHash, keywords: request.data.keywords } });
           }
         });
+
+        (global as any).chrome.runtime.sendMessage({ type: 'popup-get-action' });
         return;
       }
       const encryptedSeed = await PermanentStorage.getValue(StorageVars.EncryptedSeed);

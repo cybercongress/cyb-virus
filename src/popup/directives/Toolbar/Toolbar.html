@@ -1,11 +1,29 @@
 <div class="toolbar">
   <div class="left-group">
     <div class="logo">
-      <router-link :to="currentCabinet">
+      <a href @click.prevent="showNavigation = true;">
         <img src="assets/img/logo_sm.png" />
-      </router-link>
+      </a>
     </div>
   </div>
+
+  <md-drawer :md-active.sync="showNavigation" md-swipeable>
+    <!--<md-toolbar class="md-transparent" md-elevation="0">-->
+    <span class="md-title">Menu</span>
+    <!--</md-toolbar>-->
+
+    <md-list>
+      <md-list-item :to="currentCabinet" @click="showNavigation = false;">
+        <md-icon class="fas fa-home"></md-icon>
+        <span class="md-list-item-text">Home</span>
+      </md-list-item>
+
+      <md-list-item :to="{name: 'cabinet-ipfs-saved-content'}" @click="showNavigation = false;">
+        <md-icon class="fas fa-archive"></md-icon>
+        <span class="md-list-item-text">Saved content</span>
+      </md-list-item>
+    </md-list>
+  </md-drawer>
 
   <!--<div class="right-group">-->
   <div class="network">
