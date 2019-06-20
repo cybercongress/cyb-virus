@@ -10,7 +10,22 @@
   </div>
   <div v-else>
     <div v-for="item in list" style="margin-top: 15px;">
-      <pretty-hash :hash="item.contentHash"></pretty-hash>
+      <div style="display: flex; justify-content: space-between;">
+        <div>
+          <pretty-hash :hash="item.contentHash"></pretty-hash>
+        </div>
+        <div>
+          {{item.createdAt | beautyDate}}
+        </div>
+      </div>
+      <div style="display: flex;">
+        <div style="width: 80%;">
+          {{item.description}}
+        </div>
+        <div>
+          <button class="small-btn">Details/Link</button>
+        </div>
+      </div>
       <!--<span style="margin-left: 5px;">({{item.rank}})</span>-->
     </div>
   </div>

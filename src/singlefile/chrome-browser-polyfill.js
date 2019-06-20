@@ -31,7 +31,8 @@
         onClicked: {
           addListener: listener => nativeAPI.browserAction.onClicked.addListener(listener),
         },
-        setBadgeText: options =>
+        setBadgeText: options => {
+          return;
           new Promise((resolve, reject) => {
             if (!FEATURE_TESTS['browserAction.setBadgeText'] || !FEATURE_TESTS['browserAction.setBadgeText'].callbackNotSupported) {
               try {
@@ -54,8 +55,10 @@
                 resolve();
               }
             }
-          }),
-        setBadgeBackgroundColor: options =>
+          });
+        },
+        setBadgeBackgroundColor: options => {
+          return;
           new Promise((resolve, reject) => {
             if (!FEATURE_TESTS['browserAction.setBadgeBackgroundColor'] || !FEATURE_TESTS['browserAction.setBadgeBackgroundColor'].callbackNotSupported) {
               try {
@@ -78,7 +81,8 @@
                 resolve();
               }
             }
-          }),
+          });
+        },
         setTitle: options =>
           new Promise((resolve, reject) => {
             if (!FEATURE_TESTS['browserAction.setTitle'] || !FEATURE_TESTS['browserAction.setTitle'].callbackNotSupported) {
@@ -184,7 +188,7 @@
           addListener: listener =>
             nativeAPI.runtime.onMessage.addListener((message, sender, sendResponse) => {
               const response = listener(message, sender);
-              if (response && typeof response.then == 'function') {
+              if (response && typeof response.then === 'function') {
                 response.then(response => {
                   if (response !== undefined) {
                     try {
@@ -203,7 +207,7 @@
           addListener: listener =>
             nativeAPI.runtime.onMessageExternal.addListener((message, sender, sendResponse) => {
               const response = listener(message, sender);
-              if (response && typeof response.then == 'function') {
+              if (response && typeof response.then === 'function') {
                 response.then(response => {
                   if (response !== undefined) {
                     try {

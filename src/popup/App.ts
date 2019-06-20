@@ -8,6 +8,7 @@ import AccountSelectContainer from './directives/AccountSelect/AccountSelectCont
 import PrettyHex from '@galtproject/frontend-core/directives/PrettyHex/PrettyHex';
 import Notifications from 'vue-notification';
 import PrettyHash from './directives/PrettyHash/PrettyHash';
+import '@galtproject/frontend-core/filters';
 
 Vue.use(Notifications);
 

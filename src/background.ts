@@ -96,6 +96,7 @@ let lastAction;
       databaseService.addContent({
         contentHash: result.hash,
         size: result.size,
+        description: request.filename,
       });
 
       setAction({ type: 'page-action', method: 'link', data: { contentHash: result.hash, keywords: null } });

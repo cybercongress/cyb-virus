@@ -10,6 +10,8 @@
  * Galt•Space Society Construction and Terraforming Company by
  * [Basic Agreement](http://cyb.ai/QmaCiXUmSrP16Gz8Jdzq6AJESY1EAANmmwha15uR3c1bsS:ipfs)).
  */
+import Helper from '@galtproject/frontend-core/services/helper';
+
 export {};
 
 // require('indexeddbshim');
@@ -25,10 +27,12 @@ module.exports = {
     db = new Dexie.default('CybExtensionDatabase');
 
     db.version(1).stores({
-      content: '++id,contentHash,manifestHash,description,keywords,size',
+      content: '++id,contentHash,manifestHash,description,keywords,size,createdAt,updatedAt',
     });
   },
   async addContent(contentObj) {
+    contentObj.createdAt = Helper.now();
+    contentObj.updatedAt = Helper.now();
     try {
       return await db.content.add(contentObj);
     } catch (e) {

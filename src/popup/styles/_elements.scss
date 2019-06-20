@@ -54,6 +54,9 @@ button {
     color: grey;
     border: 1px solid grey;
   }
+  &.small-btn {
+    font-size: 11px;
+  }
 }
 
 button.small-button {
