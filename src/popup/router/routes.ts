@@ -1,17 +1,17 @@
-import Overview from './pages/Cabinet/Overview/Overview';
-import Cabinet from './pages/Cabinet/Cabinet';
-import CyberDCabinet from './pages/Cabinet/CyberDCabinet/CyberDCabinet';
-import GeesomeCabinet from './pages/Cabinet/GeesomeCabinet/GeesomeCabinet';
-import Login from './pages/Cabinet/Login/Login';
-import NewWallet from './pages/NewWallet/NewWallet';
-import Welcome from './pages/NewWallet/Welcome/Welcome';
-import ChooseMethod from './pages/NewWallet/ChooseMethod/ChooseMethod';
-import CreateWallet from './pages/NewWallet/CreateWallet/CreateWallet';
-import ImportWallet from './pages/NewWallet/ImportWallet/ImportWallet';
-import ImportAccount from './pages/Cabinet/CyberDCabinet/ImportAccount/ImportAccount';
-import LinkHashes from './pages/Cabinet/CyberDCabinet/LinkHashes/LinkHashes';
-import Search from './pages/Cabinet/CyberDCabinet/Search/Search';
-import SavedContent from './pages/Cabinet/IpfsCabinet/SavedContent/SavedContent';
+import Overview from '../pages/Cabinet/Overview/Overview';
+import Cabinet from '../pages/Cabinet/Cabinet';
+import CyberDCabinet from '../pages/Cabinet/CyberDCabinet/CyberDCabinet';
+import GeesomeCabinet from '../pages/Cabinet/GeesomeCabinet/GeesomeCabinet';
+import Login from '../pages/Cabinet/Login/Login';
+import NewWallet from '../pages/NewWallet/NewWallet';
+import Welcome from '../pages/NewWallet/Welcome/Welcome';
+import ChooseMethod from '../pages/NewWallet/ChooseMethod/ChooseMethod';
+import CreateWallet from '../pages/NewWallet/CreateWallet/CreateWallet';
+import ImportWallet from '../pages/NewWallet/ImportWallet/ImportWallet';
+import ImportAccount from '../pages/Cabinet/CyberDCabinet/ImportAccount/ImportAccount';
+import LinkHashes from '../pages/Cabinet/CyberDCabinet/LinkHashes/LinkHashes';
+import Search from '../pages/Cabinet/CyberDCabinet/Search/Search';
+import SavedContent from '../pages/Cabinet/IpfsCabinet/SavedContent/SavedContent';
 
 export default [
   {

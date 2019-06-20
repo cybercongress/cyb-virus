@@ -1,9 +1,8 @@
-import { AppWallet, CoinType, getIpfsHash, StorageVars } from '../../../../../../services/data';
-import { CyberD } from '../../../../../../services/cyberd';
+import { getIpfsHash } from '../../../../../services/data';
+import { CyberD } from '../../../../../services/cyberd';
 import EthData from '@galtproject/frontend-core/libs/EthData';
 
 const _ = require('lodash');
-const pIteration = require('p-iteration');
 
 export default {
   template: require('./Search.html'),

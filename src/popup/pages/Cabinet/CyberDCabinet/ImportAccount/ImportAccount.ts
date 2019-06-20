@@ -1,4 +1,4 @@
-import { AppWallet, CoinType, StorageVars } from '../../../../../../services/data';
+import { AppWallet, CoinType, StorageVars } from '../../../../../services/data';
 
 const _ = require('lodash');
 

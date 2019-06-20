@@ -1,5 +1,5 @@
-import { AppWallet, CoinType, getIpfsHash, StorageVars } from '../../../../../../services/data';
-import { CyberD } from '../../../../../../services/cyberd';
+import { AppWallet, CoinType, getIpfsHash, StorageVars } from '../../../../../services/data';
+import { CyberD } from '../../../../../services/cyberd';
 
 const _ = require('lodash');
 const pIteration = require('p-iteration');

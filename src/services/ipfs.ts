@@ -10,6 +10,11 @@ module.exports = {
       return result[0];
     });
   },
+  getPeersList() {
+    return new Promise((resolve, reject) => {
+      ipfs.bootstrap.list((err, res) => (err ? reject(err) : resolve(res.Peers)));
+    });
+  },
 };
 
 // geesome.saveData(request.content, request.filename).then(ipfsHash => {

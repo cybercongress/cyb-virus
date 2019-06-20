@@ -59,6 +59,23 @@ onMessage((request, sender, sendResponse) => {
     });
     return;
   }
+  if (request.type === 'get-peers-list') {
+    ipfsService
+      .getPeersList()
+      .then(contentList => {
+        sendPopupMessage({
+          type: 'show-peers',
+          data: contentList,
+        });
+      })
+      .catch(err => {
+        sendPopupMessage({
+          type: 'err-peers',
+          data: err,
+        });
+      });
+    return;
+  }
   if (request.method && _.endsWith(request.method, '.download')) {
     sendPopupMessage({
       type: 'loading',

@@ -1,5 +1,5 @@
-import { AppWallet, CoinType, StorageVars } from '../../../../../services/data';
-import { CyberD } from '../../../../../services/cyberd';
+import { AppWallet, CoinType, StorageVars } from '../../../../services/data';
+import { CyberD } from '../../../../services/cyberd';
 
 export default {
   template: require('./CyberDCabinet.html'),

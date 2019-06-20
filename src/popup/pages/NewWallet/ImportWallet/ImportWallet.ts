@@ -1,4 +1,4 @@
-import { AppWallet } from '../../../../../services/data';
+import { AppWallet } from '../../../../services/data';
 
 export default {
   template: require('./ImportWallet.html'),
