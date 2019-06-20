@@ -22,7 +22,7 @@ export {};
 const Dexie = require('dexie');
 let db;
 
-module.exports = {
+const databaseService = {
   init() {
     db = new Dexie.default('CybExtensionDatabase');
 
@@ -39,7 +39,17 @@ module.exports = {
       console.error(e);
     }
   },
-  async getContent(searchString) {
+  async updateContentByHash(contentHash, updateData) {
+    const content = await databaseService.getContentByHash(contentHash);
+    if (!content || !content.id) {
+      return;
+    }
+    return await db.content.update(content.id, updateData);
+  },
+  async getContentByHash(contentHash) {
+    return db.content.where({ contentHash }).first();
+  },
+  async getContentList(searchString) {
     let query;
     if (searchString) {
       query = db.content.where('description').startsWithIgnoreCase(searchString);
@@ -52,3 +62,5 @@ module.exports = {
       .toArray();
   },
 };
+
+module.exports = databaseService;
