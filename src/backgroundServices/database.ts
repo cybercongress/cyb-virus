@@ -11,6 +11,7 @@
  * [Basic Agreement](http://cyb.ai/QmaCiXUmSrP16Gz8Jdzq6AJESY1EAANmmwha15uR3c1bsS:ipfs)).
  */
 import Helper from '@galtproject/frontend-core/services/helper';
+import { Settings } from './types';
 
 export {};
 
@@ -28,6 +29,7 @@ const databaseService = {
 
     db.version(1).stores({
       content: '++id,contentHash,manifestHash,description,keywords,size,createdAt,updatedAt',
+      settings: 'name,value',
     });
   },
   async addContent(contentObj) {
@@ -61,6 +63,27 @@ const databaseService = {
       .distinct()
       .toArray();
   },
+
+  async setSetting(settingName, value) {
+    // try {
+    if (await db.settings.get(settingName)) {
+      return await db.settings.update(settingName, { value });
+    } else {
+      return await db.settings.add({ settingName, value });
+    }
+    // } catch(e) {
+    //     console.error(e);
+    // }
+  },
+
+  async getSetting(settingName) {
+    const item = await db.settings.get(settingName);
+    return item ? item.value : defaultSettingsValues[settingName];
+  },
+};
+
+const defaultSettingsValues = {
+  [Settings.IpfsNodeAddress]: '/ip4/127.0.0.1/tcp/5001',
 };
 
 module.exports = databaseService;

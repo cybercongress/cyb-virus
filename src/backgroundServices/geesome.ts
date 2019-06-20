@@ -1,4 +1,5 @@
 const axios = require('axios');
+const _ = require('lodash');
 let $http = axios.create({});
 $http.defaults.baseURL = 'https://geesome.galtproject.io:7722';
 

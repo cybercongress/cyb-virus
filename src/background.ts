@@ -1,10 +1,13 @@
-const ipfsService = require('./services/ipfs');
 const databaseService = require('./backgroundServices/database');
 databaseService.init();
-const _ = require('lodash');
-// const geesome = require('./services/geesome');
 
-(global as any).browser = require('webextension-polyfill');
+import { Settings } from './backgroundServices/types';
+
+const ipfsService = require('./backgroundServices/ipfs');
+databaseService.getSetting(Settings.IpfsNodeAddress).then(address => {
+  ipfsService.init(address);
+});
+const _ = require('lodash');
 
 const { setBadgeText, onMessage, sendTabMessage, sendPopupMessage, getCurrentTab } = require('./backgroundServices/actions');
 

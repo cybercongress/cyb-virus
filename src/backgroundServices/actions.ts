@@ -1,3 +1,5 @@
+(global as any).browser = require('webextension-polyfill');
+
 const chrome = (global as any).chrome;
 const browser = (global as any).browser;
 

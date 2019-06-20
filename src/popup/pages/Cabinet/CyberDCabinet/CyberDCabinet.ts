@@ -1,5 +1,6 @@
 import { AppWallet, CoinType, StorageVars } from '../../../../services/data';
 import { CyberD } from '../../../../services/cyberd';
+const _ = require('lodash');
 
 export default {
   template: require('./CyberDCabinet.html'),
@@ -11,6 +12,16 @@ export default {
     }
     this.$store.commit(StorageVars.CurrentAccounts, this.$store.state[StorageVars.CyberDAccounts]);
     this.getBalance();
+
+    (global as any).chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+      if (!request || !_.includes(['show-peers', 'err-peers'], request.type)) {
+        return;
+      }
+      this.peersError = request.type === 'err-peers';
+      this.peersCount = this.peersError ? null : request.data.length;
+    });
+
+    (global as any).chrome.runtime.sendMessage({ type: 'get-peers-list' });
   },
   watch: {
     currentAccount() {
@@ -46,6 +57,8 @@ export default {
     return {
       balance: null,
       bandwidth: null,
+      peersError: false,
+      peersCount: null,
     };
   },
 };

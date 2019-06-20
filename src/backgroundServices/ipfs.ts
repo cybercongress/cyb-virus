@@ -1,7 +1,10 @@
 const ipfsClient = require('ipfs-http-client');
-const ipfs = ipfsClient('localhost', '5001', { protocol: 'http' });
+let ipfs;
 
 module.exports = {
+  init(options) {
+    ipfs = ipfsClient(options);
+  },
   saveContent(content) {
     const bufferContent = Buffer.from(content, 'utf8');
 
