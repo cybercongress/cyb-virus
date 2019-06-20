@@ -15,7 +15,17 @@ module.exports = {
   },
   getPeersList() {
     return new Promise((resolve, reject) => {
-      ipfs.bootstrap.list((err, res) => (err ? reject(err) : resolve(res.Peers)));
+      let responded = false;
+      setTimeout(() => {
+        if (responded) {
+          return;
+        }
+        reject('Failed to fetch');
+      }, 1000);
+      ipfs.bootstrap.list((err, res) => {
+        responded = true;
+        return err ? reject(err) : resolve(res.Peers);
+      });
     });
   },
 };

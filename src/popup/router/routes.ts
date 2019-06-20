@@ -12,6 +12,7 @@ import ImportAccount from '../pages/Cabinet/CyberDCabinet/ImportAccount/ImportAc
 import LinkHashes from '../pages/Cabinet/CyberDCabinet/LinkHashes/LinkHashes';
 import Search from '../pages/Cabinet/CyberDCabinet/Search/Search';
 import SavedContent from '../pages/Cabinet/IpfsCabinet/SavedContent/SavedContent';
+import Settings from '../pages/Cabinet/Settings/Settings';
 
 export default [
   {
@@ -52,6 +53,11 @@ export default [
         path: '/ipfs/saved-content',
         name: 'cabinet-ipfs-saved-content',
         component: SavedContent,
+      },
+      {
+        path: '/settings',
+        name: 'cabinet-settings',
+        component: Settings,
       },
       {
         path: '/geesome',

@@ -1,5 +1,6 @@
 import { AppWallet, CoinType, StorageVars } from '../../../../services/data';
 import { CyberD } from '../../../../services/cyberd';
+import { getPeers } from '../../../../services/backgroundGateway';
 const _ = require('lodash');
 
 export default {
@@ -13,15 +14,16 @@ export default {
     this.$store.commit(StorageVars.CurrentAccounts, this.$store.state[StorageVars.CyberDAccounts]);
     this.getBalance();
 
-    (global as any).chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-      if (!request || !_.includes(['show-peers', 'err-peers'], request.type)) {
-        return;
-      }
-      this.peersError = request.type === 'err-peers';
-      this.peersCount = this.peersError ? null : request.data.length;
-    });
-
-    (global as any).chrome.runtime.sendMessage({ type: 'get-peers-list' });
+    getPeers()
+      .then((list: any) => {
+        this.peersLoading = false;
+        this.peersCount = list.length;
+        this.peersError = null;
+      })
+      .catch(err => {
+        this.peersLoading = false;
+        this.peersError = err;
+      });
   },
   watch: {
     currentAccount() {
@@ -34,7 +36,6 @@ export default {
       if (!this.currentAccount) {
         return;
       }
-      console.log('this.currentAccount', this.currentAccount);
       this.balance = await CyberD.getGigaBalance(this.currentAccount.address);
       this.bandwidth = await CyberD.getBandwidth(this.currentAccount.address);
     },
@@ -55,6 +56,7 @@ export default {
   },
   data() {
     return {
+      peersLoading: true,
       balance: null,
       bandwidth: null,
       peersError: false,

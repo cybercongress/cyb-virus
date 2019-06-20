@@ -1,13 +1,7 @@
 <div id="import-account" class="padding-container">
   <h2>Saved Content</h2>
 
-  <div v-if="loading" class="loading-container">
-    <div class="lds-facebook">
-      <div></div>
-      <div></div>
-      <div></div>
-    </div>
-  </div>
+  <loading v-if="loading"></loading>
   <div v-else>
     <div v-for="item in list" style="margin-top: 15px;">
       <div style="display: flex; justify-content: space-between;">

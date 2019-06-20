@@ -69,7 +69,7 @@ const databaseService = {
     if (await db.settings.get(settingName)) {
       return await db.settings.update(settingName, { value });
     } else {
-      return await db.settings.add({ settingName, value });
+      return await db.settings.add({ name: settingName, value });
     }
     // } catch(e) {
     //     console.error(e);

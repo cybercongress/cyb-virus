@@ -1,13 +1,21 @@
+import { BackgroundRequest, BackgroundResponse } from './services/backgroundGateway';
+
 const databaseService = require('./backgroundServices/database');
 databaseService.init();
 
 import { Settings } from './backgroundServices/types';
 
 const ipfsService = require('./backgroundServices/ipfs');
-databaseService.getSetting(Settings.IpfsNodeAddress).then(address => {
-  ipfsService.init(address);
-});
+
+function initServices() {
+  return databaseService.getSetting(Settings.IpfsNodeAddress).then(address => {
+    return ipfsService.init(address);
+  });
+}
+initServices();
+
 const _ = require('lodash');
+const pIteration = require('p-iteration');
 
 const { setBadgeText, onMessage, sendTabMessage, sendPopupMessage, getCurrentTab } = require('./backgroundServices/actions');
 
@@ -53,29 +61,47 @@ onMessage((request, sender, sendResponse) => {
     });
     return;
   }
-  if (request.type === 'get-content-list') {
-    databaseService.getContentList().then(contentList => {
-      sendPopupMessage({
-        type: 'show-content-list',
-        data: contentList,
-      });
+  if (request.type === BackgroundRequest.ShowContentList) {
+    databaseService.getContentList().then(data => {
+      sendPopupMessage({ type: BackgroundResponse.ShowContentList, data });
     });
     return;
   }
-  if (request.type === 'get-peers-list') {
+  if (request.type === BackgroundRequest.GetPeersList) {
     ipfsService
       .getPeersList()
-      .then(contentList => {
-        sendPopupMessage({
-          type: 'show-peers',
-          data: contentList,
-        });
+      .then(data => {
+        sendPopupMessage({ type: BackgroundResponse.GetPeersList, data });
       })
       .catch(err => {
-        sendPopupMessage({
-          type: 'err-peers',
-          data: err,
-        });
+        sendPopupMessage({ type: BackgroundResponse.GetPeersList, err: err && err.message });
+      });
+    return;
+  }
+  if (request.type === BackgroundRequest.GetSettings) {
+    const data = {};
+    pIteration
+      .forEach(request.data, async settingName => {
+        data[settingName] = await databaseService.getSetting(settingName);
+      })
+      .then(() => {
+        sendPopupMessage({ type: BackgroundResponse.GetSettings, data });
+      })
+      .catch(err => {
+        sendPopupMessage({ type: BackgroundResponse.GetSettings, err: err && err.message });
+      });
+    return;
+  }
+  if (request.type === BackgroundRequest.SetSettings) {
+    pIteration
+      .forEach(request.data, setting => databaseService.setSetting(setting.name, setting.value))
+      .then(() => initServices())
+      .then(() => {
+        sendPopupMessage({ type: BackgroundResponse.SetSettings });
+      })
+      .catch(err => {
+        console.error('catch', err);
+        sendPopupMessage({ type: BackgroundResponse.SetSettings, err: err && err.message });
       });
     return;
   }

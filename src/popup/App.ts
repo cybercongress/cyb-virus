@@ -8,6 +8,7 @@ import AccountSelectContainer from './directives/AccountSelect/AccountSelectCont
 import PrettyHex from '@galtproject/frontend-core/directives/PrettyHex/PrettyHex';
 import Notifications from 'vue-notification';
 import PrettyHash from './directives/PrettyHash/PrettyHash';
+import Loading from './directives/Loading/Loading';
 import '@galtproject/frontend-core/filters';
 
 Vue.use(Notifications);
@@ -22,6 +23,7 @@ Vue.use(MdDrawer);
 
 Vue.component('pretty-hex', PrettyHex);
 Vue.component('pretty-hash', PrettyHash);
+Vue.component('loading', Loading);
 
 const _ = require('lodash');
 
