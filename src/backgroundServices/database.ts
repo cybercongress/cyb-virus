@@ -83,7 +83,8 @@ const databaseService = {
 };
 
 const defaultSettingsValues = {
-  [Settings.IpfsNodeAddress]: '/ip4/127.0.0.1/tcp/5001',
+  [Settings.StorageNodeAddress]: '/ip4/127.0.0.1/tcp/5001',
+  [Settings.StorageNodeType]: 'ipfs',
 };
 
 module.exports = databaseService;

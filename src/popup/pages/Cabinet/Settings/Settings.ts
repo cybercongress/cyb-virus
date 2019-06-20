@@ -1,4 +1,4 @@
-import { Settings } from '../../../../backgroundServices/types';
+import { getSettingData, Settings } from '../../../../backgroundServices/types';
 import { getSettings, setSettings } from '../../../../services/backgroundGateway';
 import EthData from '@galtproject/frontend-core/libs/EthData';
 
@@ -30,8 +30,14 @@ export default {
   },
   watch: {},
   computed: {
-    humanReadableNames() {
-      return this.names.map(EthData.humanizeKey);
+    settingList() {
+      return this.names.map(name => {
+        return {
+          name,
+          title: EthData.humanizeKey(name),
+          data: getSettingData(name),
+        };
+      });
     },
     nameValueArr() {
       return this.names.map(name => {
@@ -45,7 +51,7 @@ export default {
   data() {
     return {
       loading: true,
-      names: [Settings.IpfsNodeAddress],
+      names: [Settings.StorageNodeType, Settings.StorageNodeAddress],
       values: null,
     };
   },

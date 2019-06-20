@@ -8,7 +8,7 @@ import { Settings } from './backgroundServices/types';
 const ipfsService = require('./backgroundServices/ipfs');
 
 function initServices() {
-  return databaseService.getSetting(Settings.IpfsNodeAddress).then(address => {
+  return databaseService.getSetting(Settings.StorageNodeAddress).then(address => {
     return ipfsService.init(address);
   });
 }
