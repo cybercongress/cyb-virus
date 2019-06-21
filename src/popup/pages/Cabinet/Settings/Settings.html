@@ -1,0 +1,23 @@
+<div id="import-account" class="padding-container">
+  <h2>Settings</h2>
+
+  <loading v-if="loading"></loading>
+  <div v-else>
+    <div v-for="setting in settingList" style="margin-top: 15px;">
+      <div v-if="setting.data.type === 'list'">
+        <md-field>
+          <label>{{setting.title}}</label>
+          <md-select v-model="values[setting.name]">
+            <md-option v-for="item in setting.data.list" :value="item.value">{{item.title}}</md-option>
+          </md-select>
+        </md-field>
+      </div>
+      <div v-else>
+        <div>{{setting.title}}:</div>
+        <input type="text" v-model="values[setting.name]" />
+      </div>
+    </div>
+
+    <div style="margin-top: 25px; display: flex; justify-content: flex-end;"><button @click="save">Save</button></div>
+  </div>
+</div>

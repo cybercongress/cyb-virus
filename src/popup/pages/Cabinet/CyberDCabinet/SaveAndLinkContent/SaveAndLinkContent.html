@@ -1,0 +1,46 @@
+<div id="import-account" class="padding-container">
+  <h2>{{linkKeywords ? 'Save and Link Content' : 'Save Content'}}</h2>
+
+  <div v-if="contentHash">
+    <h3>IPFS hash:</h3>
+    <div>
+      <pretty-hash :hash="contentHash"></pretty-hash>
+    </div>
+    <h3>Content details:</h3>
+    <div><b>Size:</b> {{size | prettySize}}</div>
+  </div>
+  <div v-else>
+    <h3>IPFS hash:</h3>
+    <input type="text" v-model="inputContentHash" />
+  </div>
+
+  <h3>Description:</h3>
+  <textarea v-model="inputDescription"></textarea>
+
+  <md-checkbox v-model="linkKeywords">Link keywords</md-checkbox>
+
+  <div v-if="linkKeywords">
+    <div v-if="keywordsStr">
+      <h3>Keywords:</h3>
+      <div>{{keywordsStr}}</div>
+    </div>
+    <div v-else>
+      <h3>Keywords: (separate by comma)</h3>
+      <input type="text" v-model="inputKeywordsStr" />
+    </div>
+  </div>
+
+  <!--<div>-->
+  <!--<md-checkbox v-model="saveToGeesome">Save to personal channel in GeeSome</md-checkbox>-->
+  <!--<div v-if="saveToGeesome">-->
+  <!--<h3>Content name</h3>-->
+  <!--<input type="text" v-model="inputKeywordsStr"/>-->
+  <!--</div>-->
+  <!--&lt;!&ndash;<h3>Keywords:</h3>&ndash;&gt;-->
+  <!--&lt;!&ndash;<div>{{keywordsStr}}</div>&ndash;&gt;-->
+  <!--</div>-->
+
+  <div style="margin-top: 15px;">
+    <button @click="saveAndLink()" :disabled="disableSaveAndLink">{{linkKeywords ? 'Save and Link' : 'Save'}}</button>
+  </div>
+</div>

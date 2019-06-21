@@ -1,4 +1,4 @@
-import { AppWallet } from '../../../../../services/data';
+import { AppWallet } from '../../../../services/data';
 import Helper from '@galtproject/frontend-core/services/helper';
 
 export default {

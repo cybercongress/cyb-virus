@@ -1,5 +1,7 @@
-import { AppWallet, CoinType, StorageVars } from '../../../../../services/data';
-import { CyberD } from '../../../../../services/cyberd';
+import { AppWallet, CoinType, StorageVars } from '../../../../services/data';
+import { CyberD } from '../../../../services/cyberd';
+import { getPeers } from '../../../../services/backgroundGateway';
+const _ = require('lodash');
 
 export default {
   template: require('./CyberDCabinet.html'),
@@ -11,6 +13,17 @@ export default {
     }
     this.$store.commit(StorageVars.CurrentAccounts, this.$store.state[StorageVars.CyberDAccounts]);
     this.getBalance();
+
+    getPeers()
+      .then((list: any) => {
+        this.peersLoading = false;
+        this.peersCount = list.length;
+        this.peersError = null;
+      })
+      .catch(err => {
+        this.peersLoading = false;
+        this.peersError = err;
+      });
   },
   watch: {
     currentAccount() {
@@ -23,7 +36,6 @@ export default {
       if (!this.currentAccount) {
         return;
       }
-      console.log('this.currentAccount', this.currentAccount);
       this.balance = await CyberD.getGigaBalance(this.currentAccount.address);
       this.bandwidth = await CyberD.getBandwidth(this.currentAccount.address);
     },
@@ -44,8 +56,11 @@ export default {
   },
   data() {
     return {
+      peersLoading: true,
       balance: null,
       bandwidth: null,
+      peersError: false,
+      peersCount: null,
     };
   },
 };

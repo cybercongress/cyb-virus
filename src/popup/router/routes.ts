@@ -1,16 +1,19 @@
-import Overview from './pages/Cabinet/Overview/Overview';
-import Cabinet from './pages/Cabinet/Cabinet';
-import CyberDCabinet from './pages/Cabinet/CyberDCabinet/CyberDCabinet';
-import GeesomeCabinet from './pages/Cabinet/GeesomeCabinet/GeesomeCabinet';
-import Login from './pages/Cabinet/Login/Login';
-import NewWallet from './pages/NewWallet/NewWallet';
-import Welcome from './pages/NewWallet/Welcome/Welcome';
-import ChooseMethod from './pages/NewWallet/ChooseMethod/ChooseMethod';
-import CreateWallet from './pages/NewWallet/CreateWallet/CreateWallet';
-import ImportWallet from './pages/NewWallet/ImportWallet/ImportWallet';
-import ImportAccount from './pages/Cabinet/CyberDCabinet/ImportAccount/ImportAccount';
-import LinkHashes from './pages/Cabinet/CyberDCabinet/LinkHashes/LinkHashes';
-import Search from './pages/Cabinet/CyberDCabinet/Search/Search';
+import Overview from '../pages/Cabinet/Overview/Overview';
+import Cabinet from '../pages/Cabinet/Cabinet';
+import CyberDCabinet from '../pages/Cabinet/CyberDCabinet/CyberDCabinet';
+import GeesomeCabinet from '../pages/Cabinet/GeesomeCabinet/GeesomeCabinet';
+import Login from '../pages/Cabinet/Login/Login';
+import NewWallet from '../pages/NewWallet/NewWallet';
+import Welcome from '../pages/NewWallet/Welcome/Welcome';
+import ChooseMethod from '../pages/NewWallet/ChooseMethod/ChooseMethod';
+import CreateWallet from '../pages/NewWallet/CreateWallet/CreateWallet';
+import ImportWallet from '../pages/NewWallet/ImportWallet/ImportWallet';
+import ImportAccount from '../pages/Cabinet/CyberDCabinet/ImportAccount/ImportAccount';
+import SaveAndLinkContent from '../pages/Cabinet/CyberDCabinet/SaveAndLinkContent/SaveAndLinkContent';
+import Search from '../pages/Cabinet/CyberDCabinet/Search/Search';
+import SavedContent from '../pages/Cabinet/IpfsCabinet/SavedContent/SavedContent';
+import Settings from '../pages/Cabinet/Settings/Settings';
+import LinkContent from '../pages/Cabinet/CyberDCabinet/LinkContent/LinkContent';
 
 export default [
   {
@@ -40,12 +43,27 @@ export default [
       {
         path: '/cyberd/link',
         name: 'cabinet-cyberd-link',
-        component: LinkHashes,
+        component: LinkContent,
+      },
+      {
+        path: '/cyberd/save-and-link',
+        name: 'cabinet-cyberd-save-and-link',
+        component: SaveAndLinkContent,
       },
       {
         path: '/cyberd/search',
         name: 'cabinet-cyberd-search',
         component: Search,
+      },
+      {
+        path: '/ipfs/saved-content',
+        name: 'cabinet-ipfs-saved-content',
+        component: SavedContent,
+      },
+      {
+        path: '/settings',
+        name: 'cabinet-settings',
+        component: Settings,
       },
       {
         path: '/geesome',

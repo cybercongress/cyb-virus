@@ -1,0 +1,11 @@
+<div id="import-account" class="padding-container">
+  <h2>Search Content</h2>
+
+  <loading v-if="loading"></loading>
+  <div v-else>
+    <div v-for="item in searchResults" style="margin-top: 15px;">
+      <pretty-hash :hash="item.cid"></pretty-hash>
+      <span style="margin-left: 5px;">({{item.rank}})</span>
+    </div>
+  </div>
+</div>

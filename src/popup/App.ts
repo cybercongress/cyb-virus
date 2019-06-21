@@ -1,13 +1,15 @@
 import Vue from 'vue';
 import storePlugin from '../services/permanentStore.plugin';
 
-import { MdElevation, MdCheckbox, MdButton, MdIcon, MdField, MdMenu, MdList } from 'vue-material/dist/components';
+import { MdElevation, MdCheckbox, MdButton, MdIcon, MdField, MdMenu, MdList, MdDrawer } from 'vue-material/dist/components';
 import { AppWallet, CoinType, Network, PermanentStorage, StorageVars } from '../services/data';
 import NetworkSelectContainer from './directives/NetworkSelect/NetworkSelectContainer/NetworkSelectContainer';
 import AccountSelectContainer from './directives/AccountSelect/AccountSelectContainer/AccountSelectContainer';
 import PrettyHex from '@galtproject/frontend-core/directives/PrettyHex/PrettyHex';
 import Notifications from 'vue-notification';
 import PrettyHash from './directives/PrettyHash/PrettyHash';
+import Loading from './directives/Loading/Loading';
+import '@galtproject/frontend-core/filters';
 
 Vue.use(Notifications);
 
@@ -17,9 +19,11 @@ Vue.use(MdIcon);
 Vue.use(MdField);
 Vue.use(MdMenu);
 Vue.use(MdList);
+Vue.use(MdDrawer);
 
 Vue.component('pretty-hex', PrettyHex);
 Vue.component('pretty-hash', PrettyHash);
+Vue.component('loading', Loading);
 
 const _ = require('lodash');
 
@@ -34,6 +38,28 @@ Vue.use(storePlugin, {
   [StorageVars.CurrentAccounts]: null,
   [StorageVars.CyberDAccounts]: null,
   [StorageVars.GeesomeAccounts]: null,
+});
+
+Vue.filter('prettySize', function(bytesSize) {
+  bytesSize = parseInt(bytesSize);
+  if (!bytesSize) {
+    return '0';
+  }
+
+  function round(number) {
+    return Math.round(number * 1000) / 1000;
+  }
+
+  if (bytesSize < 1024 * 100) {
+    return round(bytesSize / 1024) + ' Kb';
+  }
+  if (bytesSize < 1024 ** 2 * 100) {
+    return round(bytesSize / 1024 ** 2) + ' Mb';
+  }
+  if (bytesSize < 1024 ** 3 * 100) {
+    return round(bytesSize / 1024 ** 3) + ' Gb';
+  }
+  return round(bytesSize / 1024 ** 4) + ' Tb';
 });
 
 export default {
@@ -58,8 +84,6 @@ export default {
         console.log('storage query', query);
         this.$router.push({ path, query });
 
-        (global as any).chrome.runtime.sendMessage({ type: 'popup-get-action' });
-
         (global as any).chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
           if (!request || !request.type) {
             return;
@@ -69,10 +93,12 @@ export default {
             this.loading = true;
           } else if (request.type === 'loading-end') {
             this.loading = false;
-          } else if (request.type === 'page-action') {
-            this.$router.push({ name: 'cabinet-cyberd-link', query: { contentHash: request.data.contentHash, keywords: request.data.keywords } });
+          } else if (request.type === 'page-action' && request.method === 'save-and-link') {
+            this.$router.push({ name: 'cabinet-cyberd-save-and-link', query: request.data });
           }
         });
+
+        (global as any).chrome.runtime.sendMessage({ type: 'popup-get-action' });
         return;
       }
       const encryptedSeed = await PermanentStorage.getValue(StorageVars.EncryptedSeed);

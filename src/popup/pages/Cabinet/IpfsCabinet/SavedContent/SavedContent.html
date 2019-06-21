@@ -1,0 +1,28 @@
+<div id="import-account" class="padding-container">
+  <h2>Saved Content</h2>
+
+  <loading v-if="loading"></loading>
+  <div v-else>
+    <div v-for="item in list" style="margin-top: 15px;">
+      <div style="display: flex; justify-content: space-between;">
+        <div>
+          <pretty-hash :hash="item.contentHash"></pretty-hash>
+        </div>
+        <div>
+          {{item.createdAt | beautyDate}}
+        </div>
+      </div>
+      <div style="display: flex; justify-content: space-between;">
+        <div style="width: 70%;">
+          {{item.description}}
+        </div>
+        <div>
+          <router-link class="small-btn" :to="{name: 'cabinet-cyberd-link', query: {contentHash: item.contentHash, keywords: item.keywords}}" tag="button"
+            >Details/Link</router-link
+          >
+        </div>
+      </div>
+      <!--<span style="margin-left: 5px;">({{item.rank}})</span>-->
+    </div>
+  </div>
+</div>

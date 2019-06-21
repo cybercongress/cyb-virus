@@ -1,13 +1,7 @@
 <div id="popup">
   <router-view v-if="ready && !loading"></router-view>
 
-  <div v-else class="loading-container">
-    <div class="lds-facebook">
-      <div></div>
-      <div></div>
-      <div></div>
-    </div>
-  </div>
+  <loading v-else></loading>
 
   <notifications :duration="3000" position="bottom right"></notifications>
   <network-select-container></network-select-container>

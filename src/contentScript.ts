@@ -1,6 +1,6 @@
 document.addEventListener('cyb:link', function(data: any) {
   // alert(JSON.stringify(data.detail));
-  (global as any).chrome.runtime.sendMessage({ type: 'page-action', method: 'link', data: data.detail }, response => {
+  (global as any).chrome.runtime.sendMessage({ type: 'page-action', method: 'save-and-link', data: data.detail }, response => {
     // alert('sendMessage response');
   });
 });

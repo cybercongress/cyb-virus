@@ -6,7 +6,7 @@
     color: rgb(54, 214, 174);
   }
 }
-a .md-icon.md-theme-default.md-icon-font {
+a:not(.md-list-item-router) .md-icon.md-theme-default.md-icon-font {
   color: rgb(54, 214, 174);
   width: 15px;
   min-width: 15px;
@@ -14,6 +14,25 @@ a .md-icon.md-theme-default.md-icon-font {
   font-size: 15px !important;
   position: relative;
   bottom: 2px;
+  text-decoration: none;
+}
+
+a.md-list-item-router .md-icon.md-theme-default.md-icon-font {
+  width: 25px;
+  min-width: 25px;
+  height: 25px;
+  font-size: 25px !important;
+  position: relative;
+  bottom: 2px;
+  text-decoration: none;
+}
+a.md-list-item-router.router-link-active {
+  .md-list-item-text,
+  .md-icon.md-theme-default.md-icon-font {
+    color: rgb(54, 214, 174);
+  }
+}
+.md-list.md-theme-default a.md-list-item-router {
   text-decoration: none;
 }
 button {
@@ -34,6 +53,9 @@ button {
   &[disabled] {
     color: grey;
     border: 1px solid grey;
+  }
+  &.small-btn {
+    font-size: 11px;
   }
 }
 
@@ -83,6 +105,9 @@ textarea {
 #popup .md-checkbox.md-theme-default .md-checkbox-container {
   border-color: rgba(78, 214, 174, 0.64);
   background: transparent;
+  &:after {
+    border-color: #3ab793;
+  }
 }
 
 #popup .md-field.md-theme-default {
