@@ -1,6 +1,7 @@
 <div v-if="details">
   <h3>Content details:</h3>
   <div><b>Size:</b> {{details.size | prettySize}}</div>
+  <div><b>Manifest IPLD:</b> <pretty-hash :hash="details.manifestHash"></pretty-hash></div>
   <div><b>Created at:</b> {{details.createdAt | beautyDate}}</div>
   <div><b>Description:</b> {{details.description}}</div>
 </div>

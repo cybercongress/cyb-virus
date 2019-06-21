@@ -4,8 +4,11 @@ const databaseService = require('./backgroundServices/database');
 databaseService.init();
 
 import { Settings } from './backgroundServices/types';
+import { PermanentStorage, StorageVars } from './services/data';
+import Helper from '@galtproject/frontend-core/services/helper';
 
 const ipfsService = require('./backgroundServices/ipfs');
+const base36Trie = require('@galtproject/geesome-libs/src/base36Trie');
 
 function initServices() {
   return databaseService.getSetting(Settings.StorageNodeAddress).then(address => {
@@ -40,6 +43,56 @@ function setAction(action) {
   }
 }
 
+async function saveExtensionDataAndBindToIpns() {
+  console.log('saveExtensionDataAndBindToIpns');
+  const settings = {};
+  await pIteration.forEach([Settings.StorageNodeAddress, Settings.StorageNodeKey, Settings.StorageNodeType], async settingName => {
+    settings[settingName] = await databaseService.getSetting(settingName);
+    if (_.isUndefined(settings[settingName])) {
+      settings[settingName] = null;
+    }
+  });
+
+  const contents = {};
+  const contentList = await databaseService.getContentList();
+  await pIteration.forEach(contentList, async (contentItem, index) => {
+    if (!contentItem.manifestHash) {
+      contentItem.manifestHash = await ipfsService.saveContentManifest(contentItem);
+      await databaseService.updateContentByHash(contentItem.contentHash, { manifestHash: contentItem.manifestHash });
+    }
+    base36Trie.setNode(contents, index, ipfsService.getObjectRef(contentItem.manifestHash));
+  });
+  const encryptedSeed = await PermanentStorage.getValue(StorageVars.EncryptedSeed);
+  const cyberdAccounts = await PermanentStorage.getValue(StorageVars.CyberDAccounts);
+
+  const extensionsData = {
+    settings,
+    contents,
+    encryptedSeed,
+    cyberdAccounts,
+  };
+  console.log('extensionsData', extensionsData);
+  const extensionDataIpld = await ipfsService.saveIpld(extensionsData);
+  console.log('extensionDataIpld', extensionDataIpld);
+
+  const extensionIpnsId = await ipfsService.createExtensionIpnsIfNotExists();
+  console.log('extensionIpnsId', extensionIpnsId);
+  try {
+    await ipfsService.bindToStaticId(extensionDataIpld, extensionIpnsId);
+
+    await databaseService.setSetting(Settings.StorageExtensionIpd, extensionDataIpld);
+    await databaseService.setSetting(Settings.StorageExtensionIpdUpdatedAt, Helper.now());
+    await databaseService.setSetting(Settings.StorageExtensionIpdError, null);
+  } catch (e) {
+    console.error(e);
+    await databaseService.setSetting(Settings.StorageExtensionIpdError, e && e.message ? e.message : e);
+  }
+}
+
+setInterval(() => {
+  saveExtensionDataAndBindToIpns();
+}, 1000 * 60); // * 5
+
 fetchCurrentTab();
 
 let lastAction;
@@ -63,9 +116,12 @@ onMessage((request, sender, sendResponse) => {
   }
   if (request.type === BackgroundRequest.SaveContentToList) {
     databaseService
-      .addContent(request.data)
-      .then(data => {
-        sendPopupMessage({ type: BackgroundResponse.SaveContentToList, data });
+      .saveContent(request.data)
+      .then(async data => {
+        data.manifestHash = await ipfsService.saveContentManifest(data);
+        await databaseService.updateContentByHash(data.contentHash, { manifestHash: data.manifestHash });
+
+        sendPopupMessage({ type: BackgroundResponse.SaveContentToList, data: await databaseService.getContentByHash(data.contentHash) });
       })
       .catch(err => {
         sendPopupMessage({ type: BackgroundResponse.SaveContentToList, err: err && err.message });
@@ -123,7 +179,7 @@ onMessage((request, sender, sendResponse) => {
   }
   if (request.type === BackgroundRequest.AddIpfsContentArray) {
     pIteration
-      .map(request.data, content => ipfsService.saveContent(content).then(res => res.hash))
+      .map(request.data, content => ipfsService.saveContent(content).then(res => res.id))
       .then(data => {
         sendPopupMessage({ type: BackgroundResponse.AddIpfsContentArray, data });
       })
@@ -147,7 +203,7 @@ onMessage((request, sender, sendResponse) => {
     sendPopupMessage({ type: 'loading' });
 
     ipfsService.saveContent(request.content).then(result => {
-      const data = { contentHash: result.hash, keywords: null, description: request.filename, size: result.size };
+      const data = { contentHash: result.id, keywords: null, description: request.filename, size: result.size };
 
       setAction({ type: 'page-action', method: 'save-and-link', data });
 

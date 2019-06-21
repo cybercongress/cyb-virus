@@ -14,6 +14,7 @@ import Search from '../pages/Cabinet/CyberDCabinet/Search/Search';
 import SavedContent from '../pages/Cabinet/IpfsCabinet/SavedContent/SavedContent';
 import Settings from '../pages/Cabinet/Settings/Settings';
 import LinkContent from '../pages/Cabinet/CyberDCabinet/LinkContent/LinkContent';
+import Backup from '../pages/Cabinet/Backup/Backup';
 
 export default [
   {
@@ -64,6 +65,11 @@ export default [
         path: '/settings',
         name: 'cabinet-settings',
         component: Settings,
+      },
+      {
+        path: '/backup',
+        name: 'cabinet-backup',
+        component: Backup,
       },
       {
         path: '/geesome',

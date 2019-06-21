@@ -4,6 +4,8 @@ const pull = require('pull-stream');
 let ipfs;
 let ipfsService;
 
+const extensionIpns = 'cybvirusex';
+
 module.exports = {
   init(options) {
     ipfs = ipfsClient(options);
@@ -26,6 +28,10 @@ module.exports = {
     return ipfsService.bindToStaticId(storageId, accountKey);
   },
 
+  async saveContentManifest(contentObj) {
+    return this.saveIpld(_.pick(contentObj, ['contentHash', 'description', 'size', 'createdAt']));
+  },
+
   async getFileStats(file) {
     //TODO: make it work
     // return ipfs.files.stat('/' + file);
@@ -45,6 +51,15 @@ module.exports = {
   },
   getPeersList() {
     return ipfsService.getBootNodeList();
+  },
+  createExtensionIpnsIfNotExists() {
+    return ipfsService.createAccountIfNotExists(extensionIpns);
+  },
+  getExtensionIpns() {
+    return ipfsService.getAccountIdByName(extensionIpns);
+  },
+  getObjectRef(id) {
+    return ipfsService.getObjectRef(id);
   },
 };
 

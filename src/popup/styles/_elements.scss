@@ -122,3 +122,8 @@ textarea {
     background-color: rgb(54, 214, 174);
   }
 }
+
+.md-error {
+  color: #ff1744;
+  color: var(--md-theme-demo-light-fieldvariant, #ff1744);
+}
