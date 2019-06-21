@@ -1,6 +1,6 @@
 import { AppWallet, StorageVars } from '../../../../../services/data';
 import { CyberD } from '../../../../../services/cyberd';
-import { addIpfsContentArray, getIpfsFileStats, saveContent } from '../../../../../services/backgroundGateway';
+import { addIpfsContentArray, saveContent } from '../../../../../services/backgroundGateway';
 
 const pIteration = require('p-iteration');
 

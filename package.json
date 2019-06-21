@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "@cybercongress/js-amino": "git+ssh://git@github.com:cybercongress/js-amino.git",
-    "@galtproject/frontend-core": "git://github.com/galtspace/galtproject-frontend-core.git#340aba9",
+    "@galtproject/frontend-core": "git://github.com/galtspace/galtproject-frontend-core.git#1bd1cc7",
     "@litvintech/cyberjs": "git://github.com/litvintech/cyberjs.git",
     "autoprefixer": "^9.6.0",
     "axios": "^0.19.0",

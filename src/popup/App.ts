@@ -40,28 +40,6 @@ Vue.use(storePlugin, {
   [StorageVars.GeesomeAccounts]: null,
 });
 
-Vue.filter('prettySize', function(bytesSize) {
-  bytesSize = parseInt(bytesSize);
-  if (!bytesSize) {
-    return '0';
-  }
-
-  function round(number) {
-    return Math.round(number * 1000) / 1000;
-  }
-
-  if (bytesSize < 1024 * 100) {
-    return round(bytesSize / 1024) + ' Kb';
-  }
-  if (bytesSize < 1024 ** 2 * 100) {
-    return round(bytesSize / 1024 ** 2) + ' Mb';
-  }
-  if (bytesSize < 1024 ** 3 * 100) {
-    return round(bytesSize / 1024 ** 3) + ' Gb';
-  }
-  return round(bytesSize / 1024 ** 4) + ' Tb';
-});
-
 export default {
   template: require('./App.html'),
   components: { NetworkSelectContainer, AccountSelectContainer },
