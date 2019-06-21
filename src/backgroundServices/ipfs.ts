@@ -1,46 +1,29 @@
+import { JsIpfsService } from '@galtproject/geesome-libs/src/JsIpfsService';
 const ipfsClient = require('ipfs-http-client');
-const ipfsHelper = require('../services/ipfsHelper');
 const pull = require('pull-stream');
 let ipfs;
+let ipfsService;
 
 module.exports = {
   init(options) {
     ipfs = ipfsClient(options);
+    ipfsService = new JsIpfsService(ipfs);
   },
   saveContent(content) {
-    const bufferContent = Buffer.from(content, 'utf8');
-
-    return ipfs.add([{ content: bufferContent }]).then(async result => {
-      await ipfs.pin.add(result[0].hash);
-      return result[0];
-    });
+    return ipfsService.saveFileByData(content);
   },
   async saveIpld(objectData) {
-    const savedObj = await ipfs.dag.put(objectData);
-    const ipldHash = ipfsHelper.cidToHash(savedObj);
-    await ipfs.pin.add(ipldHash);
-    return ipldHash;
+    return ipfsService.saveObject(objectData);
   },
   async getObject(storageId) {
-    if (ipfsHelper.isCid(storageId)) {
-      storageId = ipfsHelper.cidToHash(storageId);
-    }
-    return ipfs.dag.get(storageId).then(response => response.value);
+    return ipfsService.getObject(storageId);
   },
   async getObjectProp(storageId, propName) {
-    return ipfs.dag.get(storageId + '/' + propName).then(response => response.value);
+    return ipfsService.getObjectProp(storageId, propName);
   },
 
   async bindToStaticId(storageId, accountKey) {
-    if (_.startsWith(accountKey, 'Qm')) {
-      accountKey = await this.getAccountNameById(accountKey);
-    }
-    return this.node.name
-      .publish(`${storageId}`, {
-        key: accountKey,
-        lifetime: '175200h',
-      })
-      .then(response => response.name);
+    return ipfsService.bindToStaticId(storageId, accountKey);
   },
 
   async getFileStats(file) {
@@ -61,19 +44,7 @@ module.exports = {
     });
   },
   getPeersList() {
-    return new Promise((resolve, reject) => {
-      let responded = false;
-      setTimeout(() => {
-        if (responded) {
-          return;
-        }
-        reject('Failed to fetch');
-      }, 1000);
-      ipfs.bootstrap.list((err, res) => {
-        responded = true;
-        return err ? reject(err) : resolve(res.Peers);
-      });
-    });
+    return ipfsService.getBootNodeList();
   },
 };
 

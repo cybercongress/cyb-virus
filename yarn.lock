@@ -649,6 +649,13 @@
     vuex "^3.0.1"
     web3 "1.0.0-beta.52"
 
+"@galtproject/geesome-libs@git://github.com/galtspace/geesome-libs.git#2028e62":
+  version "1.0.0"
+  resolved "git://github.com/galtspace/geesome-libs.git#2028e62d1b6f1ed0b8a7d0f59eeb9a819b757a81"
+  dependencies:
+    cids "^0.7.1"
+    lodash "^4.17.11"
+
 "@galtproject/utils@git://github.com/galtspace/galtproject-utils-js.git":
   version "0.9.1"
   resolved "git://github.com/galtspace/galtproject-utils-js.git#f75b09b93fdcd01b3b6c19835b1ad31e9b7b5543"
@@ -2385,6 +2392,15 @@ ci-info@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/ci-info/-/ci-info-2.0.0.tgz#67a9e964be31a51e15e5010d58e6f12834002f46"
 
+cids@^0.7.1, cids@~0.7.0, cids@~0.7.1:
+  version "0.7.1"
+  resolved "https://registry.yarnpkg.com/cids/-/cids-0.7.1.tgz#d8bba49a35a0e82110879b5001abf1039c62347f"
+  dependencies:
+    class-is "^1.1.0"
+    multibase "~0.6.0"
+    multicodec "~0.5.1"
+    multihashes "~0.4.14"
+
 cids@~0.5.4, cids@~0.5.6:
   version "0.5.8"
   resolved "https://registry.yarnpkg.com/cids/-/cids-0.5.8.tgz#3d5000c3856a2d3c00967b21265aa57142611aa0"
@@ -2392,15 +2408,6 @@ cids@~0.5.4, cids@~0.5.6:
     class-is "^1.1.0"
     multibase "~0.6.0"
     multicodec "~0.5.0"
-    multihashes "~0.4.14"
-
-cids@~0.7.0, cids@~0.7.1:
-  version "0.7.1"
-  resolved "https://registry.yarnpkg.com/cids/-/cids-0.7.1.tgz#d8bba49a35a0e82110879b5001abf1039c62347f"
-  dependencies:
-    class-is "^1.1.0"
-    multibase "~0.6.0"
-    multicodec "~0.5.1"
     multihashes "~0.4.14"
 
 cipher-base@^1.0.0, cipher-base@^1.0.1, cipher-base@^1.0.3:
