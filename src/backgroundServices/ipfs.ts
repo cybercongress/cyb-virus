@@ -1,4 +1,5 @@
 const ipfsClient = require('ipfs-http-client');
+const ipfsHelper = require('../services/ipfsHelper');
 const pull = require('pull-stream');
 let ipfs;
 
@@ -14,6 +15,34 @@ module.exports = {
       return result[0];
     });
   },
+  async saveIpld(objectData) {
+    const savedObj = await ipfs.dag.put(objectData);
+    const ipldHash = ipfsHelper.cidToHash(savedObj);
+    await ipfs.pin.add(ipldHash);
+    return ipldHash;
+  },
+  async getObject(storageId) {
+    if (ipfsHelper.isCid(storageId)) {
+      storageId = ipfsHelper.cidToHash(storageId);
+    }
+    return ipfs.dag.get(storageId).then(response => response.value);
+  },
+  async getObjectProp(storageId, propName) {
+    return ipfs.dag.get(storageId + '/' + propName).then(response => response.value);
+  },
+
+  async bindToStaticId(storageId, accountKey) {
+    if (_.startsWith(accountKey, 'Qm')) {
+      accountKey = await this.getAccountNameById(accountKey);
+    }
+    return this.node.name
+      .publish(`${storageId}`, {
+        key: accountKey,
+        lifetime: '175200h',
+      })
+      .then(response => response.name);
+  },
+
   async getFileStats(file) {
     //TODO: make it work
     // return ipfs.files.stat('/' + file);
