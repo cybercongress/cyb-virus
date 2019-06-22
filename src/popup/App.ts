@@ -10,7 +10,8 @@ import Notifications from 'vue-notification';
 import PrettyHash from './directives/PrettyHash/PrettyHash';
 import Loading from './directives/Loading/Loading';
 import '@galtproject/frontend-core/filters';
-import { getIsBackupExists } from '../services/backgroundGateway';
+import { getIsBackupExists, getSettings } from '../services/backgroundGateway';
+import { Settings } from '../backgroundServices/types';
 
 Vue.use(Notifications);
 
@@ -27,6 +28,7 @@ Vue.component('pretty-hash', PrettyHash);
 Vue.component('loading', Loading);
 
 const _ = require('lodash');
+const ipRegex = require('ip-regex');
 
 Vue.use(storePlugin, {
   [StorageVars.Ready]: false,
@@ -39,6 +41,7 @@ Vue.use(storePlugin, {
   [StorageVars.CurrentAccounts]: null,
   [StorageVars.CyberDAccounts]: null,
   [StorageVars.GeesomeAccounts]: null,
+  [StorageVars.IpfsUrl]: null,
 });
 
 export default {
@@ -71,6 +74,8 @@ export default {
         return;
       }
       this.loading = true;
+
+      this.getSettings();
 
       AppWallet.setStore(this.$store);
       const path = await PermanentStorage.getValue(StorageVars.Path);
@@ -120,6 +125,11 @@ export default {
         return false;
       });
     },
+    getSettings() {
+      getSettings([Settings.StorageNodeAddress]).then(settings => {
+        this.nodeAddress = settings[Settings.StorageNodeAddress];
+      });
+    },
   },
 
   watch: {
@@ -130,6 +140,7 @@ export default {
       }
       this.setNetwork();
       PermanentStorage.setValue(StorageVars.Path, this.$route.fullPath);
+      this.getSettings();
     },
     '$route.query'() {
       PermanentStorage.setValue(StorageVars.Query, JSON.stringify(this.$route.query));
@@ -137,6 +148,9 @@ export default {
     currentNetwork() {},
     ready() {
       this.init();
+    },
+    nodeIp() {
+      this.$store.commit(StorageVars.IpfsUrl, 'http://' + this.nodeIp + ':8080/ipfs/');
     },
   },
 
@@ -150,11 +164,15 @@ export default {
     ready() {
       return this.$store.state[StorageVars.Ready];
     },
+    nodeIp() {
+      return this.nodeAddress.match(ipRegex());
+    },
   },
   data() {
     return {
       loading: false,
       loadingBackup: false,
+      nodeAddress: '',
     };
   },
 };
