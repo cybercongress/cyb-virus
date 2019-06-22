@@ -28,15 +28,19 @@ const databaseService = {
     db = new Dexie.default('CybExtensionDatabase');
 
     db.version(1).stores({
-      content: '++id,contentHash,manifestHash,description,keywords,size,createdAt,updatedAt',
+      content: '++id,contentHash,manifestHash,description,keywords,size,mimeType,previewMimeType,view,extension,previewExtension,createdAt,updatedAt',
       settings: 'name,value',
     });
   },
-  async addContent(contentObj) {
+  async saveContent(contentObj) {
+    const existingContent = await this.getContentByHash(contentObj.contentHash);
+    if (existingContent) {
+      return this.updateContentByHash(contentObj.contentHash, contentObj).then(() => this.getContentByHash(contentObj.contentHash));
+    }
     contentObj.createdAt = Helper.now();
     contentObj.updatedAt = Helper.now();
     try {
-      return await db.content.add(contentObj);
+      return this.getContentById(await db.content.add(contentObj));
     } catch (e) {
       console.error(e);
     }
@@ -46,10 +50,14 @@ const databaseService = {
     if (!content || !content.id) {
       return;
     }
+    updateData.updatedAt = Helper.now();
     return await db.content.update(content.id, updateData);
   },
   async getContentByHash(contentHash) {
     return db.content.where({ contentHash }).first();
+  },
+  async getContentById(id) {
+    return db.content.get(id);
   },
   async getContentList(searchString) {
     let query;
@@ -59,6 +67,7 @@ const databaseService = {
       query = db.content;
     }
     return query
+      .reverse()
       .limit(25)
       .distinct()
       .toArray();

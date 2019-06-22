@@ -19,6 +19,6 @@
   <div style="margin-top: 40px;">
     <button style="padding: 30px;" @click="downloadPage" :disabled="peersError || peersLoading">Download page to IPFS</button>
   </div>
-  <div v-if="peersError">IPFS node unavailable. Please check settings.</div>
+  <div v-if="peersError">IPFS node unavailable. Please check settings or your node availability.</div>
   <div style="margin-top: 10px;" v-else>IPFS peers: {{peersCount }}</div>
 </div>

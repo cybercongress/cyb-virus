@@ -1,19 +1,58 @@
+import { JsIpfsService } from '@galtproject/geesome-libs/src/JsIpfsService';
 const ipfsClient = require('ipfs-http-client');
 const pull = require('pull-stream');
 let ipfs;
+let ipfsService;
+
+const extensionIpns = 'cybvirusex';
 
 module.exports = {
   init(options) {
     ipfs = ipfsClient(options);
+    ipfsService = new JsIpfsService(ipfs);
   },
   saveContent(content) {
-    const bufferContent = Buffer.from(content, 'utf8');
-
-    return ipfs.add([{ content: bufferContent }]).then(async result => {
-      await ipfs.pin.add(result[0].hash);
-      return result[0];
-    });
+    return ipfsService.saveFileByData(content);
   },
+  async saveIpld(objectData) {
+    return ipfsService.saveObject(objectData);
+  },
+  async getObject(storageId) {
+    return ipfsService.getObject(storageId);
+  },
+  async getObjectProp(storageId, propName) {
+    return ipfsService.getObjectProp(storageId, propName);
+  },
+
+  async bindToStaticId(storageId, accountKey) {
+    return ipfsService.bindToStaticId(storageId, accountKey);
+  },
+  async resolveStaticId(accountKey) {
+    return ipfsService.resolveStaticId(accountKey);
+  },
+
+  async saveContentManifest(contentObj) {
+    const fields = ['description', 'size', 'mimeType', 'previewMimeType', 'view', 'extension', 'previewExtension'];
+    const objToSave = _.pick(contentObj, fields);
+
+    fields.forEach(field => {
+      if (_.isUndefined(objToSave[field])) {
+        delete objToSave[field];
+      }
+    });
+
+    objToSave.content = contentObj.contentHash;
+    console.log('objToSave', objToSave);
+
+    return this.saveIpld(objToSave);
+  },
+
+  async getBackupIpld() {
+    const extensionIpnsId = await this.createExtensionIpnsIfNotExists();
+    const result = await ipfsService.resolveStaticId(extensionIpnsId);
+    return result === extensionIpnsId ? null : result;
+  },
+
   async getFileStats(file) {
     //TODO: make it work
     // return ipfs.files.stat('/' + file);
@@ -32,19 +71,16 @@ module.exports = {
     });
   },
   getPeersList() {
-    return new Promise((resolve, reject) => {
-      let responded = false;
-      setTimeout(() => {
-        if (responded) {
-          return;
-        }
-        reject('Failed to fetch');
-      }, 1000);
-      ipfs.bootstrap.list((err, res) => {
-        responded = true;
-        return err ? reject(err) : resolve(res.Peers);
-      });
-    });
+    return ipfsService.getBootNodeList();
+  },
+  createExtensionIpnsIfNotExists() {
+    return ipfsService.createAccountIfNotExists(extensionIpns);
+  },
+  getExtensionIpns() {
+    return ipfsService.getAccountIdByName(extensionIpns);
+  },
+  getObjectRef(id) {
+    return ipfsService.getObjectRef(id);
   },
 };
 

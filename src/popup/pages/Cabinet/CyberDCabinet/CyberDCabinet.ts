@@ -12,6 +12,9 @@ export default {
       await AppWallet.addAccount(StorageVars.CyberDAccounts, newAccount.address, newAccount.privateKey, { index });
     }
     this.$store.commit(StorageVars.CurrentAccounts, this.$store.state[StorageVars.CyberDAccounts]);
+    if (!this.currentAccount) {
+      this.$store.commit(StorageVars.Account, this.accounts[0]);
+    }
     this.getBalance();
 
     getPeers()

@@ -14,6 +14,9 @@ import Search from '../pages/Cabinet/CyberDCabinet/Search/Search';
 import SavedContent from '../pages/Cabinet/IpfsCabinet/SavedContent/SavedContent';
 import Settings from '../pages/Cabinet/Settings/Settings';
 import LinkContent from '../pages/Cabinet/CyberDCabinet/LinkContent/LinkContent';
+import Backup from '../pages/Cabinet/Backup/Backup';
+import AskRestoreBackup from '../pages/NewWallet/AskRestoreBackup/AskRestoreBackup';
+import LogIn from '../pages/NewWallet/LogIn/LogIn';
 
 export default [
   {
@@ -66,6 +69,11 @@ export default [
         component: Settings,
       },
       {
+        path: '/backup',
+        name: 'cabinet-backup',
+        component: Backup,
+      },
+      {
         path: '/geesome',
         name: 'cabinet-geesome',
         component: GeesomeCabinet,
@@ -77,22 +85,32 @@ export default [
     component: NewWallet,
     children: [
       {
-        path: '/welcome',
+        path: 'welcome',
         name: 'new-wallet-welcome',
         component: Welcome,
       },
       {
-        path: '/choose-method',
+        path: 'login',
+        name: 'login',
+        component: LogIn,
+      },
+      {
+        path: 'restore-backup',
+        name: 'ask-restore-backup',
+        component: AskRestoreBackup,
+      },
+      {
+        path: 'choose-method',
         name: 'new-wallet-method',
         component: ChooseMethod,
       },
       {
-        path: '/create-wallet',
+        path: 'create-wallet',
         name: 'new-wallet-create',
         component: CreateWallet,
       },
       {
-        path: '/import-wallet',
+        path: 'import-wallet',
         name: 'new-wallet-import',
         component: ImportWallet,
       },

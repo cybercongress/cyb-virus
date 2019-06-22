@@ -26,6 +26,8 @@ export enum BackgroundRequest {
   SetSettings = 'set-settings:request',
   AddIpfsContentArray = 'add-ipfs-content-array:request',
   GetIpfsFileStats = 'get-ipfs-file-stats:request',
+  GetIsBackupExists = 'get-is-backup-exists:request',
+  RestoreBackup = 'restore-backup:request',
 }
 
 export enum BackgroundResponse {
@@ -37,6 +39,8 @@ export enum BackgroundResponse {
   SetSettings = 'set-settings:response',
   AddIpfsContentArray = 'add-ipfs-content-array:response',
   GetIpfsFileStats = 'get-ipfs-file-stats:response',
+  GetIsBackupExists = 'get-is-backup-exists:response',
+  RestoreBackup = 'restore-backup:response',
 }
 
 export function saveContent(data) {
@@ -99,6 +103,22 @@ export function addIpfsContentArray(contentList) {
   const resultPromise = onMessagePromise(BackgroundResponse.AddIpfsContentArray);
 
   sendMessage({ type: BackgroundRequest.AddIpfsContentArray, data: contentList });
+
+  return resultPromise;
+}
+
+export function getIsBackupExists() {
+  const resultPromise = onMessagePromise(BackgroundResponse.GetIsBackupExists);
+
+  sendMessage({ type: BackgroundRequest.GetIsBackupExists });
+
+  return resultPromise;
+}
+
+export function restoreBackup(ipld) {
+  const resultPromise = onMessagePromise(BackgroundResponse.RestoreBackup);
+
+  sendMessage({ type: BackgroundRequest.RestoreBackup, data: ipld });
 
   return resultPromise;
 }

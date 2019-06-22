@@ -1,21 +1,38 @@
-import { BackgroundRequest, BackgroundResponse } from './services/backgroundGateway';
-
-const databaseService = require('./backgroundServices/database');
-databaseService.init();
-
-import { Settings } from './backgroundServices/types';
-
-const ipfsService = require('./backgroundServices/ipfs');
-
-function initServices() {
-  return databaseService.getSetting(Settings.StorageNodeAddress).then(address => {
-    return ipfsService.init(address);
-  });
-}
-initServices();
-
 const _ = require('lodash');
 const pIteration = require('p-iteration');
+const ipfsService = require('./backgroundServices/ipfs');
+const base36Trie = require('@galtproject/geesome-libs/src/base36Trie');
+
+import { BackgroundRequest, BackgroundResponse } from './services/backgroundGateway';
+import { Settings } from './backgroundServices/types';
+import { PermanentStorage, StorageVars } from './services/data';
+import Helper from '@galtproject/frontend-core/services/helper';
+
+const databaseService = require('./backgroundServices/database');
+
+let init = false;
+function initServices() {
+  return databaseService.getSetting(Settings.StorageNodeAddress).then(async address => {
+    await ipfsService.init(address);
+    init = true;
+  });
+}
+
+databaseService.init();
+initServices();
+const waitForInit = async () => {
+  if (init) {
+    return;
+  }
+  return new Promise((resolve, reject) => {
+    const interval = setInterval(() => {
+      if (init) {
+        resolve();
+        clearInterval(interval);
+      }
+    }, 100);
+  });
+};
 
 const { setBadgeText, onMessage, sendTabMessage, sendPopupMessage, getCurrentTab } = require('./backgroundServices/actions');
 
@@ -40,11 +57,101 @@ function setAction(action) {
   }
 }
 
+async function saveExtensionDataAndBindToIpns() {
+  console.log('saveExtensionDataAndBindToIpns start');
+  const settings = {};
+  await pIteration.forEach([Settings.StorageNodeAddress, Settings.StorageNodeKey, Settings.StorageNodeType], async settingName => {
+    settings[settingName] = await databaseService.getSetting(settingName);
+    if (_.isUndefined(settings[settingName])) {
+      settings[settingName] = null;
+    }
+  });
+
+  const encryptedSeed = await PermanentStorage.getValue(StorageVars.EncryptedSeed);
+  if (!encryptedSeed) {
+    console.log('there is no encryptedSeed, break saving');
+    return;
+  }
+  const cyberdAccounts = await PermanentStorage.getValue(StorageVars.CyberDAccounts);
+
+  try {
+    const contents = {};
+    const contentList = await databaseService.getContentList();
+    await pIteration.forEach(contentList, async (contentItem, index) => {
+      if (!contentItem.manifestHash) {
+        contentItem.manifestHash = await ipfsService.saveContentManifest(contentItem);
+        await databaseService.updateContentByHash(contentItem.contentHash, { manifestHash: contentItem.manifestHash });
+      }
+      base36Trie.setNode(contents, index, ipfsService.getObjectRef(contentItem.manifestHash));
+      console.log('setNode', contents, index, ipfsService.getObjectRef(contentItem.manifestHash));
+    });
+
+    //TODO: last change at
+    const extensionsData = {
+      version: 'v1',
+      contentCount: contentList.length,
+      contents,
+      settings,
+      encryptedSeed,
+      cyberdAccounts,
+    };
+    console.log('extensionsData', extensionsData);
+
+    const extensionDataIpld = await ipfsService.saveIpld(extensionsData);
+
+    if ((await databaseService.getSetting(Settings.StorageExtensionIpld)) === extensionDataIpld) {
+      return;
+    }
+
+    await databaseService.setSetting(Settings.StorageExtensionIpld, extensionDataIpld);
+    await databaseService.setSetting(Settings.StorageExtensionIpldUpdatedAt, Helper.now());
+
+    const extensionIpnsId = await ipfsService.createExtensionIpnsIfNotExists();
+    await ipfsService.bindToStaticId(extensionDataIpld, extensionIpnsId);
+
+    await databaseService.setSetting(Settings.StorageExtensionIpnsUpdatedAt, Helper.now());
+    await databaseService.setSetting(Settings.StorageExtensionIpldError, null);
+    console.log('saveExtensionDataAndBindToIpns finish');
+  } catch (e) {
+    console.error(e);
+    await databaseService.setSetting(Settings.StorageExtensionIpldError, e && e.message ? e.message : e);
+  }
+}
+
+async function restoreExtensionDataFromIpld(backupIpld) {
+  console.log('restoreExtensionDataFromIpld');
+  const backupData = await ipfsService.getObject(backupIpld);
+  console.log('backupData', backupData);
+  await pIteration.forEach([Settings.StorageNodeAddress, Settings.StorageNodeKey, Settings.StorageNodeType], async settingName => {
+    return databaseService.setSetting(settingName, backupData.settings[settingName]);
+  });
+
+  await PermanentStorage.setValue(StorageVars.EncryptedSeed, backupData.encryptedSeed);
+  await PermanentStorage.setValue(StorageVars.CyberDAccounts, backupData.cyberdAccounts);
+
+  for (let i = 0; i < backupData.contentCount; i++) {
+    const node = base36Trie.getNode(backupData.contents, i);
+    console.log('node', node);
+    const manifestHash = node['/'];
+    const contentData = await ipfsService.getObject(manifestHash);
+    console.log('contentData', contentData);
+    contentData.manifestHash = manifestHash;
+    contentData.contentHash = contentData.content;
+    await databaseService.saveContent(contentData);
+  }
+}
+
+setInterval(() => {
+  saveExtensionDataAndBindToIpns();
+}, 1000 * 60); //* 10
+
 fetchCurrentTab();
 
 let lastAction;
-onMessage((request, sender, sendResponse) => {
+onMessage(async (request, sender, sendResponse) => {
   console.log('request', request);
+  await waitForInit();
+
   if (request.type === 'page-action') {
     setAction(request);
     return;
@@ -63,9 +170,13 @@ onMessage((request, sender, sendResponse) => {
   }
   if (request.type === BackgroundRequest.SaveContentToList) {
     databaseService
-      .addContent(request.data)
-      .then(data => {
-        sendPopupMessage({ type: BackgroundResponse.SaveContentToList, data });
+      .saveContent(request.data)
+      .then(async data => {
+        setAction(null);
+        data.manifestHash = await ipfsService.saveContentManifest(data);
+        await databaseService.updateContentByHash(data.contentHash, { manifestHash: data.manifestHash });
+
+        sendPopupMessage({ type: BackgroundResponse.SaveContentToList, data: await databaseService.getContentByHash(data.contentHash) });
       })
       .catch(err => {
         sendPopupMessage({ type: BackgroundResponse.SaveContentToList, err: err && err.message });
@@ -123,7 +234,7 @@ onMessage((request, sender, sendResponse) => {
   }
   if (request.type === BackgroundRequest.AddIpfsContentArray) {
     pIteration
-      .map(request.data, content => ipfsService.saveContent(content).then(res => res.hash))
+      .map(request.data, content => ipfsService.saveContent(content).then(res => res.id))
       .then(data => {
         sendPopupMessage({ type: BackgroundResponse.AddIpfsContentArray, data });
       })
@@ -143,11 +254,32 @@ onMessage((request, sender, sendResponse) => {
       });
     return;
   }
+  if (request.type === BackgroundRequest.GetIsBackupExists) {
+    ipfsService
+      .getBackupIpld()
+      .then(data => {
+        sendPopupMessage({ type: BackgroundResponse.GetIsBackupExists, data });
+      })
+      .catch(err => {
+        sendPopupMessage({ type: BackgroundResponse.GetIsBackupExists, err: err && err.message });
+      });
+    return;
+  }
+  if (request.type === BackgroundRequest.RestoreBackup) {
+    restoreExtensionDataFromIpld(request.data)
+      .then(() => {
+        sendPopupMessage({ type: BackgroundResponse.RestoreBackup });
+      })
+      .catch(err => {
+        sendPopupMessage({ type: BackgroundResponse.RestoreBackup, err: err && err.message });
+      });
+    return;
+  }
   if (request.method && _.endsWith(request.method, '.download')) {
     sendPopupMessage({ type: 'loading' });
 
     ipfsService.saveContent(request.content).then(result => {
-      const data = { contentHash: result.hash, keywords: null, description: request.filename, size: result.size };
+      const data = { contentHash: result.id, keywords: null, description: request.filename, size: result.size };
 
       setAction({ type: 'page-action', method: 'save-and-link', data });
 

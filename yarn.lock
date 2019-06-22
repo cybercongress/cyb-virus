@@ -616,9 +616,9 @@
     reflect-metadata "^0.1.12"
     tslib "^1.8.1"
 
-"@galtproject/frontend-core@git://github.com/galtspace/galtproject-frontend-core.git#340aba9":
+"@galtproject/frontend-core@git://github.com/galtspace/galtproject-frontend-core.git#1bd1cc7":
   version "0.1.0"
-  resolved "git://github.com/galtspace/galtproject-frontend-core.git#340aba955a8329bcae7e99cf864fde4e10b8927a"
+  resolved "git://github.com/galtspace/galtproject-frontend-core.git#1bd1cc70b212b5e7cfcce936050a55f4578d8d60"
   dependencies:
     "@galtproject/utils" "git://github.com/galtspace/galtproject-utils-js.git"
     "@sentry/browser" "^4.4.2"
@@ -648,6 +648,13 @@
     vue-template-compiler "^2.5.13"
     vuex "^3.0.1"
     web3 "1.0.0-beta.52"
+
+"@galtproject/geesome-libs@git://github.com/galtspace/geesome-libs.git#1a98093":
+  version "1.0.0"
+  resolved "git://github.com/galtspace/geesome-libs.git#1a98093a19a5f8746e1d83f8d7f03cb95e293fb8"
+  dependencies:
+    cids "^0.7.1"
+    lodash "^4.17.11"
 
 "@galtproject/utils@git://github.com/galtspace/galtproject-utils-js.git":
   version "0.9.1"
@@ -2385,6 +2392,15 @@ ci-info@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/ci-info/-/ci-info-2.0.0.tgz#67a9e964be31a51e15e5010d58e6f12834002f46"
 
+cids@^0.7.1, cids@~0.7.0, cids@~0.7.1:
+  version "0.7.1"
+  resolved "https://registry.yarnpkg.com/cids/-/cids-0.7.1.tgz#d8bba49a35a0e82110879b5001abf1039c62347f"
+  dependencies:
+    class-is "^1.1.0"
+    multibase "~0.6.0"
+    multicodec "~0.5.1"
+    multihashes "~0.4.14"
+
 cids@~0.5.4, cids@~0.5.6:
   version "0.5.8"
   resolved "https://registry.yarnpkg.com/cids/-/cids-0.5.8.tgz#3d5000c3856a2d3c00967b21265aa57142611aa0"
@@ -2392,15 +2408,6 @@ cids@~0.5.4, cids@~0.5.6:
     class-is "^1.1.0"
     multibase "~0.6.0"
     multicodec "~0.5.0"
-    multihashes "~0.4.14"
-
-cids@~0.7.0, cids@~0.7.1:
-  version "0.7.1"
-  resolved "https://registry.yarnpkg.com/cids/-/cids-0.7.1.tgz#d8bba49a35a0e82110879b5001abf1039c62347f"
-  dependencies:
-    class-is "^1.1.0"
-    multibase "~0.6.0"
-    multicodec "~0.5.1"
     multihashes "~0.4.14"
 
 cipher-base@^1.0.0, cipher-base@^1.0.1, cipher-base@^1.0.3:

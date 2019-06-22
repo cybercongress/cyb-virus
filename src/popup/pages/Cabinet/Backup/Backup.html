@@ -1,0 +1,36 @@
+<div id="import-account" class="padding-container">
+  <h2>Backup</h2>
+
+  <loading v-if="loading"></loading>
+  <div v-else>
+    <div v-for="setting in settingList" style="margin-top: 15px;">
+      <div>
+        <h4>{{setting.title}}:</h4>
+        <div v-if="!values[setting.name]">
+          {{'Not saved yet'}}
+        </div>
+        <div v-else-if="setting.data.type === 'hash'">
+          <pretty-hash :hash="values[setting.name]"></pretty-hash>
+        </div>
+        <div v-else-if="setting.data.type === 'date'">
+          {{values[setting.name] | beautyDate}}
+        </div>
+        <div v-else>
+          {{values[setting.name]}}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div v-if="backupError">
+    <h4>Backup error:</h4>
+    <div class="md-error">{{backupError}}</div>
+  </div>
+
+  <!--<p>You can use this extension for save content, link for searching and control cyberd cryptocurrency.</p>-->
+  <p>
+    Every 5 minutes extension saving all settings and info about saved content to ipld and bind to extension's ipns in your node. Due to the
+    <a href="https://github.com/ipfs/go-ipfs/issues/3860" target="_blank">very slow update of the ipns</a> - we recommend that you save the last ipld hash of backup to use it when
+    restoring.
+  </p>
+</div>

@@ -137,6 +137,11 @@ export class AppWallet {
   static async addAccount(storageVar, address, privateKey, additionalData = {}) {
     const accounts = _.clone(this.$store.state[storageVar]) || [];
 
+    if (_.some(accounts, { address })) {
+      //already exists
+      return;
+    }
+
     const newAccount = _.extend(
       {
         address: address,

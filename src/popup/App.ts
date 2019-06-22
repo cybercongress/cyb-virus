@@ -10,6 +10,7 @@ import Notifications from 'vue-notification';
 import PrettyHash from './directives/PrettyHash/PrettyHash';
 import Loading from './directives/Loading/Loading';
 import '@galtproject/frontend-core/filters';
+import { getIsBackupExists } from '../services/backgroundGateway';
 
 Vue.use(Notifications);
 
@@ -40,33 +41,25 @@ Vue.use(storePlugin, {
   [StorageVars.GeesomeAccounts]: null,
 });
 
-Vue.filter('prettySize', function(bytesSize) {
-  bytesSize = parseInt(bytesSize);
-  if (!bytesSize) {
-    return '0';
-  }
-
-  function round(number) {
-    return Math.round(number * 1000) / 1000;
-  }
-
-  if (bytesSize < 1024 * 100) {
-    return round(bytesSize / 1024) + ' Kb';
-  }
-  if (bytesSize < 1024 ** 2 * 100) {
-    return round(bytesSize / 1024 ** 2) + ' Mb';
-  }
-  if (bytesSize < 1024 ** 3 * 100) {
-    return round(bytesSize / 1024 ** 3) + ' Gb';
-  }
-  return round(bytesSize / 1024 ** 4) + ' Tb';
-});
-
 export default {
   template: require('./App.html'),
   components: { NetworkSelectContainer, AccountSelectContainer },
 
   async created() {
+    (global as any).chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+      if (!request || !request.type) {
+        return;
+      }
+      console.log('request', request);
+      if (request.type === 'loading') {
+        this.loading = true;
+      } else if (request.type === 'loading-end') {
+        this.loading = false;
+      } else if (request.type === 'page-action' && request.method === 'save-and-link') {
+        this.$router.push({ name: 'cabinet-cyberd-save-and-link', query: request.data });
+      }
+    });
+
     this.init();
   },
 
@@ -77,34 +70,39 @@ export default {
       if (!this.ready) {
         return;
       }
+      this.loading = true;
+
       AppWallet.setStore(this.$store);
       const path = await PermanentStorage.getValue(StorageVars.Path);
+      console.log('path', path);
       if (path) {
         const query = JSON.parse((await PermanentStorage.getValue(StorageVars.Query)) as any);
-        console.log('storage query', query);
         this.$router.push({ path, query });
 
-        (global as any).chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-          if (!request || !request.type) {
-            return;
-          }
-          console.log('request', request);
-          if (request.type === 'loading') {
-            this.loading = true;
-          } else if (request.type === 'loading-end') {
-            this.loading = false;
-          } else if (request.type === 'page-action' && request.method === 'save-and-link') {
-            this.$router.push({ name: 'cabinet-cyberd-save-and-link', query: request.data });
-          }
-        });
-
         (global as any).chrome.runtime.sendMessage({ type: 'popup-get-action' });
+        this.loading = false;
         return;
       }
       const encryptedSeed = await PermanentStorage.getValue(StorageVars.EncryptedSeed);
 
       if (!encryptedSeed) {
-        return this.$router.push({ name: 'new-wallet-welcome' });
+        this.loadingBackup = true;
+        getIsBackupExists()
+          .then(ipld => {
+            this.loading = false;
+            this.loadingBackup = false;
+            if (ipld) {
+              this.$router.push({ name: 'ask-restore-backup', query: { ipld } });
+            } else {
+              this.$router.push({ name: 'new-wallet-welcome' });
+            }
+          })
+          .catch(() => {
+            this.loading = false;
+            this.loadingBackup = false;
+            this.$router.push({ name: 'new-wallet-welcome' });
+          });
+        return;
         // return (global as any).chrome.tabs.create({url: (global as any).extension.getURL('popup.html#window')});
       }
     },
@@ -152,6 +150,7 @@ export default {
   data() {
     return {
       loading: false,
+      loadingBackup: false,
     };
   },
 };

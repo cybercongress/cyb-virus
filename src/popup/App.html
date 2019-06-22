@@ -1,7 +1,7 @@
 <div id="popup">
   <router-view v-if="ready && !loading"></router-view>
 
-  <loading v-else></loading>
+  <loading v-else :backup-attention="loadingBackup"></loading>
 
   <notifications :duration="3000" position="bottom right"></notifications>
   <network-select-container></network-select-container>
