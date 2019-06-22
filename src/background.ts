@@ -2,6 +2,7 @@ const _ = require('lodash');
 const pIteration = require('p-iteration');
 const ipfsService = require('./backgroundServices/ipfs');
 const base36Trie = require('@galtproject/geesome-libs/src/base36Trie');
+const cheerio = require('cheerio');
 
 import { BackgroundRequest, BackgroundResponse } from './services/backgroundGateway';
 import { Settings } from './backgroundServices/types';
@@ -137,6 +138,7 @@ async function restoreExtensionDataFromIpld(backupIpld) {
     console.log('contentData', contentData);
     contentData.manifestHash = manifestHash;
     contentData.contentHash = contentData.content;
+    contentData.previewHash = contentData.preview;
     await databaseService.saveContent(contentData);
   }
 }
@@ -173,8 +175,28 @@ onMessage(async (request, sender, sendResponse) => {
       .saveContent(request.data)
       .then(async data => {
         setAction(null);
+
+        if (data.mimeType === 'text/html') {
+          const contentData = await ipfsService.getContent(data.contentHash);
+
+          const $ = cheerio.load(contentData);
+          let faviconEL = $('[rel="icon"]');
+          if (!faviconEL || !faviconEL.attr('href')) {
+            faviconEL = $('[rel="shortcut icon"]');
+          }
+          if (faviconEL || faviconEL.attr('href')) {
+            console.log('favicon', faviconEL.attr('href'));
+            const faviconData = faviconEL.attr('href').replace(/^data:image\/.+;base64,/, '');
+            console.log('faviconData', faviconData);
+            const buf = new Buffer(faviconData, 'base64');
+            console.log('faviconBuffer', buf);
+            data.previewHash = (await ipfsService.saveContent(buf)).id;
+            data.previewMimeType = 'image/x-icon';
+          }
+        }
+
         data.manifestHash = await ipfsService.saveContentManifest(data);
-        await databaseService.updateContentByHash(data.contentHash, { manifestHash: data.manifestHash });
+        await databaseService.updateContentByHash(data.contentHash, _.pick(data, ['manifestHash', 'previewHash', 'previewMimeType']));
 
         sendPopupMessage({ type: BackgroundResponse.SaveContentToList, data: await databaseService.getContentByHash(data.contentHash) });
       })
@@ -279,7 +301,7 @@ onMessage(async (request, sender, sendResponse) => {
     sendPopupMessage({ type: 'loading' });
 
     ipfsService.saveContent(request.content).then(result => {
-      const data = { contentHash: result.id, keywords: null, description: request.filename, size: result.size };
+      const data = { contentHash: result.id, keywords: null, description: request.filename, size: result.size, mimeType: 'text/html' };
 
       setAction({ type: 'page-action', method: 'save-and-link', data });
 

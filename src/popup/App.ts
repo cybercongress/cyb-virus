@@ -124,6 +124,10 @@ export default {
 
   watch: {
     '$route.name'() {
+      if (this.$route.name === 'new-wallet-welcome' && this.loadingBackup) {
+        this.loadingBackup = false;
+        this.loading = false;
+      }
       this.setNetwork();
       PermanentStorage.setValue(StorageVars.Path, this.$route.fullPath);
     },

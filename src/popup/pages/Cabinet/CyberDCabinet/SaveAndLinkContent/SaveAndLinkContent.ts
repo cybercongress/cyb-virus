@@ -18,6 +18,7 @@ export default {
         size: this.size,
         description: this.inputDescription,
         keywords: this.resultKeywords,
+        mimeType: this.$route.query.mimeType,
       });
 
       if (this.linkKeywords) {

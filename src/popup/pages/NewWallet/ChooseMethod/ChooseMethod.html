@@ -1,4 +1,4 @@
-<div id="create-wallet">
+<div id="new-wallet-method">
   <div class="back" v-if="$route.query.from">
     <a href @click.prevent="$route.query.from === 'restore' ? $router.push({name: 'ask-restore-backup'}) : $router.push({name: 'new-wallet-method'})">< Back</a>
   </div>
