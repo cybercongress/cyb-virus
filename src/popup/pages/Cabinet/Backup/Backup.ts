@@ -8,9 +8,9 @@ export default {
     getSettings(this.names).then(values => {
       this.values = values;
       this.loading = false;
-      getSettings([Settings.StorageExtensionIpdError]).then(values => {
-        console.log('StorageExtensionIpdError', values);
-        this.backupError = values[Settings.StorageExtensionIpdError];
+      getSettings([Settings.StorageExtensionIpldError]).then(values => {
+        console.log('StorageExtensionIpldError', values);
+        this.backupError = values[Settings.StorageExtensionIpldError];
       });
     });
   },
@@ -30,7 +30,7 @@ export default {
   data() {
     return {
       loading: true,
-      names: [Settings.StorageExtensionIpd, Settings.StorageExtensionIpdUpdatedAt],
+      names: [Settings.StorageExtensionIpld, Settings.StorageExtensionIpldUpdatedAt, Settings.StorageExtensionIpnsUpdatedAt],
       values: null,
       backupError: null,
     };

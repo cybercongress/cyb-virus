@@ -2,9 +2,10 @@ export enum Settings {
   StorageNodeType = 'storage-node-type',
   StorageNodeAddress = 'storage-node-address',
   StorageNodeKey = 'storage-node-key',
-  StorageExtensionIpd = 'storage-extension-ipld',
-  StorageExtensionIpdUpdatedAt = 'storage-extension-ipld-updated-at',
-  StorageExtensionIpdError = 'storage-extension-ipld-error',
+  StorageExtensionIpld = 'storage-extension-ipld',
+  StorageExtensionIpldUpdatedAt = 'storage-extension-ipld-updated-at',
+  StorageExtensionIpnsUpdatedAt = 'storage-extension-ipns-updated-at',
+  StorageExtensionIpldError = 'storage-extension-ipld-error',
 }
 
 export function getSettingData(name) {
@@ -23,12 +24,12 @@ export function getSettingData(name) {
       ],
     };
   }
-  if (name === Settings.StorageExtensionIpdUpdatedAt) {
+  if (name === Settings.StorageExtensionIpldUpdatedAt || name === Settings.StorageExtensionIpnsUpdatedAt) {
     return {
       type: 'date',
     };
   }
-  if (name === Settings.StorageExtensionIpd) {
+  if (name === Settings.StorageExtensionIpld) {
     return {
       type: 'hash',
     };

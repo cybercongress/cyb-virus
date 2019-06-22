@@ -27,9 +27,30 @@ module.exports = {
   async bindToStaticId(storageId, accountKey) {
     return ipfsService.bindToStaticId(storageId, accountKey);
   },
+  async resolveStaticId(accountKey) {
+    return ipfsService.resolveStaticId(accountKey);
+  },
 
   async saveContentManifest(contentObj) {
-    return this.saveIpld(_.pick(contentObj, ['contentHash', 'description', 'size', 'createdAt']));
+    const fields = ['description', 'size', 'mimeType', 'previewMimeType', 'view', 'extension', 'previewExtension'];
+    const objToSave = _.pick(contentObj, fields);
+
+    fields.forEach(field => {
+      if (_.isUndefined(objToSave[field])) {
+        delete objToSave[field];
+      }
+    });
+
+    objToSave.content = contentObj.contentHash;
+    console.log('objToSave', objToSave);
+
+    return this.saveIpld(objToSave);
+  },
+
+  async getBackupIpld() {
+    const extensionIpnsId = await this.createExtensionIpnsIfNotExists();
+    const result = await ipfsService.resolveStaticId(extensionIpnsId);
+    return result === extensionIpnsId ? null : result;
   },
 
   async getFileStats(file) {

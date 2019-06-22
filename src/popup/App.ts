@@ -10,6 +10,7 @@ import Notifications from 'vue-notification';
 import PrettyHash from './directives/PrettyHash/PrettyHash';
 import Loading from './directives/Loading/Loading';
 import '@galtproject/frontend-core/filters';
+import { getIsBackupExists } from '../services/backgroundGateway';
 
 Vue.use(Notifications);
 
@@ -45,6 +46,20 @@ export default {
   components: { NetworkSelectContainer, AccountSelectContainer },
 
   async created() {
+    (global as any).chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+      if (!request || !request.type) {
+        return;
+      }
+      console.log('request', request);
+      if (request.type === 'loading') {
+        this.loading = true;
+      } else if (request.type === 'loading-end') {
+        this.loading = false;
+      } else if (request.type === 'page-action' && request.method === 'save-and-link') {
+        this.$router.push({ name: 'cabinet-cyberd-save-and-link', query: request.data });
+      }
+    });
+
     this.init();
   },
 
@@ -55,34 +70,36 @@ export default {
       if (!this.ready) {
         return;
       }
+      this.loading = true;
+
       AppWallet.setStore(this.$store);
       const path = await PermanentStorage.getValue(StorageVars.Path);
+      console.log('path', path);
       if (path) {
         const query = JSON.parse((await PermanentStorage.getValue(StorageVars.Query)) as any);
-        console.log('storage query', query);
         this.$router.push({ path, query });
 
-        (global as any).chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-          if (!request || !request.type) {
-            return;
-          }
-          console.log('request', request);
-          if (request.type === 'loading') {
-            this.loading = true;
-          } else if (request.type === 'loading-end') {
-            this.loading = false;
-          } else if (request.type === 'page-action' && request.method === 'save-and-link') {
-            this.$router.push({ name: 'cabinet-cyberd-save-and-link', query: request.data });
-          }
-        });
-
         (global as any).chrome.runtime.sendMessage({ type: 'popup-get-action' });
+        this.loading = false;
         return;
       }
       const encryptedSeed = await PermanentStorage.getValue(StorageVars.EncryptedSeed);
 
       if (!encryptedSeed) {
-        return this.$router.push({ name: 'new-wallet-welcome' });
+        getIsBackupExists()
+          .then(isExists => {
+            this.loading = false;
+            if (isExists) {
+              this.$router.push({ name: 'ask-restore-backup' });
+            } else {
+              this.$router.push({ name: 'new-wallet-welcome' });
+            }
+          })
+          .catch(() => {
+            this.loading = false;
+            this.$router.push({ name: 'new-wallet-welcome' });
+          });
+        return;
         // return (global as any).chrome.tabs.create({url: (global as any).extension.getURL('popup.html#window')});
       }
     },

@@ -15,7 +15,7 @@ import Vue from 'vue';
 import * as Vuex from 'vuex';
 import * as _ from 'lodash';
 import * as pIteration from 'p-iteration';
-import { PermanentStorage } from './data';
+import { PermanentStorage, StorageVars } from './data';
 
 Vue.use(Vuex as any);
 
@@ -52,7 +52,7 @@ export default {
         }
       })
       .then(() => {
-        $store.commit('ready', true);
+        $store.commit(StorageVars.Ready, true);
       });
   },
 };

@@ -1,0 +1,21 @@
+<div id="new-wallet-method">
+  <div class="header-logo">
+    <img src="assets/img/logo_lg.png" />
+    <!--<h3>Cyb Extension</h3>-->
+  </div>
+
+  <h3>Backup found in your IPFS storage! Do you want to restore it?</h3>
+  <div class="methods">
+    <div>
+      <h4>Yes, let's do it!</h4>
+      <p>This will restore your encrypted seed phrase and accounts from IPFS storage.</p>
+      <button @click="restoreBackup()">Restore</button>
+    </div>
+
+    <div>
+      <h4>No, I want to create new wallet</h4>
+      <p>Your saved content list will be cleaned too</p>
+      <router-link tag="button" :to="{name: 'new-wallet-method', query: {from: 'restore'}}">New wallet</router-link>
+    </div>
+  </div>
+</div>
