@@ -28,7 +28,7 @@ const databaseService = {
     db = new Dexie.default('CybExtensionDatabase');
 
     db.version(1).stores({
-      content: '++id,contentHash,manifestHash,description,keywords,size,mimeType,previewMimeType,view,extension,previewExtension,createdAt,updatedAt',
+      content: '++id,contentHash,manifestHash,description,keywords,size,mimeType,previewHash,previewMimeType,view,extension,previewExtension,createdAt,updatedAt',
       settings: 'name,value',
     });
   },

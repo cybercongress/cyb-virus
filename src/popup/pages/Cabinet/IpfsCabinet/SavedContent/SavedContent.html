@@ -5,10 +5,15 @@
   <div v-else>
     <div v-for="item in list" style="margin-top: 15px;">
       <div style="display: flex; justify-content: space-between;">
-        <div>
-          <pretty-hash :hash="item.contentHash"></pretty-hash>
+        <div style="display: flex;">
+          <div style="width: 7%; margin-right: 10px;">
+            <img v-if="item.previewHash" :src="ipfsUrl + item.previewHash" />
+          </div>
+          <div>
+            <pretty-hash :hash="item.contentHash"></pretty-hash>
+          </div>
         </div>
-        <div>
+        <div style="min-width: 40%;text-align: right;">
           {{item.createdAt | beautyDate}}
         </div>
       </div>
@@ -18,8 +23,8 @@
         </div>
         <div>
           <router-link class="small-btn" :to="{name: 'cabinet-cyberd-link', query: {contentHash: item.contentHash, keywords: item.keywords}}" tag="button"
-            >Details/Link</router-link
-          >
+            >Details/Link
+          </router-link>
         </div>
       </div>
       <!--<span style="margin-left: 5px;">({{item.rank}})</span>-->

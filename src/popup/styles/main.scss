@@ -140,6 +140,10 @@ h5 {
         margin-bottom: 40px;
       }
     }
+
+    & > * {
+      max-width: 80%;
+    }
   }
 
   #create-wallet {
@@ -151,18 +155,18 @@ h5 {
     & > * {
       max-width: 80%;
     }
-
-    .button-container {
-      width: 80%;
-      margin-top: 15px;
-      display: flex;
-      justify-content: flex-end;
-    }
     .password-container h4 {
       margin-bottom: 10px;
       margin-top: 40px;
     }
   }
+}
+
+.button-container {
+  width: 80%;
+  margin-top: 15px;
+  display: flex;
+  justify-content: flex-end;
 }
 
 .account-select-container {

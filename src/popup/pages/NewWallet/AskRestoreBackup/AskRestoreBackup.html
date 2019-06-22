@@ -17,8 +17,10 @@
       <p>This will restore your encrypted seed phrase and accounts from IPFS storage.</p>
 
       <div>Backup ipld:</div>
-      <div>
+      <div style="margin-top: 10px;">
         <input type="text" v-model="ipldInput" />
+      </div>
+      <div style="margin-top: 10px;">
         <button @click="restoreBackup()">Restore</button>
       </div>
     </div>

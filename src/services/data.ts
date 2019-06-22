@@ -30,6 +30,8 @@ export enum StorageVars {
   CurrentAccounts = 'current:accounts',
   CyberDAccounts = 'cyberd:accounts',
   GeesomeAccounts = 'geesome:accounts',
+  IpfsUrl = 'ipfs:url',
+  CurrentCabinetRoute = 'current:cabinet',
 }
 
 export class PermanentStorage {

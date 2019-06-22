@@ -1,4 +1,5 @@
 import { getContentList } from '../../../../../services/backgroundGateway';
+import { StorageVars } from '../../../../../services/data';
 
 export default {
   template: require('./SavedContent.html'),
@@ -10,7 +11,11 @@ export default {
   },
   methods: {},
   watch: {},
-  computed: {},
+  computed: {
+    ipfsUrl() {
+      return this.$store.state[StorageVars.IpfsUrl];
+    },
+  },
   data() {
     return {
       loading: true,

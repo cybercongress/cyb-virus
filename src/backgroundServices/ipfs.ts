@@ -14,6 +14,9 @@ module.exports = {
   saveContent(content) {
     return ipfsService.saveFileByData(content);
   },
+  getContent(content) {
+    return ipfsService.getFileData(content);
+  },
   async saveIpld(objectData) {
     return ipfsService.saveObject(objectData);
   },
@@ -42,6 +45,9 @@ module.exports = {
     });
 
     objToSave.content = contentObj.contentHash;
+    if (contentObj.previewHash) {
+      objToSave.preview = contentObj.previewHash;
+    }
     console.log('objToSave', objToSave);
 
     return this.saveIpld(objToSave);

@@ -1,3 +1,5 @@
+import { StorageVars } from '../../../services/data';
+
 export default {
   name: 'pretty-hash',
   template: require('./PrettyHash.html'),
@@ -11,8 +13,11 @@ export default {
       if (this.hash.length > 46) {
         return 'http://geesome.galtproject.io/#/content/' + this.hash;
       } else {
-        return 'https://cloudflare-ipfs.com/ipfs/' + this.hash;
+        return this.ipfsUrl + this.hash;
       }
+    },
+    ipfsUrl() {
+      return this.$store.state[StorageVars.IpfsUrl];
     },
   },
   data() {
