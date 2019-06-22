@@ -115,10 +115,10 @@ export function getIsBackupExists() {
   return resultPromise;
 }
 
-export function restoreBackup() {
+export function restoreBackup(ipld) {
   const resultPromise = onMessagePromise(BackgroundResponse.RestoreBackup);
 
-  sendMessage({ type: BackgroundRequest.RestoreBackup });
+  sendMessage({ type: BackgroundRequest.RestoreBackup, data: ipld });
 
   return resultPromise;
 }

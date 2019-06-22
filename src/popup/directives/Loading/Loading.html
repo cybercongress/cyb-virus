@@ -4,4 +4,9 @@
     <div></div>
     <div></div>
   </div>
+
+  <div v-if="backupAttention">
+    <h3>Trying to load backup from IPNS</h3>
+    <p><router-link :to="{name: 'new-wallet-welcome'}">Ignore</router-link> IPNS backup and continue</p>
+  </div>
 </div>

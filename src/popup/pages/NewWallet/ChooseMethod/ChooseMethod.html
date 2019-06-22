@@ -1,4 +1,4 @@
-<div id="new-wallet-method">
+<div id="create-wallet">
   <div class="back" v-if="$route.query.from">
     <a href @click.prevent="$route.query.from === 'restore' ? $router.push({name: 'ask-restore-backup'}) : $router.push({name: 'new-wallet-method'})">< Back</a>
   </div>
@@ -21,5 +21,7 @@
       <p>Import your existing wallet using a 12 word seed phrase</p>
       <router-link tag="button" :to="{name: 'new-wallet-import', query: {from: 'choose-method'}}">Import Wallet</router-link>
     </div>
+
+    <div style="margin-top: 15px;">Or <router-link :to="{name: 'ask-restore-backup', query: {from: 'choose-method'}}">restore</router-link> by IPLD backup.</div>
   </div>
 </div>

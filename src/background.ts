@@ -118,9 +118,8 @@ async function saveExtensionDataAndBindToIpns() {
   }
 }
 
-async function restoreExtensionDataFromIpld() {
+async function restoreExtensionDataFromIpld(backupIpld) {
   console.log('restoreExtensionDataFromIpld');
-  const backupIpld = await ipfsService.getBackupIpld();
   const backupData = await ipfsService.getObject(backupIpld);
   console.log('backupData', backupData);
   await pIteration.forEach([Settings.StorageNodeAddress, Settings.StorageNodeKey, Settings.StorageNodeType], async settingName => {
@@ -267,7 +266,7 @@ onMessage(async (request, sender, sendResponse) => {
     return;
   }
   if (request.type === BackgroundRequest.RestoreBackup) {
-    restoreExtensionDataFromIpld()
+    restoreExtensionDataFromIpld(request.data)
       .then(() => {
         sendPopupMessage({ type: BackgroundResponse.RestoreBackup });
       })

@@ -86,17 +86,20 @@ export default {
       const encryptedSeed = await PermanentStorage.getValue(StorageVars.EncryptedSeed);
 
       if (!encryptedSeed) {
+        this.loadingBackup = true;
         getIsBackupExists()
-          .then(isExists => {
+          .then(ipld => {
             this.loading = false;
-            if (isExists) {
-              this.$router.push({ name: 'ask-restore-backup' });
+            this.loadingBackup = false;
+            if (ipld) {
+              this.$router.push({ name: 'ask-restore-backup', query: { ipld } });
             } else {
               this.$router.push({ name: 'new-wallet-welcome' });
             }
           })
           .catch(() => {
             this.loading = false;
+            this.loadingBackup = false;
             this.$router.push({ name: 'new-wallet-welcome' });
           });
         return;
@@ -147,6 +150,7 @@ export default {
   data() {
     return {
       loading: false,
+      loadingBackup: false,
     };
   },
 };

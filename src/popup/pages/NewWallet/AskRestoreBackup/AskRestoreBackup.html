@@ -1,15 +1,26 @@
 <div id="new-wallet-method">
+  <div class="back" v-if="$route.query.from">
+    <a href @click.prevent="$router.push({name: 'new-wallet-method'})">< Back</a>
+  </div>
+
   <div class="header-logo">
     <img src="assets/img/logo_lg.png" />
     <!--<h3>Cyb Extension</h3>-->
   </div>
 
-  <h3>Backup found in your IPFS storage! Do you want to restore it?</h3>
+  <h3 v-if="queryIpld">Backup found in your IPFS storage! Do you want to restore it?</h3>
+  <h3 v-else>You can restore extension data by IPLD hash of backup! Do you want to?</h3>
+
   <div class="methods">
     <div>
       <h4>Yes, let's do it!</h4>
       <p>This will restore your encrypted seed phrase and accounts from IPFS storage.</p>
-      <button @click="restoreBackup()">Restore</button>
+
+      <div>Backup ipld:</div>
+      <div>
+        <input type="text" v-model="ipldInput" />
+        <button @click="restoreBackup()">Restore</button>
+      </div>
     </div>
 
     <div>

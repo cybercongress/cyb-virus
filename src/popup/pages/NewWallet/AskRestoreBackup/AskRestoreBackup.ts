@@ -3,9 +3,14 @@ import { PermanentStorage, StorageVars } from '../../../../services/data';
 
 export default {
   template: require('./AskRestoreBackup.html'),
+  created() {
+    if (this.queryIpld) {
+      this.ipldInput = this.queryIpld;
+    }
+  },
   methods: {
     restoreBackup() {
-      restoreBackup()
+      restoreBackup(this.ipldInput)
         .then(async () => {
           this.$notify({
             type: 'success',
@@ -30,7 +35,14 @@ export default {
         });
     },
   },
+  computed: {
+    queryIpld() {
+      return this.$route.query.ipld;
+    },
+  },
   data() {
-    return {};
+    return {
+      ipldInput: '',
+    };
   },
 };
