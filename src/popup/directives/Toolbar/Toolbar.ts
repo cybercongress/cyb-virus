@@ -8,17 +8,25 @@ export default {
   components: { NetworkSelectInput, AccountSelectInput },
   created() {
     this.search = this.$route.query.search || '';
+    this.setCurrentCabinet();
+  },
+  methods: {
+    setCurrentCabinet() {
+      let cabinetRoute;
+      if (this.currentNetwork === 'cyberd') {
+        cabinetRoute = { name: 'cabinet-cyberd', query: { search: '' } };
+      } else if (this.currentNetwork === 'geesome') {
+        cabinetRoute = { name: 'cabinet-geesome', query: { search: '' } };
+      }
+      this.$store.commit(StorageVars.CurrentCabinetRoute, cabinetRoute);
+    },
   },
   computed: {
     currentNetwork() {
       return this.$store.state[StorageVars.Network];
     },
     currentCabinet() {
-      if (this.currentNetwork === 'cyberd') {
-        return { name: 'cabinet-cyberd', query: { search: '' } };
-      } else if (this.currentNetwork === 'geesome') {
-        return { name: 'cabinet-geesome', query: { search: '' } };
-      }
+      return this.$store.state[StorageVars.CurrentCabinetRoute];
     },
   },
   watch: {
@@ -34,6 +42,9 @@ export default {
       if (this.search != this.$route.query.search) {
         this.search = this.$route.query.search || '';
       }
+    },
+    currentNetwork() {
+      this.setCurrentCabinet();
     },
   },
   data() {

@@ -42,6 +42,7 @@ Vue.use(storePlugin, {
   [StorageVars.CyberDAccounts]: null,
   [StorageVars.GeesomeAccounts]: null,
   [StorageVars.IpfsUrl]: null,
+  [StorageVars.CurrentCabinetRoute]: null,
 });
 
 export default {

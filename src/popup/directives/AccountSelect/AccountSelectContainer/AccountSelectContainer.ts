@@ -73,6 +73,7 @@ export default {
     },
     selectAccountByIndex(index) {
       EventBus.$emit(ACCOUNT_SELECT_ITEM, { uniqId: this.uniqId, account: this.accountList[index] });
+      this.$router.push(this.currentCabinet);
     },
   },
   watch: {},
@@ -89,6 +90,9 @@ export default {
         account.prettyAddress = EthData.cutHex(account.address);
         return account;
       });
+    },
+    currentCabinet() {
+      return this.$store.state[StorageVars.CurrentCabinetRoute];
     },
   },
   data: function() {
