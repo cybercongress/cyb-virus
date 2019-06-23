@@ -54,7 +54,7 @@
     {
       "matches": ["<all_urls>"],
       "js": ["contentScript.js"],
-      "css": ["tingle.css", "inpage.css"]
+      "css": ["tingle.css", "toastify.css", "inpage.css"]
     },
     {
       "matches": ["<all_urls>"],
@@ -83,6 +83,7 @@
     "singlefile/content-hooks-web.js",
     "singlefile/content-hooks-frames-web.js",
     "inpage.js",
+    "toastify.css",
     "tingle.css",
     "inpage.css",
     "fonts/Play.eot",

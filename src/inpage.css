@@ -42,8 +42,8 @@
 
 #cyb-save-button {
 }
-
-button.cyb-button {
+button.cyb-button,
+.cyb-notify {
   font-family: Play;
   background: linear-gradient(to top, #181818, black);
   border: 1px solid #3ab793;
@@ -52,6 +52,10 @@ button.cyb-button {
   outline-color: #36d6ae;
   font-size: 18px;
   color: #36d6ae;
+}
+.toastify.cyb-notify {
+  padding: 15px 20px;
+  font-size: 16px;
 }
 button.cyb-button:focus {
   box-shadow: #38d6ae 0px 0px 10px 0px;
