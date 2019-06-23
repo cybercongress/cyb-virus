@@ -16,10 +16,15 @@ const modal = new tingle.modal({
   cssClass: ['cyb-extension-modal'],
 });
 
-function saveImage(imgSrc) {
+function saveContent(contentType, contentSrc) {
+  const videoElement = `<iframe src="${contentSrc}" frameborder="0" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="" class="cyb-content-to-save"></iframe>`;
+  const imageElement = `<img id="cyb-content-image" src="${contentSrc}" class="cyb-content-to-save">`;
+
   modal.setContent(`
 <div id="cyb-modal-container">
-    <div class="img-container"><img id="cyb-content-image" src="${imgSrc}"></div>
+    <div class="img-container">
+      ${contentType === 'image' ? imageElement : videoElement}
+    </div>
     <div class="inputs-container">
       <h3>Save content to IPFS</h3>
       
@@ -77,8 +82,8 @@ function saveImage(imgSrc) {
     }
     const event = new CustomEvent('cyb:save', {
       detail: {
-        contentType: 'image',
-        src: imgSrc,
+        contentType,
+        src: contentSrc,
         iconSrc: iconSrc,
         description: description['value'],
         link: linkChecked,
@@ -165,24 +170,33 @@ ready(() => {
     }, 200);
   }
 
-  let imgSrc = null;
+  let contentType = null;
+  let contentSrc = null;
 
   function subscribeToImageEvents() {
-    document.querySelectorAll('img').forEach(el => {
+    //TODO: implement youtube downloading in background.ts and use this commented code:
+    //,iframe[src*=youtube]:not(.cyb-content-to-save)
+    document.querySelectorAll('img:not(.cyb-content-to-save)').forEach(el => {
       if (el['cyb_onMouseEnter']) {
         el.removeEventListener('mouseenter', el['cyb_onMouseEnter']);
         el.removeEventListener('mouseleave', el['cyb_onMouseLeave']);
       }
 
       el['cyb_onMouseEnter'] = () => {
-        imgSrc = el.getAttribute('src');
+        console.log('el', el);
+        if (el.tagName === 'IMG') {
+          contentType = 'image';
+        } else {
+          contentType = 'video';
+        }
+        contentSrc = el.getAttribute('src');
         preventHide();
         const offset = getElOffset(el);
         buttonContainer.style.display = `block`;
         buttonContainer.style.top = `${offset.top}px`;
         buttonContainer.style.left = `${offset.left}px`;
-        buttonContainer.style.bottom = `${offset.top + el.offsetHeight}px`;
-        buttonContainer.style.right = `${offset.left + el.offsetWidth}px`;
+        buttonContainer.style.bottom = `${offset.top + el['offsetHeight']}px`;
+        buttonContainer.style.right = `${offset.left + el['offsetWidth']}px`;
       };
       el['cyb_onMouseLeave'] = () => {
         hide();
@@ -204,7 +218,7 @@ ready(() => {
   });
   button.addEventListener('click', () => {
     hide();
-    saveImage(imgSrc);
+    saveContent(contentType, contentSrc);
   });
   button.addEventListener('mouseleave', () => {
     hide();
