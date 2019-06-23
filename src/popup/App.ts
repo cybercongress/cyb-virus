@@ -43,6 +43,7 @@ Vue.use(storePlugin, {
   [StorageVars.GeesomeAccounts]: null,
   [StorageVars.IpfsUrl]: null,
   [StorageVars.CurrentCabinetRoute]: null,
+  [StorageVars.Settings]: null,
 });
 
 export default {
@@ -132,8 +133,8 @@ export default {
       });
     },
     getSettings() {
-      getSettings([Settings.StorageNodeAddress]).then(settings => {
-        this.nodeAddress = settings[Settings.StorageNodeAddress];
+      getSettings([Settings.StorageNodeAddress, Settings.StorageNodeType]).then(settings => {
+        this.$store.commit(StorageVars.Settings, settings);
       });
     },
   },
@@ -171,14 +172,16 @@ export default {
       return this.$store.state[StorageVars.Ready];
     },
     nodeIp() {
-      return this.nodeAddress.match(ipRegex());
+      return this.settings[Settings.StorageNodeAddress].match(ipRegex());
+    },
+    settings() {
+      return this.$store.state[StorageVars.Settings];
     },
   },
   data() {
     return {
       loading: false,
       loadingBackup: false,
-      nodeAddress: '',
     };
   },
 };
