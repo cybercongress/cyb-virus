@@ -14,7 +14,7 @@ document.addEventListener('cyb:link', function(data: any) {
 
 const fetchResource = ((window as any).singlefile.lib.fetch.content.resources && (window as any).singlefile.lib.fetch.content.resources.fetch) || fetch;
 
-async function srcBase64(src) {
+async function srcToBase64(src) {
   const resourceContent = await fetchResource(src, {});
   const arrayBuffer = await resourceContent.arrayBuffer();
   let b64encoded = btoa(
@@ -35,7 +35,7 @@ async function srcBase64(src) {
 }
 
 document.addEventListener('cyb:save', async function(data: any) {
-  const base64 = await srcBase64(data.detail.src);
+  const base64 = await srcToBase64(data.detail.src);
 
   const messageData = {
     mimeType: base64.mimeType,
