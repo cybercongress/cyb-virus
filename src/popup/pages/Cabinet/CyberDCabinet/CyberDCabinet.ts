@@ -56,6 +56,9 @@ export default {
     balanceStr() {
       return this.balance === null ? '...' : this.balance;
     },
+    currentCabinet() {
+      return this.$store.state[StorageVars.CurrentCabinetRoute];
+    },
   },
   data() {
     return {

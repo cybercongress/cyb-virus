@@ -12,7 +12,7 @@
  */
 
 import { EventBus, ACCOUNT_SELECT_HIDE, ACCOUNT_SELECT_PREVENT_CLOSE, ACCOUNT_SELECT_SHOW, ACCOUNT_SELECT_ITEM } from '../../../../services/events';
-import { StorageVars } from '../../../../services/data';
+import { AppWallet, CoinType, StorageVars } from '../../../../services/data';
 import EthData from '@galtproject/frontend-core/libs/EthData';
 const _ = require('lodash');
 
@@ -54,6 +54,22 @@ export default {
     });
   },
   methods: {
+    async addAccount() {
+      let lastIndex = 0;
+      this.accountList.forEach(account => {
+        if (account.index > lastIndex) {
+          lastIndex = account.index;
+        }
+      });
+      const index = lastIndex + 1;
+      const newAccount = await AppWallet.generateAccount(this.currentCoinType, index);
+      console.log('newAccount', index, newAccount);
+      //TODO: get StorageVar of accounts from state
+      await AppWallet.addAccount(StorageVars.CyberDAccounts, newAccount.address, newAccount.privateKey, { index });
+      this.$store.commit(StorageVars.CurrentAccounts, this.$store.state[StorageVars.CyberDAccounts]);
+      this.$store.commit(StorageVars.Account, _.last(this.$store.state[StorageVars.CyberDAccounts]));
+      this.$router.push(this.currentCabinet);
+    },
     getElOffset(el) {
       const rect = el.getBoundingClientRect();
       const docEl = document.documentElement;
@@ -90,6 +106,9 @@ export default {
         account.prettyAddress = EthData.cutHex(account.address);
         return account;
       });
+    },
+    currentCoinType() {
+      return this.$store.state[StorageVars.CoinType];
     },
     currentCabinet() {
       return this.$store.state[StorageVars.CurrentCabinetRoute];
