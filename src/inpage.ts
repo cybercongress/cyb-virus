@@ -5,7 +5,7 @@ const modal = new tingle.modal({
   stickyFooter: false,
   closeMethods: ['overlay', 'button', 'escape'],
   closeLabel: 'Close',
-  // cssClass: ['custom-class-1', 'custom-class-2'],
+  cssClass: ['cyb-extension-modal'],
   // onOpen: function() {
   //   console.log('modal open');
   // },
@@ -18,18 +18,6 @@ const modal = new tingle.modal({
   //   return true; // close the modal
   //   return false; // nothing happens
   // }
-});
-
-modal.addFooterBtn('Save', 'tingle-btn tingle-btn--primary', function() {
-  const image = document.getElementById('cyb-content-image');
-  const event = new CustomEvent('cyb:save', {
-    detail: {
-      contentType: 'image',
-      src: image.getAttribute('src'),
-    },
-  });
-  document.dispatchEvent(event);
-  modal.close();
 });
 
 function saveImage(imgSrc) {
@@ -48,6 +36,14 @@ function saveImage(imgSrc) {
         <div>Keywords:</div>
         <textarea id="cyb-content-keywords"></textarea>
       </div>
+      
+      <div>
+        <button id="cyb-save-confirm-button" class="cyb-button">Save</button>
+      </div>
+      
+      <div id="cyb-link-attention">
+        You have to open Cyb extension and save content.
+      </div>
     </div>
 </div>`);
   modal.open();
@@ -56,6 +52,20 @@ function saveImage(imgSrc) {
   linkCheckBox.addEventListener('change', event => {
     const linkCheckBoxInputs = document.getElementById('cyb-content-link-inputs');
     linkCheckBoxInputs.style.display = event.target['checked'] ? `block` : 'none';
+  });
+
+  const saveButton = document.getElementById('cyb-save-confirm-button');
+  saveButton.addEventListener('click', () => {
+    const description = document.getElementById('cyb-content-description');
+    const event = new CustomEvent('cyb:save', {
+      detail: {
+        contentType: 'image',
+        src: imgSrc,
+        description: description['value'],
+      },
+    });
+    document.dispatchEvent(event);
+    modal.close();
   });
 }
 
@@ -82,6 +92,8 @@ ready(() => {
 
   const button = document.createElement('button');
   button.innerHTML = 'Save';
+  button.setAttribute('id', 'cyb-save-button');
+  button.setAttribute('class', 'cyb-button cyb-small-btn');
   buttonContainer.appendChild(button);
 
   document.body.appendChild(buttonContainer);

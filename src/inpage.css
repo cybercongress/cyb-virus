@@ -1,0 +1,53 @@
+.cyb-extension-modal .tingle-modal-box {
+  background: black;
+  border: 1px solid #3ab793;
+  color: #7c7c7c;
+  font-size: 15px;
+}
+.cyb-extension-modal .tingle-modal-box__footer {
+  display: none;
+}
+#cyb-modal-container {
+  display: flex;
+}
+
+#cyb-modal-container .img-container {
+  width: 70%;
+}
+#cyb-modal-container .img-container img {
+  max-width: 100%;
+  max-height: 60vh;
+}
+.inputs-container {
+  width: 30%;
+}
+
+#cyb-save-button {
+}
+
+button.cyb-button {
+  background: linear-gradient(to top, #181818, black);
+  border: 1px solid #3ab793;
+  border-radius: 4px;
+  padding: 5px 13px;
+  outline-color: #36d6ae;
+  font-size: 18px;
+  color: #36d6ae;
+}
+button.cyb-button:focus {
+  box-shadow: #38d6ae 0px 0px 10px 0px;
+}
+button.cyb-button[disabled] {
+  color: grey;
+  border: 1px solid grey;
+}
+button.cyb-button.cyb-small-btn {
+  font-size: 11px;
+}
+
+button.cyb-button.cyb-small-button {
+  width: 25px;
+  min-width: 25px;
+  height: 25px;
+  margin: 0 6px;
+}

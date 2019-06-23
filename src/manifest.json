@@ -54,7 +54,7 @@
     {
       "matches": ["<all_urls>"],
       "js": ["contentScript.js"],
-      "css": ["tingle.css"]
+      "css": ["tingle.css", "inpage.css"]
     },
     {
       "matches": ["<all_urls>"],
@@ -79,7 +79,7 @@
       "js": ["singlefile/index.js", "singlefile/content-hooks.js", "singlefile/content-bootstrap.js"]
     }
   ],
-  "web_accessible_resources": ["singlefile/content-hooks-web.js", "singlefile/content-hooks-frames-web.js", "inpage.js", "tingle.css"],
+  "web_accessible_resources": ["singlefile/content-hooks-web.js", "singlefile/content-hooks-frames-web.js", "inpage.js", "tingle.css", "inpage.css"],
   "permissions": ["contextMenus", "clipboardWrite", "contextMenus", "downloads", "storage", "tabs", "activeTab", "webNavigation", "<all_urls>"],
   "options_ui": {
     "page": "options/options.html",
