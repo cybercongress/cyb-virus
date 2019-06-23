@@ -9,6 +9,15 @@
     /* Safari, Android, iOS */ url('chrome-extension://__MSG_@@extension_id__/fonts/Play.svg#Play') format('svg'); /* Legacy iOS */
 }
 
+#cyb-modal-container h1,
+#cyb-modal-container h2,
+#cyb-modal-container h3,
+#cyb-modal-container h4,
+#cyb-modal-container h5 {
+  line-height: 1.2;
+  font-family: Play;
+}
+
 .cyb-extension-modal .tingle-modal-box {
   background: transparent;
 }
@@ -97,4 +106,49 @@ textarea {
 .cyb-warn {
   color: #fb8c00;
   opacity: 0.8;
+}
+
+#cyb-content-link-checkbox {
+  display: none;
+}
+
+#cyb-content-link-checkbox-view {
+  display: inline-block;
+  position: relative;
+  width: 20px;
+  min-width: 20px;
+  height: 20px;
+  border-radius: 2px;
+  border: 2px solid rgba(78, 214, 174, 0.64);
+  transition: 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  background: transparent;
+}
+
+#cyb-content-link-checkbox-view.checked:after {
+  content: ' ';
+  position: absolute;
+  top: 0;
+  left: 5px;
+  height: 11px;
+  width: 4px;
+  right: 2px;
+  bottom: 2px;
+  z-index: 7;
+  border: 2px solid #3ab793;
+  border-top: 0;
+  border-left: 0;
+  transform: rotate(45deg) scale3D(1, 1, 1);
+  transition: 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+#cyb-content-link-checkbox-text {
+  position: relative;
+  left: 5px;
+  bottom: 4px;
+}
+#cyb-content-description-container,
+#cyb-content-link-checkbox-container,
+#cyb-content-link-inputs,
+#cyb-save-confirm-button-container,
+#cyb-link-attention {
+  margin-top: 15px;
 }
