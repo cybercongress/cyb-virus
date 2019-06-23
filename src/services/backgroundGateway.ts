@@ -17,6 +17,8 @@ function onMessagePromise(type) {
   });
 }
 
+//TODO: solve problem with parallel requests
+
 export enum BackgroundRequest {
   SaveContentToList = 'save-content-to-list:request',
   GetContentList = 'get-content-list:request',
