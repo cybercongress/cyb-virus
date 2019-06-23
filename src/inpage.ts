@@ -54,7 +54,7 @@ function saveImage(imgSrc) {
       </div>
       
       <div id="cyb-link-attention" class="cyb-warn" style="display: none;">
-        You have to open Cyb extension and save content.
+        You have to open Cyb extension for confirm content linking.
       </div>
     </div>
 </div>`);
