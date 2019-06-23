@@ -12,7 +12,8 @@ document.addEventListener('cyb:link', function(data: any) {
   );
 });
 
-const fetchResource = ((window as any).singlefile.lib.fetch.content.resources && (window as any).singlefile.lib.fetch.content.resources.fetch) || fetch;
+const fetchResource =
+  ((window as any).singlefile && (window as any).singlefile.lib.fetch.content.resources && (window as any).singlefile.lib.fetch.content.resources.fetch) || fetch;
 
 async function srcToBase64(src) {
   const resourceContent = await fetchResource(src, {});

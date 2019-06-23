@@ -68,7 +68,7 @@ function saveImage(imgSrc) {
   saveConfirmButton.addEventListener('click', () => {
     const description = document.getElementById('cyb-content-description');
     const keywords = document.getElementById('cyb-content-keywords');
-    const linkChecked = linkCheckBox.getAttribute('checked') === 'checked';
+    const linkChecked = linkCheckBox['checked'];
 
     let iconSrc;
     let icons = document.querySelectorAll('[rel="icon"]');
@@ -104,6 +104,7 @@ function saveImage(imgSrc) {
 
       Toastify({
         text: 'Content saved! Please open Cyb extension for link.',
+        className: 'cyb-notify',
         duration: 3000,
         gravity: 'bottom', // `top` or `bottom`
         positionLeft: false, // `true` or `false`
@@ -118,6 +119,7 @@ function saveImage(imgSrc) {
 
       Toastify({
         text: 'Content saved!',
+        className: 'cyb-notify',
         duration: 3000,
         gravity: 'bottom', // `top` or `bottom`
         positionLeft: false, // `true` or `false`
