@@ -38,12 +38,25 @@ async function srcToBase64(src) {
 }
 
 document.addEventListener('cyb:save', async function(data: any) {
-  let base64;
-  if (data.detail.src.match(regex.base64)) {
-    base64 = { content: data.detail.src, mimeType: data.detail.src.match(/^data:(.+);.+/)[1] };
+  let contentType = data.detail.contentType;
+  let mimeType;
+  let content;
+  let src;
+
+  if (contentType === 'image') {
+    let base64;
+    if (data.detail.src.match(regex.base64)) {
+      base64 = { content: data.detail.src, mimeType: data.detail.src.match(/^data:(.+);.+/)[1] };
+    } else {
+      base64 = await srcToBase64(data.detail.src);
+    }
+    mimeType = base64.mimeType;
+    content = base64.content;
+    src = base64.url;
   } else {
-    base64 = await srcToBase64(data.detail.src);
+    src = data.detail.src;
   }
+
   let iconBase64;
   if (data.detail.iconSrc) {
     if (data.detail.iconSrc.match(regex.base64)) {
@@ -54,11 +67,12 @@ document.addEventListener('cyb:save', async function(data: any) {
   }
 
   const messageData = {
-    mimeType: base64.mimeType,
-    content: base64.content,
+    contentType,
+    mimeType,
+    content,
+    src,
     iconContent: iconBase64 ? iconBase64.content : null,
     iconMimeType: iconBase64 ? iconBase64.mimeType : null,
-    src: base64.url,
     description: data.detail.description,
     keywords: data.detail.keywords,
     link: data.detail.link,

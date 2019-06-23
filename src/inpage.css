@@ -41,7 +41,8 @@
 #cyb-modal-container .img-container {
   width: 70%;
 }
-#cyb-modal-container .img-container img {
+#cyb-modal-container .img-container > * {
+  width: auto;
   max-width: 100%;
   max-height: 60vh;
 }

@@ -164,6 +164,9 @@ onMessage(async (request, sender, sendResponse) => {
 
   if (request.type === 'page-action') {
     if (request.method === 'save-content') {
+      if (request.data.contentType === 'video') {
+        //TODO: download video to IPFS
+      }
       saveContentToIpfs(request.data.content, request.data.description, request.data.mimeType).then(async data => {
         if (request.data.iconContent) {
           data.iconHash = (await ipfsService.saveContent(request.data.iconContent)).id;
