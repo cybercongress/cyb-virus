@@ -36,10 +36,16 @@ async function srcToBase64(src) {
 
 document.addEventListener('cyb:save', async function(data: any) {
   const base64 = await srcToBase64(data.detail.src);
+  let iconBase64;
+  if (data.detail.iconSrc) {
+    iconBase64 = await srcToBase64(data.detail.iconSrc);
+  }
 
   const messageData = {
     mimeType: base64.mimeType,
     content: base64.content,
+    iconContent: iconBase64 ? iconBase64.content : null,
+    iconMimeType: iconBase64 ? iconBase64.mimeType : null,
     src: base64.url,
     description: data.detail.description,
     keywords: data.detail.keywords,

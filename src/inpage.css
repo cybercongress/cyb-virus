@@ -1,8 +1,26 @@
+@font-face {
+  font-family: Play;
+  src: url('chrome-extension://__MSG_@@extension_id__/fonts/Play.woff2');
+  src: url('chrome-extension://__MSG_@@extension_id__/fonts/Play.eot'); /* IE9 Compat Modes */
+  src: url('chrome-extension://__MSG_@@extension_id__/fonts/Play.eot?#iefix') format('embedded-opentype'),
+    /* IE6-IE8 */ url('chrome-extension://__MSG_@@extension_id__/fonts/Play.woff2') format('woff2'),
+    /* Super Modern Browsers */ url('chrome-extension://__MSG_@@extension_id__/fonts/Play.woff') format('woff'),
+    /* Pretty Modern Browsers */ url('chrome-extension://__MSG_@@extension_id__/fonts/Play.ttf') format('truetype'),
+    /* Safari, Android, iOS */ url('chrome-extension://__MSG_@@extension_id__/fonts/Play.svg#Play') format('svg'); /* Legacy iOS */
+}
+
 .cyb-extension-modal .tingle-modal-box {
+  background: transparent;
+}
+.cyb-extension-modal .tingle-modal-box__content {
+  border-radius: 4px;
   background: black;
   border: 1px solid #3ab793;
   color: #7c7c7c;
   font-size: 15px;
+  font-family: Play;
+  /* fix of bottom border*/
+  margin-bottom: 1px;
 }
 .cyb-extension-modal .tingle-modal-box__footer {
   display: none;
@@ -26,6 +44,7 @@
 }
 
 button.cyb-button {
+  font-family: Play;
   background: linear-gradient(to top, #181818, black);
   border: 1px solid #3ab793;
   border-radius: 4px;
@@ -42,7 +61,7 @@ button.cyb-button[disabled] {
   border: 1px solid grey;
 }
 button.cyb-button.cyb-small-btn {
-  font-size: 11px;
+  font-size: 12px;
 }
 
 button.cyb-button.cyb-small-button {
@@ -50,4 +69,28 @@ button.cyb-button.cyb-small-button {
   min-width: 25px;
   height: 25px;
   margin: 0 6px;
+}
+
+input.cyb-input,
+textarea.cyb-textarea {
+  caret-color: #36d6ae !important;
+  box-shadow: inset 0 0 0 1px #36d6ae83 !important;
+  color: #3ab793 !important;
+  outline: 0 !important;
+  outline-offset: 0 !important;
+  outline-color: rgb(58, 183, 147);
+  background-color: transparent !important;
+  border: 1px solid rgb(58, 183, 147);
+  border-radius: 4px;
+  padding: 5px 13px;
+  font-size: 16px;
+}
+
+textarea {
+  min-height: 85px;
+}
+
+.cyb-warn {
+  color: #fb8c00;
+  opacity: 0.8;
 }

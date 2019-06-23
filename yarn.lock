@@ -616,9 +616,9 @@
     reflect-metadata "^0.1.12"
     tslib "^1.8.1"
 
-"@galtproject/frontend-core@git://github.com/galtspace/galtproject-frontend-core.git#1bd1cc7":
+"@galtproject/frontend-core@git://github.com/galtspace/galtproject-frontend-core.git#20f6013":
   version "0.1.0"
-  resolved "git://github.com/galtspace/galtproject-frontend-core.git#1bd1cc70b212b5e7cfcce936050a55f4578d8d60"
+  resolved "git://github.com/galtspace/galtproject-frontend-core.git#20f6013b48e6d52d94b587e3267073337f7ca846"
   dependencies:
     "@galtproject/utils" "git://github.com/galtspace/galtproject-utils-js.git"
     "@sentry/browser" "^4.4.2"
@@ -8386,6 +8386,10 @@ to-regex@^3.0.1, to-regex@^3.0.2:
     extend-shallow "^3.0.2"
     regex-not "^1.0.2"
     safe-regex "^1.1.0"
+
+toastify-js@^1.5.0:
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/toastify-js/-/toastify-js-1.5.0.tgz#c37a73b0ea6b8ef03574db93efdb6f2b98e9c7da"
 
 toidentifier@1.0.0:
   version "1.0.0"

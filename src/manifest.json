@@ -79,7 +79,17 @@
       "js": ["singlefile/index.js", "singlefile/content-hooks.js", "singlefile/content-bootstrap.js"]
     }
   ],
-  "web_accessible_resources": ["singlefile/content-hooks-web.js", "singlefile/content-hooks-frames-web.js", "inpage.js", "tingle.css", "inpage.css"],
+  "web_accessible_resources": [
+    "singlefile/content-hooks-web.js",
+    "singlefile/content-hooks-frames-web.js",
+    "inpage.js",
+    "tingle.css",
+    "inpage.css",
+    "fonts/Play.eot",
+    "fonts/Play.ttf",
+    "fonts/Play.woff",
+    "fonts/Play.woff2"
+  ],
   "permissions": ["contextMenus", "clipboardWrite", "contextMenus", "downloads", "storage", "tabs", "activeTab", "webNavigation", "<all_urls>"],
   "options_ui": {
     "page": "options/options.html",

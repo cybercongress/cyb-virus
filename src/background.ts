@@ -12,6 +12,7 @@ import Helper from '@galtproject/frontend-core/services/helper';
 const databaseService = require('./backgroundServices/database');
 
 let init = false;
+
 function initServices() {
   return databaseService.getSetting(Settings.StorageNodeAddress).then(async address => {
     await ipfsService.init(address);
@@ -39,6 +40,7 @@ const { setBadgeText, onMessage, sendTabMessage, sendPopupMessage, getCurrentTab
 
 let curTabId;
 let curTab;
+
 function fetchCurrentTab() {
   return getCurrentTab().then(tab => {
     curTab = tab;
@@ -58,17 +60,9 @@ function setAction(action) {
   }
 }
 
-async function saveContent(content, description, mimeType) {
-  ipfsService.saveContent(content).then(result => {
-    const data = { contentHash: result.id, keywords: null, description, size: result.size, mimeType };
-
-    setAction({ type: 'page-action', method: 'save-and-link', data });
-
-    sendPopupMessage({ type: 'loading-end' });
-
-    sendPopupMessage({ type: 'page-action', method: 'save-and-link', data }, response => {
-      setAction(null);
-    });
+async function saveContentToIpfs(content, description, mimeType) {
+  return ipfsService.saveContent(content).then(result => {
+    return { contentHash: result.id, keywords: null, description, size: result.size, mimeType };
   });
 }
 
@@ -152,7 +146,7 @@ async function restoreExtensionDataFromIpld(backupIpld) {
     console.log('contentData', contentData);
     contentData.manifestHash = manifestHash;
     contentData.contentHash = contentData.content;
-    contentData.previewHash = contentData.preview;
+    contentData.iconHash = contentData.icon;
     await databaseService.saveContent(contentData);
   }
 }
@@ -170,9 +164,21 @@ onMessage(async (request, sender, sendResponse) => {
 
   if (request.type === 'page-action') {
     if (request.method === 'save-content') {
-      saveContent(request.data.content, request.data.description, request.data.mimeType);
+      saveContentToIpfs(request.data.content, request.data.description, request.data.mimeType).then(async data => {
+        if (request.data.iconContent) {
+          data.iconHash = (await ipfsService.saveContent(request.data.iconContent)).id;
+          data.iconMimeType = request.data.iconMimeType;
+        }
+        await databaseService.saveContent(data);
+        const manifestHash = await ipfsService.saveContentManifest(data);
+        await databaseService.updateContentByHash(data.contentHash, { manifestHash });
+        if (request.data.link) {
+          setAction({ type: 'page-action', method: 'link', data: {} });
+        }
+      });
+    } else if (request.method === 'link-hash') {
+      setAction({ type: 'page-action', method: 'link', data: request.data });
     }
-    setAction(request);
     return;
   }
   if (request.type === 'popup-get-action') {
@@ -202,15 +208,18 @@ onMessage(async (request, sender, sendResponse) => {
             faviconEL = $('[rel="shortcut icon"]');
           }
           if (faviconEL || faviconEL.attr('href')) {
-            data.previewHash = (await ipfsService.saveContent(faviconEL.attr('href'))).id;
-            data.previewMimeType = 'image/x-icon';
+            data.iconHash = (await ipfsService.saveContent(faviconEL.attr('href'))).id;
+            data.iconMimeType = 'image/x-icon';
           }
         }
 
         data.manifestHash = await ipfsService.saveContentManifest(data);
-        await databaseService.updateContentByHash(data.contentHash, _.pick(data, ['manifestHash', 'previewHash', 'previewMimeType']));
+        await databaseService.updateContentByHash(data.contentHash, _.pick(data, ['manifestHash', 'iconMimeType', 'iconHash']));
 
-        sendPopupMessage({ type: BackgroundResponse.SaveContentToList, data: await databaseService.getContentByHash(data.contentHash) });
+        sendPopupMessage({
+          type: BackgroundResponse.SaveContentToList,
+          data: await databaseService.getContentByHash(data.contentHash),
+        });
       })
       .catch(err => {
         sendPopupMessage({ type: BackgroundResponse.SaveContentToList, err: err && err.message });
@@ -312,6 +321,14 @@ onMessage(async (request, sender, sendResponse) => {
   if (request.method && _.endsWith(request.method, '.download')) {
     sendPopupMessage({ type: 'loading' });
 
-    saveContent(request.content, request.filename, 'text/html');
+    saveContentToIpfs(request.content, request.filename, 'text/html').then(data => {
+      setAction({ type: 'page-action', method: 'save-and-link', data });
+
+      sendPopupMessage({ type: 'loading-end' });
+
+      sendPopupMessage({ type: 'page-action', method: 'save-and-link', data }, response => {
+        setAction(null);
+      });
+    });
   }
 });

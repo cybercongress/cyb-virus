@@ -9,11 +9,11 @@ $fa-font-path: 'webfonts';
 
 @font-face {
   font-family: Play;
-  src: url('../assets/fonts/Play.woff2');
-  src: url('../assets/fonts/Play.eot'); /* IE9 Compat Modes */
-  src: url('../assets/fonts/Play.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */ url('../assets/fonts/Play.woff2') format('woff2'),
-    /* Super Modern Browsers */ url('../assets/fonts/Play.woff') format('woff'), /* Pretty Modern Browsers */ url('../assets/fonts/Play.ttf') format('truetype'),
-    /* Safari, Android, iOS */ url('../assets/fonts/Play.svg#Play') format('svg'); /* Legacy iOS */
+  src: url('../../fonts/Play.woff2');
+  src: url('../../fonts/Play.eot'); /* IE9 Compat Modes */
+  src: url('../../fonts/Play.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */ url('../../fonts/Play.woff2') format('woff2'),
+    /* Super Modern Browsers */ url('../../fonts/Play.woff') format('woff'), /* Pretty Modern Browsers */ url('../../fonts/Play.ttf') format('truetype'),
+    /* Safari, Android, iOS */ url('../../fonts/Play.svg#Play') format('svg'); /* Legacy iOS */
 }
 
 body {
@@ -178,4 +178,7 @@ h5 {
 .md-drawer.md-theme-default {
   padding: 20px;
   width: 250px;
+}
+.pretty-hex-container {
+  white-space: nowrap;
 }

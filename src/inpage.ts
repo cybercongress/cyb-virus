@@ -1,4 +1,12 @@
 const tingle = require('tingle.js/dist/tingle');
+const Toastify = require('toastify-js/src/toastify');
+
+let onPopupOpen;
+document.addEventListener('cyb:popup-opened', async function(data: any) {
+  if (onPopupOpen) {
+    onPopupOpen();
+  }
+});
 
 const modal = new tingle.modal({
   footer: true,
@@ -27,45 +35,99 @@ function saveImage(imgSrc) {
     <div class="inputs-container">
       <div>
         <div>Description:</div>
-        <textarea id="cyb-content-description"></textarea>
+        <textarea id="cyb-content-description" class="cyb-textarea"></textarea>
       </div>
       
       <div><label><input type="checkbox" id="cyb-content-link-checkbox"> Link content</label></div>
       
       <div id="cyb-content-link-inputs" style="display: none;">
         <div>Keywords:</div>
-        <textarea id="cyb-content-keywords"></textarea>
+        <textarea id="cyb-content-keywords" class="cyb-textarea"></textarea>
       </div>
       
       <div>
         <button id="cyb-save-confirm-button" class="cyb-button">Save</button>
       </div>
       
-      <div id="cyb-link-attention">
+      <div id="cyb-link-attention" class="cyb-warn" style="display: none;">
         You have to open Cyb extension and save content.
       </div>
     </div>
 </div>`);
   modal.open();
 
+  const saveConfirmButton = document.getElementById('cyb-save-confirm-button');
   const linkCheckBox = document.getElementById('cyb-content-link-checkbox');
+
   linkCheckBox.addEventListener('change', event => {
     const linkCheckBoxInputs = document.getElementById('cyb-content-link-inputs');
     linkCheckBoxInputs.style.display = event.target['checked'] ? `block` : 'none';
+    saveConfirmButton.innerText = event.target['checked'] ? `Save and link` : 'Save';
   });
 
-  const saveButton = document.getElementById('cyb-save-confirm-button');
-  saveButton.addEventListener('click', () => {
+  saveConfirmButton.addEventListener('click', () => {
     const description = document.getElementById('cyb-content-description');
+    const keywords = document.getElementById('cyb-content-keywords');
+    const linkChecked = linkCheckBox.getAttribute('checked') === 'checked';
+
+    let iconSrc;
+    let icons = document.querySelectorAll('[rel="icon"]');
+    if (icons && icons[0]) {
+      iconSrc = icons[0].getAttribute('href');
+    }
+    if (!iconSrc) {
+      icons = document.querySelectorAll('[rel="shortcut icon"]');
+      if (icons && icons[0]) {
+        iconSrc = icons[0].getAttribute('href');
+      }
+    }
     const event = new CustomEvent('cyb:save', {
       detail: {
         contentType: 'image',
         src: imgSrc,
+        iconSrc: iconSrc,
         description: description['value'],
+        link: linkChecked,
+        linkKeywords: keywords ? keywords['value'] : '',
       },
     });
+
     document.dispatchEvent(event);
-    modal.close();
+
+    if (linkChecked) {
+      const cybLinkAttention = document.getElementById('cyb-link-attention');
+      cybLinkAttention.style.display = 'block';
+      onPopupOpen = () => {
+        modal.close();
+        onPopupOpen = null;
+      };
+
+      Toastify({
+        text: 'Content saved! Please open Cyb extension for link.',
+        duration: 3000,
+        gravity: 'bottom', // `top` or `bottom`
+        positionLeft: false, // `true` or `false`
+        stopOnFocus: true, // Prevents dismissing of toast on hover
+        // destination: "https://github.com/apvarun/toastify-js",
+        // newWindow: true,
+        // close: true,
+        // backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)",
+      }).showToast();
+    } else {
+      modal.close();
+
+      Toastify({
+        text: 'Content saved!',
+        duration: 3000,
+        gravity: 'bottom', // `top` or `bottom`
+        positionLeft: false, // `true` or `false`
+        stopOnFocus: true, // Prevents dismissing of toast on hover
+        // destination: "https://github.com/apvarun/toastify-js",
+        // newWindow: true,
+        // close: true,
+        // backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)",
+      }).showToast();
+    }
   });
 }
 

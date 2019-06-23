@@ -1,4 +1,8 @@
 <div id="import-account" class="padding-container">
+  <div class="back" v-if="$route.query.from" style="margin-left: 0">
+    <router-link :to="{name: $route.query.from}">< Back</router-link>
+  </div>
+
   <h2>Link Content</h2>
 
   <div v-if="contentHash">

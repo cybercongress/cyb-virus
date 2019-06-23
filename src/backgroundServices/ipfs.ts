@@ -49,8 +49,8 @@ module.exports = {
     });
 
     objToSave.content = contentObj.contentHash;
-    if (contentObj.previewHash) {
-      objToSave.preview = contentObj.previewHash;
+    if (contentObj.iconHash) {
+      objToSave.icon = contentObj.iconHash;
     }
     console.log('objToSave', objToSave);
 

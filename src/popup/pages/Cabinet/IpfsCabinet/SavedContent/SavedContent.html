@@ -7,7 +7,7 @@
       <div style="display: flex; justify-content: space-between;">
         <div style="display: flex;">
           <div style="width: 7%; margin-right: 10px;">
-            <img v-if="item.previewHash" :src="ipfsUrl + item.previewHash" />
+            <img v-if="item.iconHash" :src="ipfsUrl + item.iconHash" />
           </div>
           <div>
             <pretty-hash :hash="item.contentHash"></pretty-hash>
@@ -22,7 +22,10 @@
           {{item.description}}
         </div>
         <div>
-          <router-link class="small-btn" :to="{name: 'cabinet-cyberd-link', query: {contentHash: item.contentHash, keywords: item.keywords}}" tag="button"
+          <router-link
+            class="small-btn"
+            :to="{name: 'cabinet-cyberd-link', query: {contentHash: item.contentHash, keywords: item.keywords, from: 'cabinet-ipfs-saved-content'}}"
+            tag="button"
             >Details/Link
           </router-link>
         </div>
