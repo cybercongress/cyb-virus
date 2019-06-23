@@ -1,3 +1,5 @@
+const regex = require('./services/regex');
+
 document.addEventListener('cyb:link', function(data: any) {
   // alert(JSON.stringify(data.detail));
   (global as any).chrome.runtime.sendMessage(
@@ -36,10 +38,19 @@ async function srcToBase64(src) {
 }
 
 document.addEventListener('cyb:save', async function(data: any) {
-  const base64 = await srcToBase64(data.detail.src);
+  let base64;
+  if (data.detail.src.match(regex.base64)) {
+    base64 = { content: data.detail.src, mimeType: data.detail.src.match(/^data:(.+);.+/)[1] };
+  } else {
+    base64 = await srcToBase64(data.detail.src);
+  }
   let iconBase64;
   if (data.detail.iconSrc) {
-    iconBase64 = await srcToBase64(data.detail.iconSrc);
+    if (data.detail.iconSrc.match(regex.base64)) {
+      iconBase64 = { content: data.detail.iconSrc, mimeType: data.detail.iconSrc.match(/^data:(.+);.+/)[1] };
+    } else {
+      iconBase64 = await srcToBase64(data.detail.iconSrc);
+    }
   }
 
   const messageData = {

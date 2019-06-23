@@ -1,7 +1,7 @@
 import { JsIpfsService } from '@galtproject/geesome-libs/src/JsIpfsService';
 const ipfsClient = require('ipfs-http-client');
 const pull = require('pull-stream');
-const base64Regex = /^data:image\/.+;base64,/;
+const regex = require('../services/regex');
 let ipfs;
 let ipfsService;
 
@@ -13,8 +13,8 @@ module.exports = {
     ipfsService = new JsIpfsService(ipfs);
   },
   saveContent(content) {
-    if (content.match(base64Regex)) {
-      content = new Buffer(content.replace(base64Regex, ''), 'base64');
+    if (content.match(regex.base64)) {
+      content = new Buffer(content.replace(regex.base64, ''), 'base64');
     }
     return ipfsService.saveFileByData(content);
   },
