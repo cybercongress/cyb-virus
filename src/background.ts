@@ -173,7 +173,14 @@ onMessage(async (request, sender, sendResponse) => {
         const manifestHash = await ipfsService.saveContentManifest(data);
         await databaseService.updateContentByHash(data.contentHash, { manifestHash });
         if (request.data.link) {
-          setAction({ type: 'page-action', method: 'link', data: {} });
+          setAction({
+            type: 'page-action',
+            method: 'link',
+            data: {
+              keywords: request.data.keywords,
+              contentHash: data.contentHash,
+            },
+          });
         }
       });
     } else if (request.method === 'link-hash') {
