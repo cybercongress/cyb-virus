@@ -230,11 +230,13 @@ onMessage(async (request, sender, sendResponse) => {
   }
   if (request.type === BackgroundRequest.GetSettings) {
     const data = {};
+    console.log('BackgroundResponse.GetSettings request');
     pIteration
       .forEach(request.data, async settingName => {
         data[settingName] = await databaseService.getSetting(settingName);
       })
       .then(() => {
+        console.log('BackgroundResponse.GetSettings response', data);
         sendPopupMessage({ type: BackgroundResponse.GetSettings, data });
       })
       .catch(err => {
