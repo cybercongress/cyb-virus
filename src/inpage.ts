@@ -33,19 +33,23 @@ function saveImage(imgSrc) {
 <div id="cyb-modal-container">
     <div class="img-container"><img id="cyb-content-image" src="${imgSrc}"></div>
     <div class="inputs-container">
-      <div>
+      <h3>Save content to IPFS</h3>
+      
+      <div id="cyb-content-description-container">
         <div>Description:</div>
         <textarea id="cyb-content-description" class="cyb-textarea"></textarea>
       </div>
       
-      <div><label><input type="checkbox" id="cyb-content-link-checkbox"> Link content</label></div>
+      <div id="cyb-content-link-checkbox-container">
+        <label><input type="checkbox" id="cyb-content-link-checkbox"><span id="cyb-content-link-checkbox-view"></span><span id="cyb-content-link-checkbox-text">Link content</span></label>
+      </div>
       
       <div id="cyb-content-link-inputs" style="display: none;">
         <div>Keywords:</div>
         <textarea id="cyb-content-keywords" class="cyb-textarea"></textarea>
       </div>
       
-      <div>
+      <div id="cyb-save-confirm-button-container">
         <button id="cyb-save-confirm-button" class="cyb-button">Save</button>
       </div>
       
@@ -58,11 +62,13 @@ function saveImage(imgSrc) {
 
   const saveConfirmButton = document.getElementById('cyb-save-confirm-button');
   const linkCheckBox = document.getElementById('cyb-content-link-checkbox');
+  const linkCheckBoxView = document.getElementById('cyb-content-link-checkbox-view');
 
   linkCheckBox.addEventListener('change', event => {
     const linkCheckBoxInputs = document.getElementById('cyb-content-link-inputs');
     linkCheckBoxInputs.style.display = event.target['checked'] ? `block` : 'none';
     saveConfirmButton.innerText = event.target['checked'] ? `Save and link` : 'Save';
+    linkCheckBoxView.className = event.target['checked'] ? `checked` : '';
   });
 
   saveConfirmButton.addEventListener('click', () => {
