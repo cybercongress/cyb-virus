@@ -14,18 +14,6 @@ const modal = new tingle.modal({
   closeMethods: ['overlay', 'button', 'escape'],
   closeLabel: 'Close',
   cssClass: ['cyb-extension-modal'],
-  // onOpen: function() {
-  //   console.log('modal open');
-  // },
-  // onClose: function() {
-  //   console.log('modal closed');
-  // },
-  // beforeClose: function() {
-  //   // here's goes some logic
-  //   // e.g. save content before closing the modal
-  //   return true; // close the modal
-  //   return false; // nothing happens
-  // }
 });
 
 function saveImage(imgSrc) {
@@ -115,10 +103,6 @@ function saveImage(imgSrc) {
         gravity: 'bottom', // `top` or `bottom`
         positionLeft: false, // `true` or `false`
         stopOnFocus: true, // Prevents dismissing of toast on hover
-        // destination: "https://github.com/apvarun/toastify-js",
-        // newWindow: true,
-        // close: true,
-        // backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)",
       }).showToast();
     } else {
       modal.close();
@@ -130,10 +114,6 @@ function saveImage(imgSrc) {
         gravity: 'bottom', // `top` or `bottom`
         positionLeft: false, // `true` or `false`
         stopOnFocus: true, // Prevents dismissing of toast on hover
-        // destination: "https://github.com/apvarun/toastify-js",
-        // newWindow: true,
-        // close: true,
-        // backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)",
       }).showToast();
     }
   });
@@ -186,21 +166,38 @@ ready(() => {
   }
 
   let imgSrc = null;
-  document.querySelectorAll('img').forEach(el => {
-    el.addEventListener('mouseenter', () => {
-      imgSrc = el.getAttribute('src');
-      preventHide();
-      const offset = getElOffset(el);
-      buttonContainer.style.display = `block`;
-      buttonContainer.style.top = `${offset.top}px`;
-      buttonContainer.style.left = `${offset.left}px`;
-      buttonContainer.style.bottom = `${offset.top + el.offsetHeight}px`;
-      buttonContainer.style.right = `${offset.left + el.offsetWidth}px`;
+
+  function subscribeToImageEvents() {
+    document.querySelectorAll('img').forEach(el => {
+      if (el['cyb_onMouseEnter']) {
+        el.removeEventListener('mouseenter', el['cyb_onMouseEnter']);
+        el.removeEventListener('mouseleave', el['cyb_onMouseLeave']);
+      }
+
+      el['cyb_onMouseEnter'] = () => {
+        imgSrc = el.getAttribute('src');
+        preventHide();
+        const offset = getElOffset(el);
+        buttonContainer.style.display = `block`;
+        buttonContainer.style.top = `${offset.top}px`;
+        buttonContainer.style.left = `${offset.left}px`;
+        buttonContainer.style.bottom = `${offset.top + el.offsetHeight}px`;
+        buttonContainer.style.right = `${offset.left + el.offsetWidth}px`;
+      };
+      el['cyb_onMouseLeave'] = () => {
+        hide();
+      };
+
+      el.addEventListener('mouseenter', el['cyb_onMouseEnter']);
+      el.addEventListener('mouseleave', el['cyb_onMouseLeave']);
     });
-    el.addEventListener('mouseleave', () => {
-      hide();
-    });
-  });
+  }
+
+  subscribeToImageEvents();
+
+  setInterval(() => {
+    subscribeToImageEvents();
+  }, 1000);
 
   button.addEventListener('mouseenter', () => {
     preventHide();
