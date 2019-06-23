@@ -58,6 +58,20 @@ function setAction(action) {
   }
 }
 
+async function saveContent(content, description, mimeType) {
+  ipfsService.saveContent(content).then(result => {
+    const data = { contentHash: result.id, keywords: null, description, size: result.size, mimeType };
+
+    setAction({ type: 'page-action', method: 'save-and-link', data });
+
+    sendPopupMessage({ type: 'loading-end' });
+
+    sendPopupMessage({ type: 'page-action', method: 'save-and-link', data }, response => {
+      setAction(null);
+    });
+  });
+}
+
 async function saveExtensionDataAndBindToIpns() {
   console.log('saveExtensionDataAndBindToIpns start');
   const settings = {};
@@ -155,6 +169,9 @@ onMessage(async (request, sender, sendResponse) => {
   await waitForInit();
 
   if (request.type === 'page-action') {
+    if (request.method === 'save-content') {
+      saveContent(request.data.content, request.data.description, request.data.mimeType);
+    }
     setAction(request);
     return;
   }
@@ -185,12 +202,7 @@ onMessage(async (request, sender, sendResponse) => {
             faviconEL = $('[rel="shortcut icon"]');
           }
           if (faviconEL || faviconEL.attr('href')) {
-            console.log('favicon', faviconEL.attr('href'));
-            const faviconData = faviconEL.attr('href').replace(/^data:image\/.+;base64,/, '');
-            console.log('faviconData', faviconData);
-            const buf = new Buffer(faviconData, 'base64');
-            console.log('faviconBuffer', buf);
-            data.previewHash = (await ipfsService.saveContent(buf)).id;
+            data.previewHash = (await ipfsService.saveContent(faviconEL.attr('href'))).id;
             data.previewMimeType = 'image/x-icon';
           }
         }
@@ -300,16 +312,6 @@ onMessage(async (request, sender, sendResponse) => {
   if (request.method && _.endsWith(request.method, '.download')) {
     sendPopupMessage({ type: 'loading' });
 
-    ipfsService.saveContent(request.content).then(result => {
-      const data = { contentHash: result.id, keywords: null, description: request.filename, size: result.size, mimeType: 'text/html' };
-
-      setAction({ type: 'page-action', method: 'save-and-link', data });
-
-      sendPopupMessage({ type: 'loading-end' });
-
-      sendPopupMessage({ type: 'page-action', method: 'save-and-link', data }, response => {
-        setAction(null);
-      });
-    });
+    saveContent(request.content, request.filename, 'text/html');
   }
 });

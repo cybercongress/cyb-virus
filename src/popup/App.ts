@@ -95,6 +95,9 @@ export default {
         this.loadingBackup = true;
         getIsBackupExists()
           .then(ipld => {
+            if (!this.loadingBackup) {
+              return;
+            }
             this.loading = false;
             this.loadingBackup = false;
             if (ipld) {

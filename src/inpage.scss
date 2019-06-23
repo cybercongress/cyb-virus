@@ -1,0 +1,13 @@
+#cyb-modal-container {
+  display: flex;
+
+  .img-container {
+    width: 70%;
+    img {
+      max-width: 100%;
+    }
+  }
+  .inputs-container {
+    width: 30%;
+  }
+}
