@@ -94,7 +94,7 @@ function saveImage(imgSrc) {
         iconSrc: iconSrc,
         description: description['value'],
         link: linkChecked,
-        linkKeywords: keywords ? keywords['value'] : '',
+        keywords: keywords ? keywords['value'] : '',
       },
     });
 
@@ -111,7 +111,7 @@ function saveImage(imgSrc) {
       Toastify({
         text: 'Content saved! Please open Cyb extension for link.',
         className: 'cyb-notify',
-        duration: 3000,
+        duration: 5000,
         gravity: 'bottom', // `top` or `bottom`
         positionLeft: false, // `true` or `false`
         stopOnFocus: true, // Prevents dismissing of toast on hover
@@ -126,7 +126,7 @@ function saveImage(imgSrc) {
       Toastify({
         text: 'Content saved!',
         className: 'cyb-notify',
-        duration: 3000,
+        duration: 5000,
         gravity: 'bottom', // `top` or `bottom`
         positionLeft: false, // `true` or `false`
         stopOnFocus: true, // Prevents dismissing of toast on hover

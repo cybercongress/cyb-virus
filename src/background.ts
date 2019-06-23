@@ -173,7 +173,14 @@ onMessage(async (request, sender, sendResponse) => {
         const manifestHash = await ipfsService.saveContentManifest(data);
         await databaseService.updateContentByHash(data.contentHash, { manifestHash });
         if (request.data.link) {
-          setAction({ type: 'page-action', method: 'link', data: {} });
+          setAction({
+            type: 'page-action',
+            method: 'link',
+            data: {
+              keywords: request.data.keywords,
+              contentHash: data.contentHash,
+            },
+          });
         }
       });
     } else if (request.method === 'link-hash') {
@@ -251,13 +258,11 @@ onMessage(async (request, sender, sendResponse) => {
   }
   if (request.type === BackgroundRequest.GetSettings) {
     const data = {};
-    console.log('BackgroundResponse.GetSettings request');
     pIteration
       .forEach(request.data, async settingName => {
         data[settingName] = await databaseService.getSetting(settingName);
       })
       .then(() => {
-        console.log('BackgroundResponse.GetSettings response', data);
         sendPopupMessage({ type: BackgroundResponse.GetSettings, data });
       })
       .catch(err => {

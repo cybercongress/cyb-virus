@@ -47,7 +47,7 @@ export default {
       return this.$route.query.contentHash;
     },
     keywords() {
-      return this.$route.query.keywords;
+      return _.isArray(this.$route.query.keywords) ? this.$route.query.keywords : (this.$route.query.keywords || '').split(/[ ,]+/);
     },
     keywordsStr() {
       return this.keywords ? this.keywords.join(', ') : '';

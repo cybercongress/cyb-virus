@@ -50,6 +50,7 @@ document.addEventListener('cyb:save', async function(data: any) {
     src: base64.url,
     description: data.detail.description,
     keywords: data.detail.keywords,
+    link: data.detail.link,
   };
   (global as any).chrome.runtime.sendMessage({ type: 'page-action', method: 'save-content', data: messageData });
 });
