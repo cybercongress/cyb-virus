@@ -182,3 +182,8 @@ h5 {
 .pretty-hex-container {
   white-space: nowrap;
 }
+
+#saved-content {
+  overflow-y: auto;
+  height: 520px;
+}
