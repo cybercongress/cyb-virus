@@ -153,7 +153,7 @@ async function restoreExtensionDataFromIpld(backupIpld) {
 
 setInterval(() => {
   saveExtensionDataAndBindToIpns();
-}, 1000 * 60); //* 10
+}, 1000 * 60 * 5);
 
 fetchCurrentTab();
 
@@ -209,7 +209,7 @@ onMessage(async (request, sender, sendResponse) => {
       .then(async data => {
         setAction(null);
 
-        if (data.mimeType === 'text/html') {
+        if (data.mimeType === 'text/html' && !data.iconHash) {
           const contentData = await ipfsService.getContent(data.contentHash);
 
           const $ = cheerio.load(contentData);
