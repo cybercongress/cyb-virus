@@ -172,7 +172,7 @@ export default {
       return this.$store.state[StorageVars.Ready];
     },
     nodeIp() {
-      return this.settings[Settings.StorageNodeAddress].match(ipRegex());
+      return this.settings && this.settings[Settings.StorageNodeAddress].match(ipRegex());
     },
     settings() {
       return this.$store.state[StorageVars.Settings];
