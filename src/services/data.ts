@@ -2,6 +2,9 @@ const sjcl = require('sjcl');
 const _ = require('lodash');
 const ethers = require('ethers');
 const bip39 = require('bip39');
+const bech32 = require('bech32');
+const bip32 = require('bip32');
+const bitcoinjs = require('bitcoinjs-lib');
 
 const Unixfs = require('ipfs-unixfs');
 const { DAGNode, util: DAGUtil } = require('ipld-dag-pb');
@@ -85,17 +88,27 @@ export class AppWallet {
   static async generateAccount(coinType, index) {
     const encryptedSeed = await PermanentStorage.getValue(StorageVars.EncryptedSeed);
     const password = await this.getPassword();
-    const seed = AppCrypto.decrypt(encryptedSeed, password);
+    const mnemonic = AppCrypto.decrypt(encryptedSeed, password);
 
     if (coinType === CoinType.Ether) {
-      const wallet = ethers.Wallet.fromMnemonic(seed, `m/44'/60'/0'/0/${index}`);
+      const wallet = ethers.Wallet.fromMnemonic(mnemonic, `m/44'/60'/0'/0/${index}`);
       return {
         address: wallet.address,
         privateKey: wallet.privateKey,
       };
     } else if (coinType === CoinType.Cosmos) {
-      //TODO: use index
-      return cyberjsCrypto.recover(seed, 'en');
+      const seed = await bip39.mnemonicToSeed(mnemonic);
+      const node = bip32.fromSeed(seed);
+      const child = node.derivePath(`m/44'/118'/0'/0/${index}`);
+      const words = bech32.toWords(child.identifier);
+      const address = bech32.encode('cyber', words);
+      const ecpair = bitcoinjs.ECPair.fromPrivateKey(child.privateKey, { compressed: false });
+      const privateKey = ecpair.privateKey.toString('hex');
+
+      return {
+        address,
+        privateKey,
+      };
     }
     return null;
     // const hdkey = HDKey.fromMasterSeed(Buffer.from(seed, 'hex'));
