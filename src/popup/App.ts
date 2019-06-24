@@ -128,7 +128,14 @@ export default {
       });
     },
     getSettings() {
-      getSettings([Settings.StorageNodeAddress, Settings.StorageNodeType]).then(settings => {
+      getSettings([
+        Settings.StorageNodeAddress,
+        Settings.StorageNodeType,
+        Settings.StorageExtensionIpld,
+        Settings.StorageExtensionIpldUpdatedAt,
+        Settings.StorageExtensionIpnsUpdatedAt,
+        Settings.StorageExtensionIpldError,
+      ]).then(settings => {
         this.$store.commit(StorageVars.Settings, settings);
       });
     },
