@@ -2,6 +2,7 @@ const sjcl = require('sjcl');
 const _ = require('lodash');
 const ethers = require('ethers');
 const bip39 = require('bip39');
+const regex = require('./regex');
 
 const Unixfs = require('ipfs-unixfs');
 const { DAGNode, util: DAGUtil } = require('ipld-dag-pb');
@@ -168,6 +169,9 @@ export class AppWallet {
 }
 
 export function getIpfsHash(string) {
+  if (string.match(regex.base64)) {
+    string = new Buffer(string.replace(regex.base64, ''), 'base64');
+  }
   return new Promise((resolve, reject) => {
     const unixFsFile = new Unixfs('file', Buffer.from(string));
     const buffer = unixFsFile.marshal();
