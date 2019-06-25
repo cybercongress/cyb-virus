@@ -6,7 +6,7 @@ const cheerio = require('cheerio');
 
 import { BackgroundRequest, BackgroundResponse } from './services/backgroundGateway';
 import { Settings } from './backgroundServices/types';
-import { PermanentStorage, StorageVars } from './services/data';
+import { getIpfsHash, PermanentStorage, StorageVars } from './services/data';
 import Helper from '@galtproject/frontend-core/services/helper';
 
 const databaseService = require('./backgroundServices/database');
@@ -189,6 +189,16 @@ onMessage(async (request, sender, sendResponse) => {
     } else if (request.method === 'link-hash') {
       setAction({ type: 'page-action', method: 'link', data: request.data });
     }
+    return;
+  }
+  if (request.type === 'is-content-exists') {
+    let contentHash = request.data.contentHash;
+    if (contentHash) {
+      contentHash = await getIpfsHash(request.data.content);
+    }
+    sendPopupMessage(lastAction);
+    setAction(null);
+    sendTabMessage(curTabId, { type: 'popup-opened' });
     return;
   }
   if (request.type === 'popup-get-action') {
