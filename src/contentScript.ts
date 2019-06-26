@@ -106,7 +106,7 @@ document.dispatchEvent(initEvent);
   }
   if (request.type === 'is-content-exists:response') {
     const event = new CustomEvent('cyb:is-content-exists:response', {
-      detail: { response: request.data },
+      detail: request.data,
     });
     document.dispatchEvent(event);
   }
