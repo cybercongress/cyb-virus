@@ -1,10 +1,28 @@
 const tingle = require('tingle.js/dist/tingle');
 const Toastify = require('toastify-js/src/toastify');
 
+function showToast(message, timeout?) {
+  Toastify({
+    text: message,
+    className: 'cyb-notify',
+    duration: timeout || 5000,
+    gravity: 'bottom', // `top` or `bottom`
+    positionLeft: false, // `true` or `false`
+    stopOnFocus: true, // Prevents dismissing of toast on hover
+  }).showToast();
+}
+
 let onPopupOpen;
 document.addEventListener('cyb:popup-opened', async function(data: any) {
   if (onPopupOpen) {
     onPopupOpen();
+  }
+});
+
+let onIsContentExistsResponse;
+document.addEventListener('cyb:is-content-exists:response', async function(data: any) {
+  if (onIsContentExistsResponse) {
+    onIsContentExistsResponse(data.detail.response);
   }
 });
 
@@ -51,77 +69,73 @@ function saveContent(contentType, contentSrc) {
       </div>
     </div>
 </div>`);
-  modal.open();
 
-  const saveConfirmButton = document.getElementById('cyb-save-confirm-button');
-  const linkCheckBox = document.getElementById('cyb-content-link-checkbox');
-  const linkCheckBoxView = document.getElementById('cyb-content-link-checkbox-view');
-
-  linkCheckBox.addEventListener('change', event => {
-    const linkCheckBoxInputs = document.getElementById('cyb-content-link-inputs');
-    linkCheckBoxInputs.style.display = event.target['checked'] ? `block` : 'none';
-    saveConfirmButton.innerText = event.target['checked'] ? `Save and link` : 'Save';
-    linkCheckBoxView.className = event.target['checked'] ? `checked` : '';
-  });
-
-  saveConfirmButton.addEventListener('click', () => {
-    const description = document.getElementById('cyb-content-description');
-    const keywords = document.getElementById('cyb-content-keywords');
-    const linkChecked = linkCheckBox['checked'];
-
-    let iconSrc;
-    let icons = document.querySelectorAll('[rel="icon"]');
-    if (icons && icons[0]) {
-      iconSrc = icons[0].getAttribute('href');
+  onIsContentExistsResponse = isContentExists => {
+    onIsContentExistsResponse = null;
+    if (isContentExists) {
+      return showToast('Content already exists!');
     }
-    if (!iconSrc) {
-      icons = document.querySelectorAll('[rel="shortcut icon"]');
+    modal.open();
+
+    const saveConfirmButton = document.getElementById('cyb-save-confirm-button');
+    const linkCheckBox = document.getElementById('cyb-content-link-checkbox');
+    const linkCheckBoxView = document.getElementById('cyb-content-link-checkbox-view');
+
+    linkCheckBox.addEventListener('change', event => {
+      const linkCheckBoxInputs = document.getElementById('cyb-content-link-inputs');
+      linkCheckBoxInputs.style.display = event.target['checked'] ? `block` : 'none';
+      saveConfirmButton.innerText = event.target['checked'] ? `Save and link` : 'Save';
+      linkCheckBoxView.className = event.target['checked'] ? `checked` : '';
+    });
+
+    saveConfirmButton.addEventListener('click', () => {
+      const description = document.getElementById('cyb-content-description');
+      const keywords = document.getElementById('cyb-content-keywords');
+      const linkChecked = linkCheckBox['checked'];
+
+      let iconSrc;
+      let icons = document.querySelectorAll('[rel="icon"]');
       if (icons && icons[0]) {
         iconSrc = icons[0].getAttribute('href');
       }
-    }
-    const event = new CustomEvent('cyb:save', {
-      detail: {
-        contentType,
-        src: contentSrc,
-        iconSrc: iconSrc,
-        description: description['value'],
-        link: linkChecked,
-        keywords: keywords ? keywords['value'] : '',
-      },
-    });
+      if (!iconSrc) {
+        icons = document.querySelectorAll('[rel="shortcut icon"]');
+        if (icons && icons[0]) {
+          iconSrc = icons[0].getAttribute('href');
+        }
+      }
+      const event = new CustomEvent('cyb:save', {
+        detail: {
+          contentType,
+          src: contentSrc,
+          iconSrc: iconSrc,
+          description: description['value'],
+          link: linkChecked,
+          keywords: keywords ? keywords['value'] : '',
+        },
+      });
 
-    document.dispatchEvent(event);
+      document.dispatchEvent(event);
 
-    if (linkChecked) {
-      const cybLinkAttention = document.getElementById('cyb-link-attention');
-      cybLinkAttention.style.display = 'block';
-      onPopupOpen = () => {
+      if (linkChecked) {
+        const cybLinkAttention = document.getElementById('cyb-link-attention');
+        cybLinkAttention.style.display = 'block';
+        onPopupOpen = () => {
+          modal.close();
+          onPopupOpen = null;
+        };
+
+        return showToast('Content saved! Please open Cyb extension for link.');
+      } else {
         modal.close();
-        onPopupOpen = null;
-      };
+        return showToast('Content saved!');
+      }
+    });
+  };
 
-      Toastify({
-        text: 'Content saved! Please open Cyb extension for link.',
-        className: 'cyb-notify',
-        duration: 5000,
-        gravity: 'bottom', // `top` or `bottom`
-        positionLeft: false, // `true` or `false`
-        stopOnFocus: true, // Prevents dismissing of toast on hover
-      }).showToast();
-    } else {
-      modal.close();
+  const event = new CustomEvent('cyb:is-content-exists', { detail: { contentType, src: contentSrc } });
 
-      Toastify({
-        text: 'Content saved!',
-        className: 'cyb-notify',
-        duration: 5000,
-        gravity: 'bottom', // `top` or `bottom`
-        positionLeft: false, // `true` or `false`
-        stopOnFocus: true, // Prevents dismissing of toast on hover
-      }).showToast();
-    }
-  });
+  document.dispatchEvent(event);
 }
 
 function getElOffset(el) {

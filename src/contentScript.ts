@@ -80,6 +80,17 @@ document.addEventListener('cyb:save', async function(data: any) {
   (global as any).chrome.runtime.sendMessage({ type: 'page-action', method: 'save-content', data: messageData });
 });
 
+document.addEventListener('cyb:is-content-exists', async function(data: any) {
+  const base64 = await srcToBase64(data.detail.src);
+  // alert(JSON.stringify(data.detail));
+  (global as any).chrome.runtime.sendMessage({
+    type: 'is-content-exists:request',
+    data: {
+      content: base64.content,
+    },
+  });
+});
+
 const initEvent = document.createEvent('Event');
 initEvent.initEvent('cyb:init');
 document.dispatchEvent(initEvent);
@@ -87,10 +98,17 @@ document.dispatchEvent(initEvent);
 
 (global as any).chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   // alert('onMessage: ' + JSON.stringify(request));
+  console.log('onMessage', request);
   if (request.type === 'popup-opened') {
     const initEvent = document.createEvent('Event');
     initEvent.initEvent('cyb:popup-opened');
     document.dispatchEvent(initEvent);
+  }
+  if (request.type === 'is-content-exists:response') {
+    const event = new CustomEvent('cyb:is-content-exists:response', {
+      detail: { response: request.data },
+    });
+    document.dispatchEvent(event);
   }
 });
 
