@@ -162,6 +162,7 @@ onMessage((request, sender, sendResponse) => {
   (async () => {
     console.log('request', request);
     await waitForInit();
+    await fetchCurrentTab();
 
     if (request.type === 'page-action') {
       if (request.method === 'save-content') {
@@ -209,9 +210,7 @@ onMessage((request, sender, sendResponse) => {
       return;
     }
     if (request.type === 'download-page') {
-      fetchCurrentTab().then(() => {
-        (global as any).singlefile.extension.core.bg.business.saveTab(curTab);
-      });
+      (global as any).singlefile.extension.core.bg.business.saveTab(curTab);
       return;
     }
     if (request.type === BackgroundRequest.SaveContentToList) {
