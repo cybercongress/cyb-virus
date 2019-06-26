@@ -22,7 +22,7 @@ document.addEventListener('cyb:popup-opened', async function(data: any) {
 let onIsContentExistsResponse;
 document.addEventListener('cyb:is-content-exists:response', async function(data: any) {
   if (onIsContentExistsResponse) {
-    onIsContentExistsResponse(data.detail.response);
+    onIsContentExistsResponse(data.detail);
   }
 });
 
@@ -72,8 +72,8 @@ function saveContent(contentType, contentSrc) {
 
   onIsContentExistsResponse = isContentExists => {
     onIsContentExistsResponse = null;
-    if (isContentExists) {
-      return showToast('Content already exists!');
+    if (isContentExists.result) {
+      return showToast('Content already exists!<br/>Hash: ' + isContentExists.contentHash);
     }
     modal.open();
 

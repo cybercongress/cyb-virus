@@ -199,7 +199,7 @@ onMessage((request, sender, sendResponse) => {
       }
       const contentObj = await databaseService.getContentByHash(contentHash);
 
-      sendTabMessage(curTabId, { type: 'is-content-exists:response', data: !!contentObj });
+      sendTabMessage(curTabId, { type: 'is-content-exists:response', data: { result: !!contentObj, contentHash } });
       return;
     }
     if (request.type === 'popup-get-action') {
