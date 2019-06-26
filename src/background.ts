@@ -158,197 +158,200 @@ setInterval(() => {
 fetchCurrentTab();
 
 let lastAction;
-onMessage(async (request, sender, sendResponse) => {
-  console.log('request', request);
-  await waitForInit();
+onMessage((request, sender, sendResponse) => {
+  (async () => {
+    console.log('request', request);
+    await waitForInit();
 
-  if (request.type === 'page-action') {
-    if (request.method === 'save-content') {
-      if (request.data.contentType === 'video') {
-        //TODO: download video to IPFS
-      }
-      saveContentToIpfs(request.data.content, request.data.description, request.data.mimeType).then(async data => {
-        if (request.data.iconContent) {
-          data.iconHash = (await ipfsService.saveContent(request.data.iconContent)).id;
-          data.iconMimeType = request.data.iconMimeType;
+    if (request.type === 'page-action') {
+      if (request.method === 'save-content') {
+        if (request.data.contentType === 'video') {
+          //TODO: download video to IPFS
         }
-        await databaseService.saveContent(data);
-        const manifestHash = await ipfsService.saveContentManifest(data);
-        await databaseService.updateContentByHash(data.contentHash, { manifestHash });
-        if (request.data.link) {
-          setAction({
-            type: 'page-action',
-            method: 'link',
-            data: {
-              keywords: request.data.keywords,
-              contentHash: data.contentHash,
-            },
-          });
-        }
-      });
-    } else if (request.method === 'link-hash') {
-      setAction({ type: 'page-action', method: 'link', data: request.data });
-    }
-    return;
-  }
-  if (request.type === 'is-content-exists') {
-    let contentHash = request.data.contentHash;
-    if (contentHash) {
-      contentHash = await getIpfsHash(request.data.content);
-    }
-    sendPopupMessage(lastAction);
-    setAction(null);
-    sendTabMessage(curTabId, { type: 'popup-opened' });
-    return;
-  }
-  if (request.type === 'popup-get-action') {
-    sendPopupMessage(lastAction);
-    setAction(null);
-    sendTabMessage(curTabId, { type: 'popup-opened' });
-    return;
-  }
-  if (request.type === 'download-page') {
-    fetchCurrentTab().then(() => {
-      (global as any).singlefile.extension.core.bg.business.saveTab(curTab);
-    });
-    return;
-  }
-  if (request.type === BackgroundRequest.SaveContentToList) {
-    databaseService
-      .saveContent(request.data)
-      .then(async data => {
-        setAction(null);
-
-        if (data.mimeType === 'text/html' && !data.iconHash) {
-          const contentData = await ipfsService.getContent(data.contentHash);
-
-          const $ = cheerio.load(contentData);
-          let faviconEL = $('[rel="icon"]');
-          if (!faviconEL || !faviconEL.attr('href')) {
-            faviconEL = $('[rel="shortcut icon"]');
+        saveContentToIpfs(request.data.content, request.data.description, request.data.mimeType).then(async data => {
+          if (request.data.iconContent) {
+            data.iconHash = (await ipfsService.saveContent(request.data.iconContent)).id;
+            data.iconMimeType = request.data.iconMimeType;
           }
-          if (faviconEL || faviconEL.attr('href')) {
-            data.iconHash = (await ipfsService.saveContent(faviconEL.attr('href'))).id;
-            data.iconMimeType = 'image/x-icon';
+          await databaseService.saveContent(data);
+          const manifestHash = await ipfsService.saveContentManifest(data);
+          await databaseService.updateContentByHash(data.contentHash, { manifestHash });
+          if (request.data.link) {
+            setAction({
+              type: 'page-action',
+              method: 'link',
+              data: {
+                keywords: request.data.keywords,
+                contentHash: data.contentHash,
+              },
+            });
           }
-        }
-
-        data.manifestHash = await ipfsService.saveContentManifest(data);
-        await databaseService.updateContentByHash(data.contentHash, _.pick(data, ['manifestHash', 'iconMimeType', 'iconHash']));
-
-        sendPopupMessage({
-          type: BackgroundResponse.SaveContentToList,
-          data: await databaseService.getContentByHash(data.contentHash),
         });
-      })
-      .catch(err => {
-        sendPopupMessage({ type: BackgroundResponse.SaveContentToList, err: err && err.message });
-      });
-    return;
-  }
-  if (request.type === BackgroundRequest.GetContentList) {
-    databaseService.getContentList().then(data => {
-      sendPopupMessage({ type: BackgroundResponse.GetContentList, data });
-    });
-    return;
-  }
-  if (request.type === BackgroundRequest.GetContentByHash) {
-    databaseService.getContentByHash(request.data).then(data => {
-      sendPopupMessage({ type: BackgroundResponse.GetContentByHash, data });
-    });
-    return;
-  }
-  if (request.type === BackgroundRequest.GetPeersList) {
-    ipfsService
-      .getPeersList()
-      .then(data => {
-        sendPopupMessage({ type: BackgroundResponse.GetPeersList, data });
-      })
-      .catch(err => {
-        sendPopupMessage({ type: BackgroundResponse.GetPeersList, err: err && err.message });
-      });
-    return;
-  }
-  if (request.type === BackgroundRequest.GetSettings) {
-    const data = {};
-    pIteration
-      .forEach(request.data, async settingName => {
-        data[settingName] = await databaseService.getSetting(settingName);
-      })
-      .then(() => {
-        sendPopupMessage({ type: BackgroundResponse.GetSettings, data });
-      })
-      .catch(err => {
-        sendPopupMessage({ type: BackgroundResponse.GetSettings, err: err && err.message });
-      });
-    return;
-  }
-  if (request.type === BackgroundRequest.SetSettings) {
-    pIteration
-      .forEach(request.data, setting => databaseService.setSetting(setting.name, setting.value))
-      .then(() => initServices())
-      .then(() => {
-        sendPopupMessage({ type: BackgroundResponse.SetSettings });
-      })
-      .catch(err => {
-        sendPopupMessage({ type: BackgroundResponse.SetSettings, err: err && err.message });
-      });
-    return;
-  }
-  if (request.type === BackgroundRequest.AddIpfsContentArray) {
-    pIteration
-      .map(request.data, content => ipfsService.saveContent(content).then(res => res.id))
-      .then(data => {
-        sendPopupMessage({ type: BackgroundResponse.AddIpfsContentArray, data });
-      })
-      .catch(err => {
-        sendPopupMessage({ type: BackgroundResponse.AddIpfsContentArray, err: err && err.message });
-      });
-    return;
-  }
-  if (request.type === BackgroundRequest.GetIpfsFileStats) {
-    ipfsService
-      .getFileStats(request.data)
-      .then(data => {
-        sendPopupMessage({ type: BackgroundResponse.GetIpfsFileStats, data });
-      })
-      .catch(err => {
-        sendPopupMessage({ type: BackgroundResponse.GetIpfsFileStats, err: err && err.message });
-      });
-    return;
-  }
-  if (request.type === BackgroundRequest.GetIsBackupExists) {
-    ipfsService
-      .getBackupIpld()
-      .then(data => {
-        sendPopupMessage({ type: BackgroundResponse.GetIsBackupExists, data });
-      })
-      .catch(err => {
-        sendPopupMessage({ type: BackgroundResponse.GetIsBackupExists, err: err && err.message });
-      });
-    return;
-  }
-  if (request.type === BackgroundRequest.RestoreBackup) {
-    restoreExtensionDataFromIpld(request.data)
-      .then(() => {
-        sendPopupMessage({ type: BackgroundResponse.RestoreBackup });
-      })
-      .catch(err => {
-        sendPopupMessage({ type: BackgroundResponse.RestoreBackup, err: err && err.message });
-      });
-    return;
-  }
-  if (request.method && _.endsWith(request.method, '.download')) {
-    sendPopupMessage({ type: 'loading' });
+      } else if (request.method === 'link-hash') {
+        setAction({ type: 'page-action', method: 'link', data: request.data });
+      }
+      return;
+    }
+    if (request.type === 'is-content-exists:request') {
+      let contentHash = request.data.contentHash;
+      if (!contentHash) {
+        contentHash = await getIpfsHash(request.data.content);
+      }
+      const contentObj = await databaseService.getContentByHash(contentHash);
 
-    saveContentToIpfs(request.content, request.filename, 'text/html').then(data => {
-      setAction({ type: 'page-action', method: 'save-and-link', data });
-
-      sendPopupMessage({ type: 'loading-end' });
-
-      sendPopupMessage({ type: 'page-action', method: 'save-and-link', data }, response => {
-        setAction(null);
+      sendTabMessage(curTabId, { type: 'is-content-exists:response', data: !!contentObj });
+      return;
+    }
+    if (request.type === 'popup-get-action') {
+      sendPopupMessage(lastAction);
+      setAction(null);
+      sendTabMessage(curTabId, { type: 'popup-opened' });
+      return;
+    }
+    if (request.type === 'download-page') {
+      fetchCurrentTab().then(() => {
+        (global as any).singlefile.extension.core.bg.business.saveTab(curTab);
       });
-    });
-  }
+      return;
+    }
+    if (request.type === BackgroundRequest.SaveContentToList) {
+      databaseService
+        .saveContent(request.data)
+        .then(async data => {
+          setAction(null);
+
+          if (data.mimeType === 'text/html' && !data.iconHash) {
+            const contentData = await ipfsService.getContent(data.contentHash);
+
+            const $ = cheerio.load(contentData);
+            let faviconEL = $('[rel="icon"]');
+            if (!faviconEL || !faviconEL.attr('href')) {
+              faviconEL = $('[rel="shortcut icon"]');
+            }
+            if (faviconEL || faviconEL.attr('href')) {
+              data.iconHash = (await ipfsService.saveContent(faviconEL.attr('href'))).id;
+              data.iconMimeType = 'image/x-icon';
+            }
+          }
+
+          data.manifestHash = await ipfsService.saveContentManifest(data);
+          await databaseService.updateContentByHash(data.contentHash, _.pick(data, ['manifestHash', 'iconMimeType', 'iconHash']));
+
+          sendPopupMessage({
+            type: BackgroundResponse.SaveContentToList,
+            data: await databaseService.getContentByHash(data.contentHash),
+          });
+        })
+        .catch(err => {
+          sendPopupMessage({ type: BackgroundResponse.SaveContentToList, err: err && err.message });
+        });
+      return;
+    }
+    if (request.type === BackgroundRequest.GetContentList) {
+      databaseService.getContentList().then(data => {
+        sendPopupMessage({ type: BackgroundResponse.GetContentList, data });
+      });
+      return;
+    }
+    if (request.type === BackgroundRequest.GetContentByHash) {
+      databaseService.getContentByHash(request.data).then(data => {
+        sendPopupMessage({ type: BackgroundResponse.GetContentByHash, data });
+      });
+      return;
+    }
+    if (request.type === BackgroundRequest.GetPeersList) {
+      ipfsService
+        .getPeersList()
+        .then(data => {
+          sendPopupMessage({ type: BackgroundResponse.GetPeersList, data });
+        })
+        .catch(err => {
+          sendPopupMessage({ type: BackgroundResponse.GetPeersList, err: err && err.message });
+        });
+      return;
+    }
+    if (request.type === BackgroundRequest.GetSettings) {
+      const data = {};
+      pIteration
+        .forEach(request.data, async settingName => {
+          data[settingName] = await databaseService.getSetting(settingName);
+        })
+        .then(() => {
+          sendPopupMessage({ type: BackgroundResponse.GetSettings, data });
+        })
+        .catch(err => {
+          sendPopupMessage({ type: BackgroundResponse.GetSettings, err: err && err.message });
+        });
+      return;
+    }
+    if (request.type === BackgroundRequest.SetSettings) {
+      pIteration
+        .forEach(request.data, setting => databaseService.setSetting(setting.name, setting.value))
+        .then(() => initServices())
+        .then(() => {
+          sendPopupMessage({ type: BackgroundResponse.SetSettings });
+        })
+        .catch(err => {
+          sendPopupMessage({ type: BackgroundResponse.SetSettings, err: err && err.message });
+        });
+      return;
+    }
+    if (request.type === BackgroundRequest.AddIpfsContentArray) {
+      pIteration
+        .map(request.data, content => ipfsService.saveContent(content).then(res => res.id))
+        .then(data => {
+          sendPopupMessage({ type: BackgroundResponse.AddIpfsContentArray, data });
+        })
+        .catch(err => {
+          sendPopupMessage({ type: BackgroundResponse.AddIpfsContentArray, err: err && err.message });
+        });
+      return;
+    }
+    if (request.type === BackgroundRequest.GetIpfsFileStats) {
+      ipfsService
+        .getFileStats(request.data)
+        .then(data => {
+          sendPopupMessage({ type: BackgroundResponse.GetIpfsFileStats, data });
+        })
+        .catch(err => {
+          sendPopupMessage({ type: BackgroundResponse.GetIpfsFileStats, err: err && err.message });
+        });
+      return;
+    }
+    if (request.type === BackgroundRequest.GetIsBackupExists) {
+      ipfsService
+        .getBackupIpld()
+        .then(data => {
+          sendPopupMessage({ type: BackgroundResponse.GetIsBackupExists, data });
+        })
+        .catch(err => {
+          sendPopupMessage({ type: BackgroundResponse.GetIsBackupExists, err: err && err.message });
+        });
+      return;
+    }
+    if (request.type === BackgroundRequest.RestoreBackup) {
+      restoreExtensionDataFromIpld(request.data)
+        .then(() => {
+          sendPopupMessage({ type: BackgroundResponse.RestoreBackup });
+        })
+        .catch(err => {
+          sendPopupMessage({ type: BackgroundResponse.RestoreBackup, err: err && err.message });
+        });
+      return;
+    }
+    if (request.method && _.endsWith(request.method, '.download')) {
+      sendPopupMessage({ type: 'loading' });
+
+      saveContentToIpfs(request.content, request.filename, 'text/html').then(data => {
+        setAction({ type: 'page-action', method: 'save-and-link', data });
+
+        sendPopupMessage({ type: 'loading-end' });
+
+        sendPopupMessage({ type: 'page-action', method: 'save-and-link', data }, response => {
+          setAction(null);
+        });
+      });
+    }
+  })();
+  return true;
 });
