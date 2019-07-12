@@ -19,30 +19,38 @@ export default {
       console.log('this.$route.query.keywords', this.$route.query.keywords);
       const keywordHashes = await addIpfsContentArray(this.resultKeywords);
 
-      const results = await pIteration.mapSeries(keywordHashes, async keywordHash => {
-        return CyberD.link(
-          {
-            address: this.currentAccount.address,
-            privateKey: await AppWallet.decryptByPassword(this.currentAccount.encryptedPrivateKey),
-          },
-          keywordHash,
-          this.resultContentHash
-        );
-      });
+      try {
+        const results = await pIteration.mapSeries(keywordHashes, async keywordHash => {
+          return CyberD.link(
+            {
+              address: this.currentAccount.address,
+              privateKey: await AppWallet.decryptByPassword(this.currentAccount.encryptedPrivateKey),
+            },
+            keywordHash,
+            this.resultContentHash
+          );
+        });
 
-      await saveContent({
-        contentHash: this.resultContentHash,
-        keywords: this.resultKeywords,
-      });
+        await saveContent({
+          contentHash: this.resultContentHash,
+          keywords: this.resultKeywords,
+        });
 
-      console.log('link results', results);
+        console.log('link results', results);
 
-      this.$notify({
-        type: 'success',
-        text: 'Successfully linked',
-      });
+        this.$notify({
+          type: 'success',
+          text: 'Successfully linked',
+        });
 
-      this.$router.push({ name: 'cabinet-cyberd' });
+        this.$router.push({ name: 'cabinet-cyberd' });
+      } catch (e) {
+        this.$notify({
+          type: 'error',
+          title: e && e.message ? e.message : e || 'Unknown error',
+          text: e && e.data ? e.data : '',
+        });
+      }
     },
   },
   computed: {

@@ -2,6 +2,7 @@ import EthData from '@galtproject/frontend-core/libs/EthData';
 
 const cyberjsBuilder = require('@litvintech/cyberjs/builder');
 const cyberjsCodec = require('@litvintech/cyberjs/codec');
+const cyberjsConstants = require('@litvintech/cyberjs/constants');
 const axios = require('axios');
 const node = 'http://88.198.36.117:26657';
 const indexedNode = 'http://88.198.36.117:26657';
@@ -100,7 +101,73 @@ export class CyberD {
       method: 'get',
       url: `${node}/submit_signed_link?data="${signedSendHex}"`,
     })
-      .then(response => response.data)
-      .catch(error => console.error('Cannot send', error));
+      .then(res => {
+        if (!res.data) {
+          throw new Error('Empty data');
+        }
+        if (res.data.error) {
+          throw res.data.error;
+        }
+        return res.data;
+      })
+      .catch(error => {
+        console.error('Link error', error);
+        throw error;
+      });
+  }
+
+  static async transfer(txOptions, addressTo, gAmount) {
+    const chainId = await this.getNetworkId();
+    const addressInfo = await axios({
+      method: 'get',
+      url: `${node}/account?address="${txOptions.address}"`,
+    });
+
+    if (!addressInfo.data.result) {
+      return console.error('error: addressInfo.data.result undefined');
+    }
+    const account = addressInfo.data.result.account;
+    if (!account) {
+      return console.error('error: addressInfo.data.result.account undefined');
+    }
+
+    const acc = {
+      address: account.address,
+      chain_id: chainId,
+      account_number: parseInt(account.account_number, 10),
+      sequence: parseInt(account.sequence, 10),
+    };
+
+    const amount = parseFloat(gAmount) * 10 ** 9;
+
+    const sendRequest = {
+      acc,
+      amount,
+      from: account.address,
+      // to: cyberjsCodec.bech32.toBech32(cyberjsConstants.CyberdNetConfig.PREFIX_BECH32_ACCADDR, addressTo),
+      to: addressTo,
+      type: 'send',
+    };
+
+    const txRequest = cyberjsBuilder.buildAndSignTxRequest(sendRequest, txOptions.privateKey, chainId);
+    const signedSendHex = cyberjsCodec.hex.stringToHex(JSON.stringify(txRequest));
+
+    return axios({
+      method: 'get',
+      url: `${node}/submit_signed_send?data="${signedSendHex}"`,
+    })
+      .then(res => {
+        if (!res.data) {
+          throw new Error('Empty data');
+        }
+        if (res.data.error) {
+          throw res.data.error;
+        }
+        return res.data;
+      })
+      .catch(error => {
+        console.error('Transfer error', error);
+        throw error;
+      });
   }
 }

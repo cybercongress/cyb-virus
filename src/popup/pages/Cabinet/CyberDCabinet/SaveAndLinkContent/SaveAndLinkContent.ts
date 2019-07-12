@@ -21,29 +21,36 @@ export default {
         mimeType: this.$route.query.mimeType,
       });
 
-      if (this.linkKeywords) {
-        const keywordHashes = await addIpfsContentArray(this.resultKeywords);
+      try {
+        if (this.linkKeywords) {
+          const keywordHashes = await addIpfsContentArray(this.resultKeywords);
 
-        const results = await pIteration.mapSeries(keywordHashes, async keywordHash => {
-          return CyberD.link(
-            {
-              address: this.currentAccount.address,
-              privateKey: await AppWallet.decryptByPassword(this.currentAccount.encryptedPrivateKey),
-            },
-            keywordHash,
-            this.resultContentHash
-          );
+          const results = await pIteration.mapSeries(keywordHashes, async keywordHash => {
+            return CyberD.link(
+              {
+                address: this.currentAccount.address,
+                privateKey: await AppWallet.decryptByPassword(this.currentAccount.encryptedPrivateKey),
+              },
+              keywordHash,
+              this.resultContentHash
+            );
+          });
+
+          console.log('link results', results);
+        }
+
+        this.$notify({
+          type: 'success',
+          text: this.linkKeywords ? 'Successfully saved and linked' : 'Successfully saved',
         });
-
-        console.log('link results', results);
+        this.$router.push({ name: 'cabinet-cyberd' });
+      } catch (e) {
+        this.$notify({
+          type: 'error',
+          title: e && e.message ? e.message : e || 'Unknown error',
+          text: e && e.data ? e.data : '',
+        });
       }
-
-      this.$notify({
-        type: 'success',
-        text: this.linkKeywords ? 'Successfully saved and linked' : 'Successfully saved',
-      });
-
-      this.$router.push({ name: 'cabinet-cyberd' });
     },
   },
   computed: {
