@@ -1,6 +1,6 @@
 import { AppWallet, StorageVars } from '../../../../../services/data';
 import { CyberD } from '../../../../../services/cyberd';
-import { addIpfsContentArray } from '../../../../../services/backgroundGateway';
+import { addIpfsContentArray, saveContent } from '../../../../../services/backgroundGateway';
 import ContentDetails from '../../../../directives/ContentDetails/ContentDetails';
 
 const pIteration = require('p-iteration');
@@ -13,6 +13,10 @@ export default {
   },
   methods: {
     async link() {
+      console.log('this.inputKeywordsStr', this.inputKeywordsStr);
+      console.log('this.keywords', this.keywords);
+      console.log('this.resultKeywords', this.resultKeywords);
+      console.log('this.$route.query.keywords', this.$route.query.keywords);
       const keywordHashes = await addIpfsContentArray(this.resultKeywords);
 
       const results = await pIteration.mapSeries(keywordHashes, async keywordHash => {
@@ -24,6 +28,11 @@ export default {
           keywordHash,
           this.resultContentHash
         );
+      });
+
+      await saveContent({
+        contentHash: this.resultContentHash,
+        keywords: this.resultKeywords,
       });
 
       console.log('link results', results);
@@ -41,13 +50,13 @@ export default {
       return this.contentHash || this.inputContentHash;
     },
     resultKeywords() {
-      return this.keywords || this.inputKeywordsStr.split(/[ ,]+/);
+      return this.inputKeywordsStr.split(/[ ,]+/);
     },
     contentHash() {
       return this.$route.query.contentHash;
     },
     keywords() {
-      return this.$route.query.keywords;
+      return _.isArray(this.$route.query.keywords) ? this.$route.query.keywords : this.$route.query.keywords ? this.$route.query.keywords.split(/[ ,]+/) : null;
     },
     keywordsStr() {
       return this.keywords ? this.keywords.join(', ') : '';

@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "@cybercongress/js-amino": "git+ssh://git@github.com:cybercongress/js-amino.git",
-    "@galtproject/frontend-core": "git://github.com/galtspace/galtproject-frontend-core.git#1bd1cc7",
+    "@galtproject/frontend-core": "git://github.com/galtspace/galtproject-frontend-core.git#20f6013",
     "@galtproject/geesome-libs": "git://github.com/galtspace/geesome-libs.git#1a98093",
     "@litvintech/cyberjs": "git://github.com/litvintech/cyberjs.git",
     "autoprefixer": "^9.6.0",
@@ -40,6 +40,8 @@
     "shr-keys": "git+https://bitbucket.org/shareringvietnam/bc_shrcrypto.git#platform/web_bech32",
     "simple-crypto-js": "^2.0.2",
     "sjcl": "^1.0.8",
+    "tingle.js": "^0.15.1",
+    "toastify-js": "^1.5.0",
     "utf8": "^3.0.0",
     "vue": "^2.6.10",
     "vue-notification": "^1.3.16",

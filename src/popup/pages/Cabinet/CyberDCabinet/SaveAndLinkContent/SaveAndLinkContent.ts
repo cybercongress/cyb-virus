@@ -51,13 +51,13 @@ export default {
       return this.contentHash || this.inputContentHash;
     },
     resultKeywords() {
-      return this.keywords || this.inputKeywordsStr.split(/[ ,]+/);
+      return this.inputKeywordsStr.split(/[ ,]+/);
     },
     contentHash() {
       return this.$route.query.contentHash;
     },
     keywords() {
-      return this.$route.query.keywords;
+      return _.isArray(this.$route.query.keywords) ? this.$route.query.keywords : this.$route.query.keywords ? this.$route.query.keywords.split(/[ ,]+/) : null;
     },
     keywordsStr() {
       return this.keywords ? this.keywords.join(', ') : '';
