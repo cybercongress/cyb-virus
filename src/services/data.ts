@@ -32,6 +32,7 @@ export enum StorageVars {
   GeesomeAccounts = 'geesome:accounts',
   IpfsUrl = 'ipfs:url',
   CurrentCabinetRoute = 'current:cabinet',
+  Settings = 'settings',
 }
 
 export class PermanentStorage {

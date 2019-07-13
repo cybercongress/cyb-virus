@@ -1,15 +1,11 @@
 import { getSettingData, Settings } from '../../../../backgroundServices/types';
-import { getSettings, setSettings } from '../../../../services/backgroundGateway';
+import { setSettings } from '../../../../services/backgroundGateway';
 import EthData from '@galtproject/frontend-core/libs/EthData';
+import { StorageVars } from '../../../../services/data';
 
 export default {
   template: require('./Settings.html'),
-  created() {
-    getSettings(this.names).then(values => {
-      this.values = values;
-      this.loading = false;
-    });
-  },
+  created() {},
   methods: {
     save() {
       setSettings(this.nameValueArr)
@@ -47,12 +43,16 @@ export default {
         };
       });
     },
+    values() {
+      return this.$store.state[StorageVars.Settings];
+    },
+    loading() {
+      return !this.$store.state[StorageVars.Settings];
+    },
   },
   data() {
     return {
-      loading: true,
       names: [Settings.StorageNodeType, Settings.StorageNodeAddress],
-      values: null,
     };
   },
 };

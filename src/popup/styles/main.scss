@@ -179,3 +179,11 @@ h5 {
   padding: 20px;
   width: 250px;
 }
+.pretty-hex-container {
+  white-space: nowrap;
+}
+
+#saved-content {
+  overflow-y: auto;
+  height: 520px;
+}

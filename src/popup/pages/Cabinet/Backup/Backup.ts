@@ -1,19 +1,11 @@
 import { getSettingData, Settings } from '../../../../backgroundServices/types';
 import { getSettings, setSettings } from '../../../../services/backgroundGateway';
 import EthData from '@galtproject/frontend-core/libs/EthData';
+import { StorageVars } from '../../../../services/data';
 
 export default {
   template: require('./Backup.html'),
-  created() {
-    getSettings(this.names).then(values => {
-      this.values = values;
-      this.loading = false;
-      getSettings([Settings.StorageExtensionIpldError]).then(values => {
-        console.log('StorageExtensionIpldError', values);
-        this.backupError = values[Settings.StorageExtensionIpldError];
-      });
-    });
-  },
+  created() {},
   methods: {},
   watch: {},
   computed: {
@@ -26,13 +18,19 @@ export default {
         };
       });
     },
+    values() {
+      return this.$store.state[StorageVars.Settings] || {};
+    },
+    backupError() {
+      return this.values && this.values[Settings.StorageExtensionIpldError];
+    },
+    loading() {
+      return !this.values;
+    },
   },
   data() {
     return {
-      loading: true,
       names: [Settings.StorageExtensionIpld, Settings.StorageExtensionIpldUpdatedAt, Settings.StorageExtensionIpnsUpdatedAt],
-      values: null,
-      backupError: null,
     };
   },
 };
