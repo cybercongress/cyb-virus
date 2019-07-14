@@ -9,7 +9,12 @@
     </div>
 
     <div class="add-new-account">
-      <router-link tag="button" :to="{name: 'cabinet-cyberd-import'}">Import account</router-link>
+      <div style="margin: 15px 0;">
+        <a href @click.prevent="addAccount()"><md-icon class="fas fa-plus"></md-icon> Add account</a>
+      </div>
+      <div>
+        <router-link tag="button" :to="{name: 'cabinet-cyberd-import'}">Import account</router-link>
+      </div>
     </div>
   </div>
   <div class="background" v-if="showContainer"></div>
