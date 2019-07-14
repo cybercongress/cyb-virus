@@ -38,6 +38,7 @@ Vue.use(storePlugin, {
   [StorageVars.Account]: null,
   [StorageVars.Path]: null,
   [StorageVars.EncryptedSeed]: null,
+  [StorageVars.AccountsGroups]: null,
   [StorageVars.CurrentAccounts]: null,
   [StorageVars.CyberDAccounts]: null,
   [StorageVars.GeesomeAccounts]: null,

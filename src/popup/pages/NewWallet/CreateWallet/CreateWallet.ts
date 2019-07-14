@@ -8,7 +8,7 @@ export default {
   },
   methods: {
     async save() {
-      AppWallet.setSeed(this.seedPhrase, this.password);
+      await AppWallet.setSeed(this.seedPhrase, this.password);
       this.$router.push({ name: 'cabinet-cyberd' });
     },
     copyToClipboard() {

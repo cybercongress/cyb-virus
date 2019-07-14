@@ -27,6 +27,7 @@ export enum StorageVars {
   Network = 'network',
   NetworkList = 'networkList',
   Account = 'account',
+  AccountsGroups = 'accounts:groups',
   CurrentAccounts = 'current:accounts',
   CyberDAccounts = 'cyberd:accounts',
   GeesomeAccounts = 'geesome:accounts',
@@ -135,6 +136,15 @@ export class AppWallet {
   static async setSeed(seed, password) {
     this.$store.commit(StorageVars.EncryptedSeed, AppCrypto.encrypt(seed, password));
     return this.setPassword(password);
+  }
+
+  static async addAccountGroup(title) {
+    const accountsGroups = _.clone(this.$store.state[StorageVars.AccountsGroups]) || [];
+    accountsGroups.push({
+      title,
+      derivationIndex: accountsGroups.length,
+    });
+    this.$store.commit(StorageVars.AccountsGroups, accountsGroups);
   }
 
   static async addAccount(storageVar, address, privateKey, additionalData = {}) {
