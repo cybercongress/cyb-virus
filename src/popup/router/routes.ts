@@ -17,6 +17,7 @@ import LinkContent from '../pages/Cabinet/CyberDCabinet/LinkContent/LinkContent'
 import Backup from '../pages/Cabinet/Backup/Backup';
 import AskRestoreBackup from '../pages/NewWallet/AskRestoreBackup/AskRestoreBackup';
 import LogIn from '../pages/NewWallet/LogIn/LogIn';
+import TransferCyb from '../pages/Cabinet/CyberDCabinet/TransferCyb/TransferCyb';
 
 export default [
   {
@@ -47,6 +48,11 @@ export default [
         path: '/cyberd/link',
         name: 'cabinet-cyberd-link',
         component: LinkContent,
+      },
+      {
+        path: '/cyberd/transfer',
+        name: 'cabinet-cyberd-transfer',
+        component: TransferCyb,
       },
       {
         path: '/cyberd/save-and-link',

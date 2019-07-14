@@ -1,0 +1,31 @@
+<div id="import-account" class="padding-container">
+  <div class="back" v-if="$route.query.from" style="margin-left: 0">
+    <router-link :to="{name: $route.query.from}">< Back</router-link>
+  </div>
+
+  <h2>Send CYB</h2>
+
+  <div>
+    <h3>To address:</h3>
+    <input v-model="addressTo" />
+  </div>
+
+  <div>
+    <h3>Amount: (GCYB)</h3>
+    <input type="number" v-model="amount" />
+  </div>
+
+  <!--<div>-->
+  <!--<md-checkbox v-model="saveToGeesome">Save to personal channel in GeeSome</md-checkbox>-->
+  <!--<div v-if="saveToGeesome">-->
+  <!--<h3>Content name</h3>-->
+  <!--<input type="text" v-model="inputKeywordsStr"/>-->
+  <!--</div>-->
+  <!--&lt;!&ndash;<h3>Keywords:</h3>&ndash;&gt;-->
+  <!--&lt;!&ndash;<div>{{keywordsStr}}</div>&ndash;&gt;-->
+  <!--</div>-->
+
+  <div class="button-container">
+    <button @click="transfer()" :disabled="disableTransfer">{{'Send'}}</button>
+  </div>
+</div>
