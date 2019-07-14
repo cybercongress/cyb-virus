@@ -1,19 +1,18 @@
-const sjcl = require('sjcl');
+import Helper from '@galtproject/frontend-core/services/helper';
+
 const _ = require('lodash');
-const ethers = require('ethers');
-const bip39 = require('bip39');
-const bech32 = require('bech32');
-const bip32 = require('bip32');
-const bitcoinjs = require('bitcoinjs-lib');
 
 const Unixfs = require('ipfs-unixfs');
 const { DAGNode, util: DAGUtil } = require('ipld-dag-pb');
 
-const cyberjsCrypto = require('@litvintech/cyberjs/crypto');
+const cybCrypto = require('../crypto');
 
 export enum CoinType {
-  Cosmos = 'cosmos',
+  CyberD = 'cyberd',
   Ether = 'ether',
+  Binance = 'binance',
+  Irisnet = 'irisnet',
+  Terra = 'terra',
 }
 
 export enum Network {
@@ -31,9 +30,10 @@ export enum StorageVars {
   NetworkList = 'networkList',
   Account = 'account',
   AccountsGroups = 'accounts:groups',
-  CurrentAccounts = 'current:accounts',
-  CyberDAccounts = 'cyberd:accounts',
-  GeesomeAccounts = 'geesome:accounts',
+  AllAccounts = 'accounts:all',
+  CurrentAccounts = 'accounts:current',
+  // CyberDAccounts = 'cyberd:accounts',
+  // GeesomeAccounts = 'geesome:accounts',
   IpfsUrl = 'ipfs:url',
   CurrentCabinetRoute = 'current:cabinet',
   Settings = 'settings',
@@ -71,15 +71,6 @@ export class PermanentStorage {
   }
 }
 
-export class AppCrypto {
-  static encrypt(data, password) {
-    return sjcl.encrypt(password, data);
-  }
-  static decrypt(encryptedData, password) {
-    return sjcl.decrypt(password, encryptedData);
-  }
-}
-
 export class AppWallet {
   static $store;
 
@@ -90,46 +81,26 @@ export class AppWallet {
   static async generateAccount(coinType, index) {
     const encryptedSeed = await PermanentStorage.getValue(StorageVars.EncryptedSeed);
     const password = await this.getPassword();
-    const mnemonic = AppCrypto.decrypt(encryptedSeed, password);
+    const mnemonic = cybCrypto.decrypt(encryptedSeed, password);
 
     if (coinType === CoinType.Ether) {
-      const wallet = ethers.Wallet.fromMnemonic(mnemonic, `m/44'/60'/0'/0/${index}`);
-      return {
-        address: wallet.address,
-        privateKey: wallet.privateKey,
-      };
-    } else if (coinType === CoinType.Cosmos) {
-      const seed = await bip39.mnemonicToSeed(mnemonic);
-      const node = bip32.fromSeed(seed);
-      const child = node.derivePath(`m/44'/118'/0'/0/${index}`);
-      const words = bech32.toWords(child.identifier);
-      const address = bech32.encode('cyber', words);
-      const ecpair = bitcoinjs.ECPair.fromPrivateKey(child.privateKey, { compressed: false });
-      const privateKey = ecpair.privateKey.toString('hex');
-
-      return {
-        address,
-        privateKey,
-      };
+    } else if (coinType === CoinType.CyberD) {
+      return cybCrypto.getEthereumKeypairByMnemonic(mnemonic, index);
+    } else if (coinType === CoinType.Binance) {
+      return cybCrypto.getBinanceKeypairByMnemonic(mnemonic, index);
+    } else if (coinType === CoinType.Irisnet) {
+      return cybCrypto.getIrisnetKeypairByMnemonic(mnemonic, index);
+    } else if (coinType === CoinType.Terra) {
+      return cybCrypto.getTerraKeypairByMnemonic(mnemonic, index);
     }
     return null;
-    // const hdkey = HDKey.fromMasterSeed(Buffer.from(seed, 'hex'));
-    // const childkey = hdkey.derive(`m/44'/60'/0'/0/${index}`);
-    // return {
-    //   privateKey: childkey.privateExtendedKey,
-    //   publicKey: childkey.publicExtendedKey
-    // }
   }
 
   static async getAccountByPrivateKey(coinType, privateKey) {
     if (coinType === CoinType.Ether) {
-      const wallet = new ethers.Wallet(privateKey);
-      return {
-        address: wallet.address,
-        privateKey: wallet.privateKey,
-      };
-    } else if (coinType === CoinType.Cosmos) {
-      return cyberjsCrypto.importAccount(privateKey);
+      return cybCrypto.getEthereumKeypairByPrivateKey(privateKey);
+    } else if (coinType === CoinType.CyberD) {
+      return cybCrypto.getCyberKeypairByPrivateKey(privateKey);
     }
     return null;
   }
@@ -143,54 +114,57 @@ export class AppWallet {
   }
 
   static generateSeed() {
-    return bip39.generateMnemonic();
+    return cybCrypto.generateMnemonic();
   }
 
   static async setSeed(seed, password) {
-    this.$store.commit(StorageVars.EncryptedSeed, AppCrypto.encrypt(seed, password));
+    this.$store.commit(StorageVars.EncryptedSeed, cybCrypto.encrypt(seed, password));
     return this.setPassword(password);
   }
 
   static async addAccountGroup(title) {
     const accountsGroups = _.clone(this.$store.state[StorageVars.AccountsGroups]) || [];
-    accountsGroups.push({
+    const newGroup = {
       title,
       derivationIndex: accountsGroups.length,
-    });
+      id: Helper.uuidv4(),
+    };
+    accountsGroups.push(newGroup);
     this.$store.commit(StorageVars.AccountsGroups, accountsGroups);
+    return newGroup;
   }
 
-  static async addAccount(storageVar, address, privateKey, additionalData = {}) {
-    const accounts = _.clone(this.$store.state[storageVar]) || [];
+  static async addAccount(groupId, address, coinType, privateKey, additionalData = {}) {
+    const accounts = _.clone(this.$store.state[StorageVars.AllAccounts]) || [];
 
-    if (_.some(accounts, { address })) {
+    if (_.some(accounts, { address, groupId })) {
       //already exists
       return;
     }
 
     const newAccount = _.extend(
       {
-        address: address,
+        address,
+        coinType,
         encryptedPrivateKey: await this.encryptByPassword(privateKey),
       },
       additionalData
     );
 
     accounts.push(newAccount);
-    this.$store.commit(storageVar, accounts);
-    this.$store.commit(StorageVars.Account, newAccount);
+    this.$store.commit(StorageVars.AllAccounts, accounts);
   }
 
   static async encryptByPassword(data) {
-    return AppCrypto.encrypt(data, await this.getPassword());
+    return cybCrypto.encrypt(data, await this.getPassword());
   }
 
   static async decryptByPassword(encryptedData) {
-    return AppCrypto.decrypt(encryptedData, await this.getPassword());
+    return cybCrypto.decrypt(encryptedData, await this.getPassword());
   }
 }
 
-export function getIpfsHash(string) {
+export function getIpfsfHash(string) {
   return new Promise((resolve, reject) => {
     const unixFsFile = new Unixfs('file', Buffer.from(string));
     const buffer = unixFsFile.marshal();

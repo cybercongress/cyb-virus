@@ -32,7 +32,7 @@ const ipRegex = require('ip-regex');
 
 Vue.use(storePlugin, {
   [StorageVars.Ready]: false,
-  [StorageVars.CoinType]: CoinType.Cosmos,
+  [StorageVars.CoinType]: CoinType.CyberD,
   [StorageVars.Network]: Network.CyberD,
   [StorageVars.NetworkList]: [{ title: 'CyberD', value: Network.CyberD }, { title: 'Geesome', value: Network.Geesome }],
   [StorageVars.Account]: null,
@@ -120,7 +120,7 @@ export default {
           this.$store.commit(StorageVars.Network, network.value);
           let coinType = null;
           if (network.value === 'cyberd') {
-            coinType = CoinType.Cosmos;
+            coinType = CoinType.CyberD;
           }
           this.$store.commit(StorageVars.CoinType, coinType);
           return true;

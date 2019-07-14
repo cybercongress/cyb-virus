@@ -8,7 +8,7 @@ export default {
   async created() {
     if (!this.accounts.length) {
       const index = 0;
-      const newAccount = await AppWallet.generateAccount(CoinType.Cosmos, index);
+      const newAccount = await AppWallet.generateAccount(CoinType.CyberD, index);
       await AppWallet.addAccount(StorageVars.CyberDAccounts, newAccount.address, newAccount.privateKey, { index });
     }
     this.$store.commit(StorageVars.CurrentAccounts, this.$store.state[StorageVars.CyberDAccounts]);
