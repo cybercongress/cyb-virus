@@ -1,23 +1,20 @@
-import { AppWallet, CoinType, StorageVars } from '../../../../../services/data';
+import { KeyPairType, Network, StorageVars } from '../../../../../enum';
+import { AppWallet } from '../../../../../services/data';
 
 export default {
   template: require('./ImportAccount.html'),
   methods: {
     async importAccount() {
       if (this.importMethod === 'privateKey') {
-        const account = await AppWallet.getAccountByPrivateKey(CoinType.CyberD, this.privateKey);
-        await AppWallet.addAccount(StorageVars.CyberDAccounts, account.address, account.privateKey);
-        this.$store.commit(StorageVars.CurrentAccounts, this.$store.state[StorageVars.CyberDAccounts]);
+        const account = await AppWallet.getAccountByPrivateKey(KeyPairType.Cyber, this.privateKey);
+        await AppWallet.addAccount(this.currentAccountGroup.id, Network.CyberD, KeyPairType.Cyber, account.address, account.privateKey);
         this.$router.push({ name: 'cabinet-cyberd' });
       }
     },
   },
   computed: {
-    accounts() {
-      return this.$store.state[StorageVars.CurrentAccounts];
-    },
-    coinType() {
-      return this.$store.state[StorageVars.CoinType];
+    currentAccountGroup() {
+      return this.$store.state[StorageVars.CurrentAccountGroup];
     },
   },
   data() {

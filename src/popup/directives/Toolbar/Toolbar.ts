@@ -1,11 +1,10 @@
-import NetworkSelectInput from '../NetworkSelect/NetworkSelectInput/NetworkSelectInput';
 import AccountSelectInput from '../AccountSelect/AccountSelectInput/AccountSelectInput';
-import { StorageVars } from '../../../services/data';
+import { StorageVars } from '../../../enum';
 
 export default {
   name: 'toolbar',
   template: require('./Toolbar.html'),
-  components: { NetworkSelectInput, AccountSelectInput },
+  components: { AccountSelectInput }, // NetworkSelectInput,
   created() {
     this.search = this.$route.query.search || '';
     this.setCurrentCabinet();
@@ -13,17 +12,17 @@ export default {
   methods: {
     setCurrentCabinet() {
       let cabinetRoute;
-      if (this.currentNetwork === 'cyberd') {
+      if (this.currentAccount.networkName === 'cyberd') {
         cabinetRoute = { name: 'cabinet-cyberd', query: { search: '' } };
-      } else if (this.currentNetwork === 'geesome') {
+      } else if (this.currentAccount.networkName === 'geesome') {
         cabinetRoute = { name: 'cabinet-geesome', query: { search: '' } };
       }
       this.$store.commit(StorageVars.CurrentCabinetRoute, cabinetRoute);
     },
   },
   computed: {
-    currentNetwork() {
-      return this.$store.state[StorageVars.Network];
+    currentAccount() {
+      return this.$store.state[StorageVars.CurrentAccountItem];
     },
     currentCabinet() {
       return this.$store.state[StorageVars.CurrentCabinetRoute];
@@ -43,7 +42,7 @@ export default {
         this.search = this.$route.query.search || '';
       }
     },
-    currentNetwork() {
+    currentAccount() {
       this.setCurrentCabinet();
     },
   },

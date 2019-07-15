@@ -1,6 +1,7 @@
-import { AppWallet, StorageVars } from '../../../../../services/data';
+import { AppWallet } from '../../../../../services/data';
 import { CyberD } from '../../../../../services/cyberd';
 import ContentDetails from '../../../../directives/ContentDetails/ContentDetails';
+import { StorageVars } from '../../../../../enum';
 
 export default {
   template: require('./TransferCyb.html'),
@@ -37,7 +38,7 @@ export default {
   },
   computed: {
     currentAccount() {
-      return this.$store.state[StorageVars.Account];
+      return this.$store.state[StorageVars.CurrentAccountItem];
     },
     disableTransfer() {
       return !this.addressTo || !this.amount;

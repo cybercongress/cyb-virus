@@ -15,7 +15,8 @@ import Vue from 'vue';
 import * as Vuex from 'vuex';
 import * as _ from 'lodash';
 import * as pIteration from 'p-iteration';
-import { PermanentStorage, StorageVars } from './data';
+import { PermanentStorage } from './data';
+import { StorageVars } from '../enum';
 
 Vue.use(Vuex as any);
 

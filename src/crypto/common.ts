@@ -1,14 +1,12 @@
-const ethers = require('ethers');
+import Hd from './hd';
+
 const bip39 = require('bip39');
 const bech32 = require('bech32');
 const bip32 = require('bip32');
 const bitcoinjs = require('bitcoinjs-lib');
-const BN = require('bn');
 const Secp256k1 = require('secp256k1');
 const Sha256 = require('sha256');
 const RIPEMD160 = require('ripemd160');
-
-const amino = require('irisnet-crypto/src/chains/base');
 
 module.exports = {
   async getCosmosKeypairByMnemonic(mnemonic, index, prefix, chainIndex = '118') {
@@ -42,7 +40,7 @@ module.exports = {
 
     return {
       address,
-      privateKey,
+      privateKey: privateKey.toString('hex'),
     };
   },
 };

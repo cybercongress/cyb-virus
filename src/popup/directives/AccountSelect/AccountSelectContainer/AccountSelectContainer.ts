@@ -12,9 +12,7 @@
  */
 
 import { EventBus, ACCOUNT_SELECT_HIDE, ACCOUNT_SELECT_PREVENT_CLOSE, ACCOUNT_SELECT_SHOW, ACCOUNT_SELECT_ITEM } from '../../../../services/events';
-import { AppWallet, CoinType, StorageVars } from '../../../../services/data';
-import EthData from '@galtproject/frontend-core/libs/EthData';
-const _ = require('lodash');
+import { StorageVars } from '../../../../enum';
 
 export default {
   name: 'account-select-container',
@@ -54,22 +52,22 @@ export default {
     });
   },
   methods: {
-    async addAccount() {
-      let lastIndex = 0;
-      this.accountList.forEach(account => {
-        if (account.index > lastIndex) {
-          lastIndex = account.index;
-        }
-      });
-      const index = lastIndex + 1;
-      const newAccount = await AppWallet.generateAccount(this.currentCoinType, index);
-      console.log('newAccount', index, newAccount);
-      //TODO: get StorageVar of accounts from state
-      await AppWallet.addAccount(StorageVars.CyberDAccounts, newAccount.address, newAccount.privateKey, { index });
-      this.$store.commit(StorageVars.CurrentAccounts, this.$store.state[StorageVars.CyberDAccounts]);
-      this.$store.commit(StorageVars.Account, _.last(this.$store.state[StorageVars.CyberDAccounts]));
-      this.$router.push(this.currentCabinet);
-    },
+    // async addAccount() {
+    //   let lastIndex = 0;
+    //   this.accountList.forEach(account => {
+    //     if (account.index > lastIndex) {
+    //       lastIndex = account.index;
+    //     }
+    //   });
+    //   const index = lastIndex + 1;
+    //   const newAccount = await AppWallet.generateAccount(this.currentCoinType, index);
+    //   console.log('newAccount', index, newAccount);
+    //   //TODO: get StorageVar of accounts from state
+    //   await AppWallet.addAccount(StorageVars.CyberDAccounts, newAccount.address, newAccount.privateKey, { index });
+    //   this.$store.commit(StorageVars.CurrentAccounts, this.$store.state[StorageVars.CyberDAccounts]);
+    //   this.$store.commit(StorageVars.AppAccountGroup, _.last(this.$store.state[StorageVars.CyberDAccounts]));
+    //   this.$router.push(this.currentCabinet);
+    // },
     getElOffset(el) {
       const rect = el.getBoundingClientRect();
       const docEl = document.documentElement;
@@ -87,28 +85,18 @@ export default {
     preventClose() {
       EventBus.$emit(ACCOUNT_SELECT_PREVENT_CLOSE, { uniqId: this.uniqId });
     },
-    selectAccountByIndex(index) {
-      EventBus.$emit(ACCOUNT_SELECT_ITEM, { uniqId: this.uniqId, account: this.accountList[index] });
+    selectAccountGroupById(id) {
+      EventBus.$emit(ACCOUNT_SELECT_ITEM, { uniqId: this.uniqId, groupId: id });
       this.$router.push(this.currentCabinet);
     },
   },
   watch: {},
   computed: {
     currentAccount() {
-      return this.$store.state[StorageVars.Account];
+      return this.$store.state[StorageVars.CurrentAccountGroup];
     },
-    accountList() {
-      return this.$store.state[StorageVars.CurrentAccounts] || [];
-    },
-    accountListDisplay() {
-      return this.accountList.map(account => {
-        account = _.clone(account);
-        account.prettyAddress = EthData.cutHex(account.address);
-        return account;
-      });
-    },
-    currentCoinType() {
-      return this.$store.state[StorageVars.CoinType];
+    accountGroupsList() {
+      return this.$store.state[StorageVars.AccountsGroups] || [];
     },
     currentCabinet() {
       return this.$store.state[StorageVars.CurrentCabinetRoute];

@@ -1,4 +1,4 @@
-import { StorageVars } from '../../../services/data';
+import { StorageVars } from '../../../enum';
 
 export default {
   name: 'pretty-hash',

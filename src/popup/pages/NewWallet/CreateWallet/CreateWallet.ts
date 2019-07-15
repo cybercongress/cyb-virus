@@ -1,6 +1,8 @@
 import { AppWallet } from '../../../../services/data';
 import Helper from '@galtproject/frontend-core/services/helper';
 
+const appConfig = require('../../../../config');
+
 export default {
   template: require('./CreateWallet.html'),
   created() {
@@ -9,6 +11,11 @@ export default {
   methods: {
     async save() {
       await AppWallet.setSeed(this.seedPhrase, this.password);
+      const group = await AppWallet.addAccountGroup(appConfig.baseAccountsGroupTitle);
+      await AppWallet.generateBaseCoinsForAccountGroup(group.id);
+
+      AppWallet.setCurrentAccountGroup(group);
+
       this.$router.push({ name: 'cabinet-cyberd' });
     },
     copyToClipboard() {

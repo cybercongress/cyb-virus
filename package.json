@@ -32,6 +32,7 @@
     "cheerio": "^1.0.0-rc.3",
     "dexie": "^2.0.4",
     "ethers": "^4.0.30",
+    "bn": "git+https://github.com/shineabel/bn.git",
     "font-awesome": "https://github.com/FortAwesome/Font-Awesome.git",
     "hdkey": "^1.1.1",
     "ip-regex": "^4.1.0",

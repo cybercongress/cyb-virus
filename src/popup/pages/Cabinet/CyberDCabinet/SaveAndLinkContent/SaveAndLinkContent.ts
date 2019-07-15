@@ -1,6 +1,7 @@
-import { AppWallet, StorageVars } from '../../../../../services/data';
 import { CyberD } from '../../../../../services/cyberd';
 import { addIpfsContentArray, saveContent } from '../../../../../services/backgroundGateway';
+import { AppWallet } from '../../../../../services/data';
+import { StorageVars } from '../../../../../enum';
 
 const pIteration = require('p-iteration');
 
@@ -70,7 +71,7 @@ export default {
       return this.keywords ? this.keywords.join(', ') : '';
     },
     currentAccount() {
-      return this.$store.state[StorageVars.Account];
+      return this.$store.state[StorageVars.CurrentAccountItem];
     },
     disableSaveAndLink() {
       return !(this.contentHash || this.inputContentHash) || (this.linkKeywords && !(this.keywordsStr || this.inputKeywordsStr));

@@ -1,20 +1,10 @@
-import { AppWallet, CoinType, StorageVars } from '../../../../services/data';
 import { CyberD } from '../../../../services/cyberd';
 import { getPeers } from '../../../../services/backgroundGateway';
-const _ = require('lodash');
+import { StorageVars } from '../../../../enum';
 
 export default {
   template: require('./CyberDCabinet.html'),
   async created() {
-    if (!this.accounts.length) {
-      const index = 0;
-      const newAccount = await AppWallet.generateAccount(CoinType.CyberD, index);
-      await AppWallet.addAccount(StorageVars.CyberDAccounts, newAccount.address, newAccount.privateKey, { index });
-    }
-    this.$store.commit(StorageVars.CurrentAccounts, this.$store.state[StorageVars.CyberDAccounts]);
-    if (!this.currentAccount) {
-      this.$store.commit(StorageVars.Account, this.accounts[0]);
-    }
     this.getBalance();
 
     getPeers()
@@ -48,10 +38,7 @@ export default {
   },
   computed: {
     currentAccount() {
-      return this.$store.state[StorageVars.Account];
-    },
-    accounts() {
-      return this.$store.state[StorageVars.CurrentAccounts] || [];
+      return this.$store.state[StorageVars.CurrentAccountItem];
     },
     balanceStr() {
       return this.balance === null ? '...' : this.balance;

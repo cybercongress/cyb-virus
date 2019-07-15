@@ -1,4 +1,7 @@
-class Hd {
+const BN = require('bn');
+const Secp256k1 = require('secp256k1');
+
+export default class Hd {
   static ComputeMastersFromSeed(seed) {
     let masterSecret = Buffer.from('Bitcoin seed');
     let master = Hd.I64(masterSecret, seed);

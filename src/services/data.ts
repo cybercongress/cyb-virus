@@ -1,43 +1,15 @@
 import Helper from '@galtproject/frontend-core/services/helper';
+import { AppAccount, AppAccountGroup } from '../interface';
+import { KeyPairType, StorageVars } from '../enum';
 
 const _ = require('lodash');
+const pIteration = require('p-iteration');
 
 const Unixfs = require('ipfs-unixfs');
 const { DAGNode, util: DAGUtil } = require('ipld-dag-pb');
 
 const cybCrypto = require('../crypto');
-
-export enum CoinType {
-  CyberD = 'cyberd',
-  Ether = 'ether',
-  Binance = 'binance',
-  Irisnet = 'irisnet',
-  Terra = 'terra',
-}
-
-export enum Network {
-  Geesome = 'geesome',
-  CyberD = 'cyberd',
-}
-
-export enum StorageVars {
-  Ready = 'ready',
-  EncryptedSeed = 'encryptedSeed',
-  Path = 'path',
-  Query = 'query',
-  CoinType = 'coinType',
-  Network = 'network',
-  NetworkList = 'networkList',
-  Account = 'account',
-  AccountsGroups = 'accounts:groups',
-  AllAccounts = 'accounts:all',
-  CurrentAccounts = 'accounts:current',
-  // CyberDAccounts = 'cyberd:accounts',
-  // GeesomeAccounts = 'geesome:accounts',
-  IpfsUrl = 'ipfs:url',
-  CurrentCabinetRoute = 'current:cabinet',
-  Settings = 'settings',
-}
+const appConfig = require('../config');
 
 export class PermanentStorage {
   static pseudoStorage = {};
@@ -78,28 +50,29 @@ export class AppWallet {
     this.$store = $store;
   }
 
-  static async generateAccount(coinType, index) {
+  static async generateAccount(coinType, index): Promise<AppAccount> {
     const encryptedSeed = await PermanentStorage.getValue(StorageVars.EncryptedSeed);
     const password = await this.getPassword();
     const mnemonic = cybCrypto.decrypt(encryptedSeed, password);
 
-    if (coinType === CoinType.Ether) {
-    } else if (coinType === CoinType.CyberD) {
+    if (coinType === KeyPairType.Ether) {
       return cybCrypto.getEthereumKeypairByMnemonic(mnemonic, index);
-    } else if (coinType === CoinType.Binance) {
+    } else if (coinType === KeyPairType.Cyber) {
+      return cybCrypto.getCyberDKeypairByMnemonic(mnemonic, index);
+    } else if (coinType === KeyPairType.Binance) {
       return cybCrypto.getBinanceKeypairByMnemonic(mnemonic, index);
-    } else if (coinType === CoinType.Irisnet) {
+    } else if (coinType === KeyPairType.Irisnet) {
       return cybCrypto.getIrisnetKeypairByMnemonic(mnemonic, index);
-    } else if (coinType === CoinType.Terra) {
+    } else if (coinType === KeyPairType.Terra) {
       return cybCrypto.getTerraKeypairByMnemonic(mnemonic, index);
     }
     return null;
   }
 
-  static async getAccountByPrivateKey(coinType, privateKey) {
-    if (coinType === CoinType.Ether) {
+  static async getAccountByPrivateKey(coinType, privateKey): Promise<AppAccount> {
+    if (coinType === KeyPairType.Ether) {
       return cybCrypto.getEthereumKeypairByPrivateKey(privateKey);
-    } else if (coinType === CoinType.CyberD) {
+    } else if (coinType === KeyPairType.Cyber) {
       return cybCrypto.getCyberKeypairByPrivateKey(privateKey);
     }
     return null;
@@ -122,19 +95,50 @@ export class AppWallet {
     return this.setPassword(password);
   }
 
-  static async addAccountGroup(title) {
+  static async addAccountGroup(title): Promise<AppAccountGroup> {
     const accountsGroups = _.clone(this.$store.state[StorageVars.AccountsGroups]) || [];
-    const newGroup = {
+
+    let lastIndex = 0;
+
+    if (accountsGroups.length > 0) {
+      accountsGroups.forEach(account => {
+        if (account.derivationIndex > lastIndex) {
+          lastIndex = account.derivationIndex;
+        }
+      });
+      lastIndex += 1;
+    }
+
+    const newGroup: AppAccountGroup = {
       title,
-      derivationIndex: accountsGroups.length,
+      derivationIndex: lastIndex,
       id: Helper.uuidv4(),
     };
     accountsGroups.push(newGroup);
+
     this.$store.commit(StorageVars.AccountsGroups, accountsGroups);
+
     return newGroup;
   }
 
-  static async addAccount(groupId, address, coinType, privateKey, additionalData = {}) {
+  static async generateBaseCoinsForAccountGroup(groupId): Promise<AppAccount[]> {
+    const accountGroup = this.getAccountGroupById(groupId);
+
+    return pIteration.map(appConfig.baseKeyPairs, async coinType => {
+      const newAccount = await AppWallet.generateAccount(coinType, accountGroup.derivationIndex);
+      return AppWallet.addAccount(groupId, coinType, appConfig.defaultNetworksByKeyPairType[coinType], newAccount.address, newAccount.privateKey);
+    });
+  }
+
+  static getAccountGroupById(groupId): AppAccountGroup {
+    return _.find(this.$store.state[StorageVars.AccountsGroups], { id: groupId });
+  }
+
+  static getAccountListByGroupById(groupId): AppAccount[] {
+    return _.filter(this.$store.state[StorageVars.AllAccounts], { groupId });
+  }
+
+  static async addAccount(groupId, networkName, coinType, address, privateKey, additionalData = {}): Promise<AppAccount> {
     const accounts = _.clone(this.$store.state[StorageVars.AllAccounts]) || [];
 
     if (_.some(accounts, { address, groupId })) {
@@ -142,10 +146,25 @@ export class AppWallet {
       return;
     }
 
-    const newAccount = _.extend(
+    const groupAccounts = this.getAccountListByGroupById(groupId);
+
+    let lastPosition = 0;
+    if (groupAccounts.length > 0) {
+      groupAccounts.forEach(account => {
+        if (account.position > lastPosition) {
+          lastPosition = account.position;
+        }
+      });
+      lastPosition += 1;
+    }
+
+    const newAccount: AppAccount = _.extend(
       {
         address,
         coinType,
+        groupId,
+        networkName,
+        position: lastPosition,
         encryptedPrivateKey: await this.encryptByPassword(privateKey),
       },
       additionalData
@@ -153,6 +172,20 @@ export class AppWallet {
 
     accounts.push(newAccount);
     this.$store.commit(StorageVars.AllAccounts, accounts);
+    return newAccount;
+  }
+
+  static setCurrentAccountItem(accountItem: AppAccount) {
+    this.$store.commit(StorageVars.CurrentAccountItem, accountItem);
+  }
+  static setCurrentAccountGroup(accountGroup: AppAccountGroup) {
+    this.$store.commit(StorageVars.CurrentAccountGroup, accountGroup);
+    const accountList = this.getAccountListByGroupById(accountGroup.id);
+    this.$store.commit(StorageVars.CurrentAccountList, accountList);
+    this.setCurrentAccountItem(accountList[0]);
+  }
+  static setCurrentAccountGroupById(groupId) {
+    this.setCurrentAccountGroup(this.getAccountGroupById(groupId));
   }
 
   static async encryptByPassword(data) {
@@ -164,7 +197,7 @@ export class AppWallet {
   }
 }
 
-export function getIpfsfHash(string) {
+export function getIpfsHash(string) {
   return new Promise((resolve, reject) => {
     const unixFsFile = new Unixfs('file', Buffer.from(string));
     const buffer = unixFsFile.marshal();
