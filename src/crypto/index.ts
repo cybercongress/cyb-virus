@@ -34,7 +34,7 @@ module.exports = {
     return common.getCosmosKeypairByMnemonic(mnemonic, index, 'tbnb', '714');
   },
   async getIrisnetKeypairByMnemonic(mnemonic, index) {
-    return common.getIrisnetKeypairByMnemonic(mnemonic, index);
+    return common.getIrisnetKeypairByMnemonic(mnemonic, index, null, '118');
   },
   async getTerraKeypairByMnemonic(mnemonic, index) {
     // https://github.com/terra-project/terra-js/blob/master/src/utils/keyUtils.ts
