@@ -3,9 +3,9 @@ import { StorageVars } from '../../../../enum';
 import { AppWallet } from '../../../../services/data';
 
 export default {
-  template: require('./CyberDCabinet.html'),
+  template: require('./CosmosCabinet.html'),
   async created() {
-    this.$cyberD = AppWallet.getCyberDInstance();
+    this.$cosmos = AppWallet.getCosmosInstance();
 
     this.getBalance();
 
@@ -31,8 +31,7 @@ export default {
       if (!this.currentAccount) {
         return;
       }
-      this.balance = await this.$cyberD.getGigaBalance(this.currentAccount.address);
-      this.bandwidth = await this.$cyberD.getBandwidth(this.currentAccount.address);
+      this.balance = await this.$cosmos.getMegaBalance(this.currentAccount.address);
     },
     downloadPage() {
       (global as any).chrome.runtime.sendMessage({ type: 'download-page' }, response => {});
@@ -53,7 +52,6 @@ export default {
     return {
       peersLoading: true,
       balance: null,
-      bandwidth: null,
       peersError: false,
       peersCount: null,
     };

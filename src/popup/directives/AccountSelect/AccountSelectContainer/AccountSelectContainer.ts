@@ -60,7 +60,7 @@ export default {
     //     }
     //   });
     //   const index = lastIndex + 1;
-    //   const newAccount = await AppWallet.generateAccount(this.currentCoinType, index);
+    //   const newAccount = await AppWallet.generateAccount(this.currentkeyPairType, index);
     //   console.log('newAccount', index, newAccount);
     //   //TODO: get StorageVar of accounts from state
     //   await AppWallet.addAccount(StorageVars.CyberDAccounts, newAccount.address, newAccount.privateKey, { index });

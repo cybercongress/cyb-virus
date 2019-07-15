@@ -1,4 +1,3 @@
-import { CyberD } from '../../../../../services/cyberd';
 import { addIpfsContentArray, saveContent } from '../../../../../services/backgroundGateway';
 import { AppWallet } from '../../../../../services/data';
 import { StorageVars } from '../../../../../enum';
@@ -8,6 +7,8 @@ const pIteration = require('p-iteration');
 export default {
   template: require('./SaveAndLinkContent.html'),
   created() {
+    this.$cyberD = AppWallet.getCyberDInstance();
+
     this.linkKeywords = this.$route.query.linkKeywords;
     this.inputDescription = this.$route.query.description;
     this.size = this.$route.query.size;
@@ -27,7 +28,7 @@ export default {
           const keywordHashes = await addIpfsContentArray(this.resultKeywords);
 
           const results = await pIteration.mapSeries(keywordHashes, async keywordHash => {
-            return CyberD.link(
+            return this.$cyberD.link(
               {
                 address: this.currentAccount.address,
                 privateKey: await AppWallet.decryptByPassword(this.currentAccount.encryptedPrivateKey),

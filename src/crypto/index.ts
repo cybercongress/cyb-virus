@@ -29,6 +29,9 @@ module.exports = {
   async getCyberDKeypairByMnemonic(mnemonic, index) {
     return common.getCosmosKeypairByMnemonic(mnemonic, index, 'cyber', '118');
   },
+  async getCosmosKeypairByMnemonic(mnemonic, index) {
+    return common.getCosmosKeypairByMnemonic(mnemonic, index, 'cosmos', '118');
+  },
   async getBinanceKeypairByMnemonic(mnemonic, index) {
     // https://github.com/binance-chain/javascript-sdk/blob/master/src/crypto/index.js
     return common.getCosmosKeypairByMnemonic(mnemonic, index, 'tbnb', '714');

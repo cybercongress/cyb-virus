@@ -1,7 +1,7 @@
 export interface AppAccount {
   address;
   privateKey?;
-  coinType?;
+  keyPairType?;
   groupId?;
   position?;
   networkName?;

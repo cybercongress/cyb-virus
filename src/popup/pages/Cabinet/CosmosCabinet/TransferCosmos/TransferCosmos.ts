@@ -3,17 +3,17 @@ import ContentDetails from '../../../../directives/ContentDetails/ContentDetails
 import { StorageVars } from '../../../../../enum';
 
 export default {
-  template: require('./TransferCyb.html'),
+  template: require('./TransferCosmos.html'),
   components: { ContentDetails },
   created() {
-    this.$cyberD = AppWallet.getCyberDInstance();
+    this.$cosmos = AppWallet.getCosmosInstance();
 
     this.inputKeywordsStr = this.keywordsStr;
   },
   methods: {
     async transfer() {
       try {
-        const result = await this.$cyberD.transfer(
+        const result = await this.$cosmos.transfer(
           {
             address: this.currentAccount.address,
             privateKey: await AppWallet.decryptByPassword(this.currentAccount.encryptedPrivateKey),
@@ -27,7 +27,7 @@ export default {
           text: 'Successfully transfered',
         });
 
-        this.$router.push({ name: 'cabinet-cyberd' });
+        this.$router.push({ name: 'cabinet-cosmos' });
       } catch (e) {
         this.$notify({
           type: 'error',

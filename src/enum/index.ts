@@ -1,15 +1,17 @@
 export enum KeyPairType {
   Cyber = 'cyber',
+  Cosmos = 'cosmos',
   Ether = 'ether',
   Binance = 'binance',
   Irisnet = 'irisnet',
   Terra = 'terra',
 }
 
-export enum Network {
+export enum NetworkType {
   Geesome = 'geesome',
   CyberD = 'cyberd',
-  EthereumMainnet = 'ethereum-mainnet',
+  Cosmos = 'cosmos',
+  Ethereum = 'ethereum',
   BinanceChain = 'binance-chain',
   Irisnet = 'irisnet',
   Terra = 'terra',

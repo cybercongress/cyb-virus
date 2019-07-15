@@ -14,7 +14,7 @@ module.exports = {
     const node = bip32.fromSeed(seed);
     const child = node.derivePath(`m/44'/${chainIndex}'/0'/0/${index}`);
     const words = bech32.toWords(child.identifier);
-    const address = bech32.encode('cyber', words);
+    const address = bech32.encode(prefix, words);
     const ecpair = bitcoinjs.ECPair.fromPrivateKey(child.privateKey, { compressed: false });
     const privateKey = ecpair.privateKey.toString('hex');
     return {

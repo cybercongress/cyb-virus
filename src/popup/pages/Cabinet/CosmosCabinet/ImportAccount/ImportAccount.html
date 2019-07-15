@@ -1,0 +1,17 @@
+<div id="import-account" class="padding-container">
+  <h2>Import account</h2>
+
+  <md-field>
+    <label>Import method</label>
+    <md-select v-model="importMethod">
+      <md-option v-for="method in methodList" :value="method.value">{{method.title}}</md-option>
+    </md-select>
+  </md-field>
+
+  <div v-if="importMethod === 'privateKey'">
+    <div><label>Input private key</label></div>
+    <input v-model="privateKey" />
+
+    <button style="margin-top: 15px;" @click="importAccount()">Add new account</button>
+  </div>
+</div>
