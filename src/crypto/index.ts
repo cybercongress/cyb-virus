@@ -34,6 +34,7 @@ module.exports = {
     return common.getCosmosKeypairByMnemonic(mnemonic, index, 'tbnb', '714');
   },
   async getIrisnetKeypairByMnemonic(mnemonic, index) {
+    // https://github.com/irisnet/irisnet-crypto/blob/master/src/chains/cosmos/keypair.js
     return common.getIrisnetKeypairByMnemonic(mnemonic, index, null, '118');
   },
   async getTerraKeypairByMnemonic(mnemonic, index) {
