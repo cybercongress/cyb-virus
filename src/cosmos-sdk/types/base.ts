@@ -1,0 +1,98 @@
+export {};
+
+let { TypeFactory, Types } = require('js-amino');
+
+let StdTx = TypeFactory.create('StdTx', [
+  {
+    name: 'msg',
+    type: Types.ArrayInterface,
+  },
+  {
+    name: 'fee',
+    type: Types.Struct,
+  },
+  {
+    name: 'signatures',
+    type: Types.ArrayStruct,
+  },
+  {
+    name: 'memo',
+    type: Types.String,
+  },
+]);
+
+let Coin = TypeFactory.create('coin', [
+  {
+    name: 'denom',
+    type: Types.String,
+  },
+  {
+    name: 'amount',
+    type: Types.String,
+  },
+]);
+
+let Input = TypeFactory.create('input', [
+  {
+    name: 'address',
+    type: Types.String,
+  },
+  {
+    name: 'coins',
+    type: Types.ArrayStruct,
+  },
+]);
+
+let Output = TypeFactory.create('output', [
+  {
+    name: 'address',
+    type: Types.String,
+  },
+  {
+    name: 'coins',
+    type: Types.ArrayStruct,
+  },
+]);
+
+let Fee = TypeFactory.create('fee', [
+  {
+    name: 'amount',
+    type: Types.ArrayStruct,
+  },
+  {
+    name: 'gas',
+    type: Types.Int64,
+  },
+]);
+
+let PubKeySecp256k1 = TypeFactory.create(
+  'PubKeySecp256k1',
+  [
+    {
+      name: 's',
+      type: Types.ByteSlice,
+    },
+  ],
+  Types.ByteSlice
+);
+
+let Signature = TypeFactory.create('signature', [
+  {
+    name: 'pub_key',
+    type: Types.Interface,
+  },
+  {
+    name: 'signature',
+    type: Types.ByteSlice,
+  },
+]);
+
+module.exports = {
+  Coin,
+  Input,
+  Output,
+  Fee,
+  Signature,
+  StdTx,
+  PubKeySecp256k1,
+};

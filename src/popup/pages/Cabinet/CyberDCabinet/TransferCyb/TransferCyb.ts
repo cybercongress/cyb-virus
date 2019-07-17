@@ -29,6 +29,7 @@ export default {
 
         this.$router.push({ name: 'cabinet-cyberd' });
       } catch (e) {
+        console.error(e);
         this.$notify({
           type: 'error',
           title: e && e.message ? e.message : e || 'Unknown error',

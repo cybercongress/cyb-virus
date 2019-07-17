@@ -14,7 +14,7 @@ export default {
       const group = await AppWallet.addAccountGroup(appConfig.baseAccountsGroupTitle);
       await AppWallet.generateBaseCoinsForAccountGroup(group.id);
 
-      AppWallet.setCurrentAccountGroup(group);
+      await AppWallet.setCurrentAccountGroup(group);
 
       this.$router.push({ name: 'cabinet-cyberd' });
     },

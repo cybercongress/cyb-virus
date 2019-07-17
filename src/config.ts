@@ -13,7 +13,7 @@ module.exports = {
   defaultEndpointByNetworkName: {
     [NetworkType.CyberD]: {
       title: 'Euler',
-      rpc: 'http://88.198.36.117:26657',
+      rpc: 'http://93.125.26.210:34657',
     },
     [NetworkType.Cosmos]: {
       title: 'Mainnet',

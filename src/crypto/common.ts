@@ -8,6 +8,9 @@ const Secp256k1 = require('secp256k1');
 const Sha256 = require('sha256');
 const RIPEMD160 = require('ripemd160');
 
+const { marshalBinary } = require('../cosmos-sdk/utils/common');
+const { hexToBytes } = require('../cosmos-sdk/utils/hex');
+
 module.exports = {
   async getCosmosKeypairByMnemonic(mnemonic, index, prefix, chainIndex = '118') {
     const seed = await bip39.mnemonicToSeed(mnemonic);
@@ -44,32 +47,3 @@ module.exports = {
     };
   },
 };
-
-function marshalBinary(prefix, message) {
-  let prefixBytes: any = _aminoPrefix(prefix);
-  prefixBytes = Buffer.from(prefixBytes.concat(message.length));
-  prefixBytes = Buffer.concat([prefixBytes, message]);
-  return prefixBytes;
-}
-
-function _aminoPrefix(name) {
-  let a = Sha256(name);
-  let b = hexToBytes(a);
-  while (b[0] === 0) {
-    b = b.slice(1, b.length - 1);
-  }
-  b = b.slice(3, b.length - 1);
-  while (b[0] === 0) {
-    b = b.slice(1, b.length - 1);
-  }
-  b = b.slice(0, 4);
-  return b;
-}
-
-function hexToBytes(hex) {
-  let bytes = [];
-  for (let c = 0; c < hex.length; c += 2) {
-    bytes.push(parseInt(hex.substr(c, 2), 16));
-  }
-  return bytes;
-}

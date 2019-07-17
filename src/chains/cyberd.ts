@@ -3,6 +3,8 @@ export {};
 const axios = require('axios');
 const cyberjsBuilder = require('@litvintech/cyberjs/builder');
 const cyberjsCodec = require('@litvintech/cyberjs/codec');
+const cosmosBuilder = require('../cosmos-sdk/builder');
+const { stringToHex } = require('../cosmos-sdk/utils/hex');
 
 import Cosmos from './cosmos';
 
@@ -28,34 +30,51 @@ export default class CyberD extends Cosmos {
     }).then(response => (response.data.result ? response.data.result.cids : []));
   }
 
-  async transfer(txOptions, addressTo, gAmount) {
-    const chainId = await this.getNetworkId();
-    const account = await this.getAccountInfo(txOptions.address);
+  async getAccountInfo(address) {
+    const addressInfo = await axios({
+      method: 'get',
+      url: `${this.rpc}/account?address="${address}"`,
+    });
 
-    const acc = {
-      address: account.address,
-      chain_id: chainId,
-      account_number: parseInt(account.account_number, 10),
-      sequence: parseInt(account.sequence, 10),
-    };
+    if (!addressInfo.data.result) {
+      throw 'addressInfo.data.result undefined';
+    }
+    const account = addressInfo.data.result.account;
+    if (!account) {
+      throw 'addressInfo.data.result.account undefined';
+    }
+    return addressInfo.data.result.account;
+  }
+
+  async transfer(txOptions, addressTo, gAmount) {
+    // const chainId = await this.getNetworkId();
+    const account = await this.getAccountInfo(txOptions.address);
 
     const amount = parseFloat(gAmount) * 10 ** 9;
 
-    const sendRequest = {
-      acc,
+    const requestData = {
+      account: {
+        address: account.address,
+        privateKey: txOptions.privateKey,
+        // chain_id: chainId,
+        accountNumber: parseInt(account.account_number, 10),
+        sequence: parseInt(account.sequence, 10),
+      },
       amount,
       from: account.address,
       // to: cyberjsCodec.bech32.toBech32(cyberjsConstants.CyberdNetConfig.PREFIX_BECH32_ACCADDR, addressTo),
       to: addressTo,
-      type: 'send',
+      coin: 'cyb',
     };
 
-    const txRequest = cyberjsBuilder.buildAndSignTxRequest(sendRequest, txOptions.privateKey, chainId);
-    const signedSendHex = cyberjsCodec.hex.stringToHex(JSON.stringify(txRequest));
+    const txRequest = cosmosBuilder.sendRequest(requestData);
+    console.log('txRequest', txRequest);
+    // const signedSendHex = stringToHex(txRequest);
+    // console.log('signedSendHex', signedSendHex);
 
     return axios({
       method: 'get',
-      url: `${this.rpc}/submit_signed_send?data="${signedSendHex}"`,
+      url: `${this.rpc}/broadcast_tx_commit?tx="${txRequest}"`,
     })
       .then(res => {
         if (!res.data) {
@@ -90,7 +109,7 @@ export default class CyberD extends Cosmos {
       type: 'link',
     };
 
-    const txRequest = cyberjsBuilder.buildAndSignTxRequest(sendRequest, txOptions.privateKey, chainId);
+    const txRequest = cosmosBuilder.buildSendRequest(sendRequest, txOptions.privateKey, chainId);
     const signedSendHex = cyberjsCodec.hex.stringToHex(JSON.stringify(txRequest));
 
     // let websocket = new WebSocket('ws://earth.cybernode.ai:34657/websocket');

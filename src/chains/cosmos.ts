@@ -59,20 +59,16 @@ export default class Cosmos {
   async getAccountInfo(address) {
     const addressInfo = await axios({
       method: 'get',
-      url: `${this.rpc}/account?address="${address}"`,
+      url: `${this.rpc}/auth/accounts/${address}`,
     });
 
-    if (!addressInfo.data.result) {
+    if (!addressInfo.data.value) {
       throw 'addressInfo.data.result undefined';
     }
-    const account = addressInfo.data.result.account;
-    if (!account) {
-      throw 'addressInfo.data.result.account undefined';
-    }
-    return addressInfo.data.result.account;
+    return addressInfo.data.value;
   }
 
-  async transfer(txOptions, addressTo, gAmount) {
+  async transfer(txOptions, addressTo, mAmount) {
     const chainId = await this.getNetworkId();
     const account = await this.getAccountInfo(txOptions.address);
 
@@ -83,7 +79,7 @@ export default class Cosmos {
       sequence: parseInt(account.sequence, 10),
     };
 
-    const amount = parseFloat(gAmount) * 10 ** 9;
+    const amount = parseFloat(mAmount) * 10 ** 6;
 
     const sendRequest = {
       acc,

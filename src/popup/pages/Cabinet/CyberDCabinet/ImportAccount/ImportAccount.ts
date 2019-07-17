@@ -8,6 +8,10 @@ export default {
       if (this.importMethod === 'privateKey') {
         const account = await AppWallet.getAccountByPrivateKey(KeyPairType.Cyber, this.privateKey);
         await AppWallet.addAccount(this.currentAccountGroup.id, NetworkType.CyberD, KeyPairType.Cyber, account.address, account.privateKey);
+
+        // refresh current accounts
+        await AppWallet.setCurrentAccountGroup(this.currentAccountGroup);
+
         this.$router.push({ name: 'cabinet-cyberd' });
       }
     },
