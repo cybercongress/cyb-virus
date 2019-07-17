@@ -1,5 +1,7 @@
 export {};
 
+const _ = require('lodash');
+
 let { MsgSend, MsgMultiSend } = require('./types/tx');
 
 let { MsgLink, SignMsg } = require('./types/cyberd');

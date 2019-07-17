@@ -5,6 +5,7 @@ const Secp256k1 = require('secp256k1');
 const RIPEMD160 = require('ripemd160');
 const _ = require('lodash');
 const { bytesToHex, hexToBytes, isHex } = require('./hex');
+const toBN = require('number-to-bn');
 
 const { toBech32 } = require('./bech32');
 
@@ -64,9 +65,45 @@ function sign(private_key, msg) {
   return Array.from(sig.signature);
 }
 
+function weiToDecimals(wei, decimals) {
+  const zero = toBN(0);
+  const negative1 = toBN(-1);
+
+  const negative = toBN(wei.toString(10), 10).lt(zero); // eslint-disable-line
+  const baseLength = (10 ** decimals).toString().length - 1 || 1;
+  const decimalsBN = toBN((10 ** decimals).toString(10), 10);
+
+  if (negative) {
+    wei = toBN(wei.toString(10), 10).mul(negative1);
+  }
+
+  let fraction = toBN(wei.toString(10), 10)
+    .mod(decimalsBN)
+    .toString(10); // eslint-disable-line
+
+  while (fraction.length < baseLength) {
+    fraction = '0' + fraction;
+  }
+
+  fraction = fraction.match(/^([0-9]*[1-9]|0)(0*)/)[1];
+
+  const whole = toBN(wei.toString(10), 10)
+    .div(decimalsBN)
+    .toString(10); // eslint-disable-line
+
+  let value = '' + whole + (fraction == '0' ? '' : '.' + fraction); // eslint-disable-line
+
+  if (negative) {
+    value = '-' + value;
+  }
+
+  return _.trim(value, '.');
+}
+
 module.exports = {
   marshalBinary,
   hexToBytes,
   sign,
   importPrivateKey,
+  weiToDecimals,
 };

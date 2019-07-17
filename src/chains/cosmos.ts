@@ -1,9 +1,9 @@
-import EthData from '@galtproject/frontend-core/libs/EthData';
-
 const cyberjsBuilder = require('@litvintech/cyberjs/builder');
 const cyberjsCodec = require('@litvintech/cyberjs/codec');
 const cyberjsConstants = require('@litvintech/cyberjs/constants');
 const axios = require('axios');
+
+const { weiToDecimals } = require('../cosmos-sdk/utils/common');
 
 export default class Cosmos {
   rpc: string;
@@ -23,7 +23,7 @@ export default class Cosmos {
 
   async getMegaBalance(address) {
     return this.getBalance(address).then(cyb => {
-      cyb = EthData.weiToDecimals(cyb, 6);
+      cyb = weiToDecimals(cyb, 6);
 
       const strSplit = cyb.toString().split('.');
       if (strSplit.length === 1) {
@@ -35,7 +35,7 @@ export default class Cosmos {
 
   async getGigaBalance(address) {
     return this.getBalance(address).then(cyb => {
-      cyb = EthData.weiToDecimals(cyb, 9);
+      cyb = weiToDecimals(cyb, 9);
 
       const strSplit = cyb.toString().split('.');
       if (strSplit.length === 1) {
