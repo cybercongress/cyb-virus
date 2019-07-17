@@ -8,11 +8,9 @@ let { Fee, StdTx, Signature, Coin, Input, Output, PubKeySecp256k1 } = require('.
 
 const codec = require('./codec');
 
-const { hexToBytes, arrToHex } = require('./utils/hex');
-//
-// const {
-//   toBech32
-// } = require('./utils/bech32');
+const { hexToBytes, arrToHex, hexToArr } = require('./utils/hex');
+
+const { fromBech32 } = require('./utils/bech32');
 
 const { sign, importPrivateKey } = require('./utils/common');
 
@@ -88,7 +86,14 @@ module.exports = {
     console.log('marshalJson', codec.marshalJson(stdTx));
 
     let result = arrToHex(codec.marshalBinary(stdTx));
-    console.log('marshalBinary hex', result);
+    console.log('marshalBinary bytes', codec.marshalBinary(stdTx));
+    console.log('marshalBinary hex', arrToHex(codec.marshalBinary(stdTx)));
+    console.log('unmarshalBinary bytes', hexToArr(result));
+
+    let decodedDataTx = new StdTx();
+    codec.unMarshalBinary(hexToArr(result), decodedDataTx);
+
+    console.log('unmarshalBinary json', decodedDataTx.JsObject());
     if (!_.isString(result)) {
       result = result.toString('base64');
     }

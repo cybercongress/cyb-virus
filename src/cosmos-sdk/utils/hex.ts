@@ -35,6 +35,14 @@ function arrToHex(arr, hasPrefix = true) {
   return hex;
 }
 
+function hexToArr(hex, hasPrefix = true) {
+  if (hasPrefix) {
+    hex = hex.slice(2);
+  }
+
+  return hexToBytes(hex);
+}
+
 function isHex(str) {
   str = str.replace('0x', '');
   return /^[0-9a-fA-F]*$/i.test(str);
@@ -46,4 +54,5 @@ module.exports = {
   stringToHex,
   isHex,
   arrToHex,
+  hexToArr,
 };
