@@ -7,9 +7,11 @@ const { weiToDecimals } = require('../cosmos-sdk/utils/common');
 
 export default class Cosmos {
   rpc: string;
+  constants: any;
 
-  constructor(rpc) {
+  constructor(rpc, constants) {
     this.rpc = rpc;
+    this.constants = constants;
   }
 
   async getBalance(address) {

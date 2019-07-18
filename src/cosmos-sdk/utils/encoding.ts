@@ -1,4 +1,9 @@
+export {};
+
 const { importPrivateKey } = require('./common');
+const { isHex } = require('./hex');
+const { toBech32 } = require('./bech32');
+const _ = require('lodash');
 
 module.exports = function(constants) {
   function importAccount(privateKey) {

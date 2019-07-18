@@ -5,6 +5,7 @@ const cyberjsBuilder = require('@litvintech/cyberjs/builder');
 const cyberjsCodec = require('@litvintech/cyberjs/codec');
 const cosmosBuilder = require('../cosmos-sdk/builder');
 const { stringToHex } = require('../cosmos-sdk/utils/hex');
+const { importPrivateKey } = require('../cosmos-sdk/utils/common');
 
 import Cosmos from './cosmos';
 
@@ -46,16 +47,63 @@ export default class CyberD extends Cosmos {
     return addressInfo.data.result.account;
   }
 
+  async transferOld(txOptions, addressTo, gAmount) {
+    const chainId = await this.getNetworkId();
+    const account = await this.getAccountInfo(txOptions.address);
+
+    const acc = {
+      address: account.address,
+      chain_id: chainId,
+      account_number: parseInt(account.account_number, 10),
+      sequence: parseInt(account.sequence, 10),
+    };
+
+    const amount = parseFloat(gAmount) * 10 ** 9;
+
+    const sendRequest = {
+      acc,
+      amount,
+      from: account.address,
+      // to: cyberjsCodec.bech32.toBech32(cyberjsConstants.CyberdNetConfig.PREFIX_BECH32_ACCADDR, addressTo),
+      to: addressTo,
+      type: 'send',
+    };
+
+    const txRequest = cyberjsBuilder.buildAndSignTxRequest(sendRequest, txOptions.privateKey, chainId);
+    const signedSendHex = cyberjsCodec.hex.stringToHex(JSON.stringify(txRequest));
+
+    return axios({
+      method: 'get',
+      url: `${this.rpc}/submit_signed_send?data="${signedSendHex}"`,
+    })
+      .then(res => {
+        if (!res.data) {
+          throw new Error('Empty data');
+        }
+        if (res.data.error) {
+          throw res.data.error;
+        }
+        return res.data;
+      })
+      .catch(error => {
+        console.error('Transfer error', error);
+        throw error;
+      });
+  }
+
   async transfer(txOptions, addressTo, gAmount) {
     const chainId = await this.getNetworkId();
     const account = await this.getAccountInfo(txOptions.address);
 
     const amount = parseFloat(gAmount) * 10 ** 9;
 
+    const keyPair = importPrivateKey(txOptions.privateKey);
+
     const requestData = {
       account: {
-        address: account.address,
-        privateKey: txOptions.privateKey,
+        address: keyPair.address,
+        publicKey: keyPair.publicKey,
+        privateKey: keyPair.privateKey,
         accountNumber: parseInt(account.account_number, 10),
         sequence: parseInt(account.sequence, 10),
       },
@@ -68,15 +116,16 @@ export default class CyberD extends Cosmos {
       memo: 'elonmusk',
     };
 
-    const txRequest = cosmosBuilder.sendRequest(requestData);
+    const txRequest = cosmosBuilder.sendRequest(this.constants.CyberdNetConfig, requestData);
     console.log('txRequest', txRequest);
+    console.log(`${this.rpc}/broadcast_tx_commit?tx=${txRequest.hex}`);
     // const signedSendHex = stringToHex(txRequest);
     // console.log('signedSendHex', signedSendHex);
 
     // return axios.post(`${this.rpc}/txs`, txRequest.json)
     return axios({
       method: 'get',
-      url: `${this.rpc}/broadcast_tx_commit?tx="${txRequest.hex}"`,
+      url: `${this.rpc}/broadcast_tx_commit?tx=${txRequest.hex}`,
     })
       .then(res => {
         if (!res.data) {

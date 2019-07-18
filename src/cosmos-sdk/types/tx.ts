@@ -3,17 +3,17 @@ export {};
 let { TypeFactory, Types } = require('js-amino');
 
 let MsgSend = TypeFactory.create('MsgSend', [
+  // {
+  //   name: 'from_address',
+  //   type: Types.ByteSlice,
+  // },
   {
-    name: 'from_address',
-    type: Types.ByteSlice,
-  },
-  {
-    name: 'to_address',
+    name: 'to',
     type: Types.ByteSlice,
   },
   {
     name: 'amount',
-    type: Types.ArrayStruct,
+    type: Types.Struct,
   },
 ]);
 
