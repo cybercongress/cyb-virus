@@ -24,33 +24,6 @@ let CyberDMsgLinkData = TypeFactory.create('links', [
   },
 ]);
 
-let CyberDSignMsg = TypeFactory.create('SignMsg', [
-  {
-    name: 'chainID',
-    type: Types.String,
-  },
-  {
-    name: 'accnum',
-    type: Types.String,
-  },
-  {
-    name: 'sequence',
-    type: Types.String,
-  },
-  {
-    name: 'fee',
-    type: Types.Struct,
-  },
-  {
-    name: 'msg',
-    type: Types.ArrayStruct,
-  },
-  {
-    name: 'memo',
-    type: Types.String,
-  },
-]);
-
 let CyberDTxRequest = TypeFactory.create('TxRequest', [
   {
     name: 'msgs',
@@ -73,6 +46,5 @@ let CyberDTxRequest = TypeFactory.create('TxRequest', [
 module.exports = {
   CyberDMsgLink,
   CyberDMsgLinkData,
-  CyberDSignMsg,
   CyberDTxRequest,
 };

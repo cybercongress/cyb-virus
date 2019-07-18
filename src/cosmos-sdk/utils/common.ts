@@ -6,6 +6,7 @@ const RIPEMD160 = require('ripemd160');
 const _ = require('lodash');
 const { bytesToHex, hexToBytes, isHex } = require('./hex');
 const toBN = require('number-to-bn');
+const crypto = require('crypto');
 
 const { toBech32 } = require('./bech32');
 
@@ -52,17 +53,17 @@ function importPrivateKey(secretKey) {
   };
 }
 
-function sign(private_key, msg) {
-  const sigByte = Buffer.from(JSON.stringify(msg));
-  const sig32 = Buffer.from(
-    Sha256(sigByte, {
-      asBytes: true,
-    })
-  );
+function sign(private_key, msgJson) {
+  const hash = crypto
+    .createHash('sha256')
+    .update(JSON.stringify(sortObject(msgJson)))
+    .digest('hex');
+  const buf = Buffer.from(hash, 'hex');
   const prikeyArr = Buffer.from(new Uint8Array(hexToBytes(private_key)));
-  const sig = Secp256k1.sign(sig32, prikeyArr);
-
-  return Array.from(sig.signature);
+  let signObj = Secp256k1.sign(buf, prikeyArr);
+  // console.log('')
+  return Array.from(signObj.signature);
+  return Buffer.from(signObj.signature, 'binary').toString('base64');
 }
 
 function weiToDecimals(wei, decimals) {
@@ -98,6 +99,18 @@ function weiToDecimals(wei, decimals) {
   }
 
   return _.trim(value, '.');
+}
+
+function sortObject(obj) {
+  if (obj === null) return null;
+  if (typeof obj !== 'object') return obj;
+  if (Array.isArray(obj)) return obj.map(sortObject);
+  const sortedKeys = Object.keys(obj).sort();
+  const result = {};
+  sortedKeys.forEach(key => {
+    result[key] = sortObject(obj[key]);
+  });
+  return result;
 }
 
 module.exports = {

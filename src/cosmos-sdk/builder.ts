@@ -6,7 +6,7 @@ let { MsgSend, MsgMultiSend } = require('./types/tx');
 
 let { MsgLink, SignMsg } = require('./types/cyberd');
 
-let { Fee, StdTx, Signature, Coin, Input, Output, PubKeySecp256k1 } = require('./types/base');
+let { Fee, StdTx, Signature, Coin, Input, Output, PubKeySecp256k1, MsgForSign } = require('./types/base');
 
 const codec = require('./codec');
 
@@ -15,6 +15,8 @@ const { hexToBytes, arrToHex, hexToArr } = require('./utils/hex');
 const { fromBech32 } = require('./utils/bech32');
 
 const { sign, importPrivateKey } = require('./utils/common');
+
+let { addressToBech32, bech32ToAddress } = require('shr-keys');
 
 module.exports = {
   // const encoding = require('./utils/encoding')(constants);
@@ -60,37 +62,47 @@ module.exports = {
 
   // return {
   sendRequest(sendOptions) {
-    const { account } = sendOptions;
+    let { account, memo } = sendOptions;
+
+    if (_.isUndefined(memo) || _.isNull(memo)) {
+      memo = '';
+    }
 
     let coin = new Coin(sendOptions.coin, sendOptions.amount.toString());
-    console.log('Input', sendOptions.from, [coin]);
-    let input = new Input(sendOptions.from, [coin]);
-    console.log('Output', sendOptions.to, [coin]);
-    let output = new Output(sendOptions.to, [coin]);
-    console.log('MsgMultiSend', [input], [output]);
-    let sendMultiMsg = new MsgMultiSend([input], [output]);
     console.log('Fee', [new Coin(sendOptions.coin, '0')], '200000');
     let fee = new Fee([new Coin(sendOptions.coin, '0')], '200000');
 
-    console.log('marshalBinary', sendMultiMsg);
-    const msgToSign = codec.marshalBinary(sendMultiMsg);
+    // MULTI SEND:
+    // console.log('Input', sendOptions.from, [coin]);
+    // let input = new Input(sendOptions.from, [coin]);
+    // console.log('Output', sendOptions.to, [coin]);
+    // let output = new Output(sendOptions.to, [coin]);
+    // console.log('MsgMultiSend', [input], [output]);
+    // let sendMsg = new MsgMultiSend([input], [output]);
 
-    console.log('sign', account.privateKey, msgToSign);
-    const signedBytes = sign(account.privateKey, msgToSign);
+    // SINGLE SEND:
+    // hexToBytes(bech32ToAddress(sendOptions.to))
+    const sendMsg = new MsgSend(hexToBytes(bech32ToAddress(account.address)), hexToBytes(bech32ToAddress(sendOptions.to)), [coin]);
+
+    console.log('MsgForSign', sendOptions.chainId, account.accountNumber, account.sequence, fee, [sendMsg]);
+
+    const msgForSign = new MsgForSign(sendOptions.chainId, account.accountNumber, account.sequence, fee, [sendMsg], memo);
+    console.log('sign', account.privateKey, codec.marshalJson(msgForSign));
+    const signedBytes = sign(account.privateKey, codec.marshalJson(msgForSign));
     console.log('importPrivateKey', account.privateKey);
     const keyPair = importPrivateKey(account.privateKey);
     console.log('Signature', hexToBytes(keyPair.publicKey), signedBytes);
     const sig = new Signature(new PubKeySecp256k1(hexToBytes(keyPair.publicKey)), signedBytes);
 
-    console.log('StdTx', [sendMultiMsg], fee, [sig], 'elonmusk');
-    let stdTx = new StdTx([sendMultiMsg], fee, [sig], 'elonmusk');
+    console.log('StdTx', [sendMsg], fee, [sig], memo);
+    let stdTx = new StdTx([sendMsg], fee, [sig], memo);
     console.log('stdTx', stdTx);
     console.log('marshalJson', codec.marshalJson(stdTx));
 
     let result = arrToHex(codec.marshalBinary(stdTx));
-    console.log('marshalBinary bytes', codec.marshalBinary(stdTx));
+    console.log('marshalBinary bytes', JSON.stringify(codec.marshalBinary(stdTx)));
     console.log('marshalBinary hex', arrToHex(codec.marshalBinary(stdTx)));
-    console.log('unmarshalBinary bytes', hexToArr(result));
+    console.log('unmarshalBinary bytes', JSON.stringify(hexToArr(result)));
 
     let decodedDataTx = new StdTx();
     codec.unMarshalBinary(hexToArr(result), decodedDataTx);

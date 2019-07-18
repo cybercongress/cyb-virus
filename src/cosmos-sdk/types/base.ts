@@ -87,6 +87,33 @@ let Signature = TypeFactory.create('signature', [
   },
 ]);
 
+let MsgForSign = TypeFactory.create('MsgForSign', [
+  {
+    name: 'chain_id',
+    type: Types.String,
+  },
+  {
+    name: 'account_number',
+    type: Types.String,
+  },
+  {
+    name: 'sequence',
+    type: Types.String,
+  },
+  {
+    name: 'fee',
+    type: Types.Struct,
+  },
+  {
+    name: 'msgs',
+    type: Types.ArrayInterface,
+  },
+  {
+    name: 'memo',
+    type: Types.String,
+  },
+]);
+
 module.exports = {
   Coin,
   Input,
@@ -95,4 +122,5 @@ module.exports = {
   Signature,
   StdTx,
   PubKeySecp256k1,
+  MsgForSign,
 };

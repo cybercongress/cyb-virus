@@ -47,7 +47,7 @@ export default class CyberD extends Cosmos {
   }
 
   async transfer(txOptions, addressTo, gAmount) {
-    // const chainId = await this.getNetworkId();
+    const chainId = await this.getNetworkId();
     const account = await this.getAccountInfo(txOptions.address);
 
     const amount = parseFloat(gAmount) * 10 ** 9;
@@ -56,15 +56,16 @@ export default class CyberD extends Cosmos {
       account: {
         address: account.address,
         privateKey: txOptions.privateKey,
-        // chain_id: chainId,
         accountNumber: parseInt(account.account_number, 10),
         sequence: parseInt(account.sequence, 10),
       },
+      chainId: chainId,
       amount,
       from: account.address,
       // to: cyberjsCodec.bech32.toBech32(cyberjsConstants.CyberdNetConfig.PREFIX_BECH32_ACCADDR, addressTo),
       to: addressTo,
       coin: 'cyb',
+      memo: 'elonmusk',
     };
 
     const txRequest = cosmosBuilder.sendRequest(requestData);
