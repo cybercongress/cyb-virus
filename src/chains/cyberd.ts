@@ -73,9 +73,10 @@ export default class CyberD extends Cosmos {
     // const signedSendHex = stringToHex(txRequest);
     // console.log('signedSendHex', signedSendHex);
 
+    // return axios.post(`${this.rpc}/txs`, txRequest.json)
     return axios({
       method: 'get',
-      url: `${this.rpc}/broadcast_tx_commit?tx="${txRequest}"`,
+      url: `${this.rpc}/broadcast_tx_commit?tx="${txRequest.hex}"`,
     })
       .then(res => {
         if (!res.data) {

@@ -97,21 +97,25 @@ module.exports = {
     console.log('StdTx', [sendMsg], fee, [sig], memo);
     let stdTx = new StdTx([sendMsg], fee, [sig], memo);
     console.log('stdTx', stdTx);
+    const json = codec.marshalJson(stdTx);
     console.log('marshalJson', codec.marshalJson(stdTx));
 
-    let result = arrToHex(codec.marshalBinary(stdTx));
+    let hex = arrToHex(codec.marshalBinary(stdTx));
     console.log('marshalBinary bytes', JSON.stringify(codec.marshalBinary(stdTx)));
     console.log('marshalBinary hex', arrToHex(codec.marshalBinary(stdTx)));
-    console.log('unmarshalBinary bytes', JSON.stringify(hexToArr(result)));
+    console.log('unmarshalBinary bytes', JSON.stringify(hexToArr(hex)));
 
-    let decodedDataTx = new StdTx();
-    codec.unMarshalBinary(hexToArr(result), decodedDataTx);
+    // let decodedDataTx = new StdTx();
+    // codec.unMarshalBinary(hexToArr(hex), decodedDataTx);
 
-    console.log('unmarshalBinary json', decodedDataTx.JsObject());
-    if (!_.isString(result)) {
-      result = result.toString('base64');
+    // console.log('unmarshalBinary json', decodedDataTx.JsObject());
+    if (!_.isString(hex)) {
+      hex = hex.toString('base64');
     }
-    return result;
+    return {
+      json,
+      hex,
+    };
   },
   buildLinkRequest() {},
   // }
