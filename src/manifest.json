@@ -78,7 +78,7 @@
       "js": ["singlefile/index.js", "singlefile/content-hooks.js", "singlefile/content-bootstrap.js"]
     }
   ],
-  "web_accessible_resources": ["singlefile/content-hooks-web.js", "singlefile/content-hooks-frames-web.js"],
+  "web_accessible_resources": ["singlefile/content-hooks-web.js", "singlefile/content-hooks-frames-web.js", "workers/ipfsResource.js"],
   "permissions": ["contextMenus", "clipboardWrite", "contextMenus", "downloads", "storage", "tabs", "activeTab", "webNavigation", "<all_urls>"],
   "options_ui": {
     "page": "options/options.html",

@@ -17,6 +17,7 @@ export default {
       }
     },
     ipfsUrl() {
+      // return  this.$store.state[StorageVars.ExtensionTabPageUrl] + '#';
       return this.$store.state[StorageVars.IpfsUrl];
     },
   },

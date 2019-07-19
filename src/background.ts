@@ -3,6 +3,9 @@ const pIteration = require('p-iteration');
 const ipfsService = require('./backgroundServices/ipfs');
 const base36Trie = require('@galtproject/geesome-libs/src/base36Trie');
 const cheerio = require('cheerio');
+const IPFS = require('ipfs');
+const axios = require('axios');
+// const ipfsClient = require('ipfs-http-client');
 
 import { BackgroundRequest, BackgroundResponse } from './services/backgroundGateway';
 import { Settings } from './backgroundServices/types';
@@ -14,8 +17,46 @@ const databaseService = require('./backgroundServices/database');
 let init = false;
 function initServices() {
   return databaseService.getSetting(Settings.StorageNodeAddress).then(async address => {
-    await ipfsService.init(address);
+    // await ipfsService.init(ipfsClient(address));
+    await ipfsService.init(await promiseMeJsIpfs());
+    console.log('ipfs id', await ipfsService.id());
     init = true;
+  });
+}
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker
+    .register('/workers/ipfsResource.js', { scope: '/workers/ipfs/' })
+    .then(async reg => {
+      // регистрация сработала
+      console.log('Registration succeeded. Scope is ' + reg.scope);
+      await navigator.serviceWorker.ready;
+      navigator.serviceWorker.controller.postMessage('ipfs-background');
+    })
+    .catch(function(error) {
+      console.error('Registration failed with ' + error);
+    });
+
+  navigator.serviceWorker.onmessage = function(event) {
+    console.log('background message', event);
+    event.ports[0].postMessage('background response');
+  };
+}
+
+// setInterval(async () => {
+//   console.log('worker response', await axios.get('/workers/ipfs/lala'));
+// }, 5000)
+
+function promiseMeJsIpfs() {
+  return new Promise((resolve, reject) => {
+    const ipfs = IPFS.createNode({
+      EXPERIMENTAL: {
+        pubsub: true,
+        ipnsPubsub: true,
+      },
+    });
+    ipfs.once('ready', () => resolve(ipfs));
+    ipfs.once('error', err => reject(err));
   });
 }
 
@@ -154,6 +195,8 @@ onMessage(async (request, sender, sendResponse) => {
   console.log('request', request);
   await waitForInit();
   await fetchCurrentTab();
+
+  const ipfsNode = await promiseMeJsIpfs();
 
   if (request.type === 'page-action') {
     setAction(request);
