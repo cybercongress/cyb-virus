@@ -11,6 +11,8 @@ module.exports = function(constants) {
 
     if (!keyPair) return null;
 
+    console.log('importPrivateKey', keyPair);
+
     return encodeAccount({
       address: keyPair.address,
       phrase: null,

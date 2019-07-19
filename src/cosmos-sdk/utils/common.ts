@@ -53,30 +53,23 @@ function importPrivateKey(secretKey) {
   };
 }
 
-function sign(privateKey, publicKey, nonce, msg) {
-  let signBytes = JSON.stringify(msg.JsObject());
-  let signHash = crypto
+function sign(privateKey, msgJson, publicKey, nonce) {
+  const hash = crypto
     .createHash('sha256')
-    .update(signBytes)
+    .update(JSON.stringify(sortObject(msgJson)))
     .digest('hex');
-  // console.log("msgSend SignByte:", tmpObj);
-
-  const privateKeyArr = Buffer.from(new Uint8Array(hexToBytes(privateKey)));
-
-  return Array.from(Secp256k1.sign(Buffer.from(new Uint8Array(hexToBytes(signHash))), privateKeyArr, { canonical: true }).signature);
-  //
-  // return tx;
-  //
-  // const hash = crypto
-  //   .createHash('sha256')
-  //   .update(JSON.stringify(sortObject(msgJson)))
-  //   .digest('hex');
-  // const buf = Buffer.from(hash, 'hex');
-  // const prikeyArr = Buffer.from(new Uint8Array(hexToBytes(privateKey)));
-  // let signObj = Secp256k1.sign(buf, prikeyArr);
-  // // console.log('')
-  // return Array.from(signObj.signature);
+  const buf = Buffer.from(hash, 'hex');
+  const prikeyArr = Buffer.from(new Uint8Array(hexToBytes(privateKey)));
+  let signObj = Secp256k1.sign(buf, prikeyArr);
+  // console.log('')
+  return Array.from(signObj.signature);
   // return Buffer.from(signObj.signature, 'binary').toString('base64');
+  // let signBytes = JSON.stringify(msg.JsObject());
+  // let signHash = crypto.createHash('sha256').update(signBytes).digest('hex');
+  //
+  // const privateKeyArr = Buffer.from(new Uint8Array(hexToBytes(privateKey)));
+  //
+  // return Array.from(Secp256k1.sign(Buffer.from(new Uint8Array(hexToBytes(signHash))), privateKeyArr, { canonical: true }).signature);
 }
 
 function weiToDecimals(wei, decimals) {

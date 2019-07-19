@@ -13,6 +13,9 @@ const { DAGNode, util: DAGUtil } = require('ipld-dag-pb');
 const cybCrypto = require('../crypto');
 const appConfig = require('../config');
 
+const cyberDconstants = require('./src/cosmos-sdk/constants/cyberd');
+const constants = require('./src/cosmos-sdk/constants/cyberd');
+
 export class PermanentStorage {
   static pseudoStorage = {};
 

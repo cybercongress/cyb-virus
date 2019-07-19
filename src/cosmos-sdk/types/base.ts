@@ -76,40 +76,14 @@ let PubKeySecp256k1 = TypeFactory.create(
   Types.ByteSlice
 );
 
-let SignatureSecp256k1 = TypeFactory.create(
-  'SignatureSecp256k1',
-  [
-    {
-      name: 'bytes',
-      type: Types.ByteSlice,
-    },
-  ],
-  Types.ByteSlice
-);
-
-let Signature = TypeFactory.create('Signature', [
+let Signature = TypeFactory.create('signature', [
   {
-    name: 'pubKey',
+    name: 'pub_key',
     type: Types.Interface,
   },
   {
     name: 'signature',
-    type: Types.Struct,
-  },
-  {
-    name: 'nonce',
-    type: Types.Int64,
-  },
-]);
-
-let AuthTx = TypeFactory.create('AuthTx', [
-  {
-    name: 'msg',
-    type: Types.Interface,
-  },
-  {
-    name: 'signature',
-    type: Types.Struct,
+    type: Types.ByteSlice,
   },
 ]);
 
@@ -148,7 +122,5 @@ module.exports = {
   Signature,
   StdTx,
   PubKeySecp256k1,
-  SignatureSecp256k1,
   MsgForSign,
-  AuthTx,
 };

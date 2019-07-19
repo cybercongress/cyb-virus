@@ -83,32 +83,26 @@ module.exports = {
 
     // SINGLE SEND:
     // hexToBytes(bech32ToAddress(sendOptions.to))
-    const sendMsg = new MsgSend(hexToBytes(bech32ToAddress(sendOptions.to)), coin);
+    const sendMsg = new MsgSend(hexToBytes(bech32ToAddress(account.address)), hexToBytes(bech32ToAddress(sendOptions.to)), [coin]);
 
     console.log('MsgForSign', sendOptions.chainId, account.accountNumber, account.sequence, fee, [sendMsg]);
 
-    // const msgForSign = new MsgForSign(sendOptions.chainId, account.accountNumber, account.sequence, fee, [sendMsg], memo);
-    // console.log('sign', account.privateKey, codec.marshalJson(msgForSign));
-    const keyPair = encoding(constants).importAccount(account.privateKey);
-    const signedBytes = sign(account.privateKey, keyPair.publicKey, account.sequence, sendMsg);
+    const msgForSign = new MsgForSign(sendOptions.chainId, account.accountNumber, account.sequence, fee, [sendMsg], memo);
+    console.log('sign', account.privateKey, codec.marshalJson(msgForSign));
+    const signedBytes = sign(account.privateKey, codec.marshalJson(msgForSign));
+    console.log('Signature', hexToBytes(account.publicKey), signedBytes);
+    const sig = new Signature(new PubKeySecp256k1(hexToBytes(account.publicKey)), signedBytes);
 
-    // let bzKey = hexToBytes(publicKey);
-    // let sig = Signature.createAuthSignature(bzKey, bzSig, obj.nonce)
-
-    console.log('Signature', hexToBytes(bech32ToAddress(keyPair.publicKey)), new SignatureSecp256k1(signedBytes));
-    const sig = new Signature(new PubKeySecp256k1(hexToBytes(bech32ToAddress(keyPair.publicKey))), new SignatureSecp256k1(signedBytes), account.sequence);
-
-    console.log('StdTx', sendMsg, sig);
-    let stdTx = new AuthTx(sendMsg, sig);
-    // let stdTx = new StdTx([sendMsg], fee, [sig], memo);
+    console.log('StdTx', [sendMsg], fee, [sig], memo);
+    let stdTx = new StdTx([sendMsg], fee, [sig], memo);
     console.log('stdTx', stdTx);
     const json = codec.marshalJson(stdTx);
     console.log('marshalJson', codec.marshalJson(stdTx));
 
     let hex = arrToHex(codec.marshalBinary(stdTx));
-    // console.log('marshalBinary bytes', JSON.stringify(codec.marshalBinary(stdTx)));
+    console.log('marshalBinary bytes', JSON.stringify(codec.marshalBinary(stdTx)));
     console.log('marshalBinary hex', arrToHex(codec.marshalBinary(stdTx)));
-    // console.log('unmarshalBinary bytes', JSON.stringify(hexToArr(hex)));
+    console.log('unmarshalBinary bytes', JSON.stringify(hexToArr(hex)));
 
     // let decodedDataTx = new StdTx();
     // codec.unMarshalBinary(hexToArr(hex), decodedDataTx);

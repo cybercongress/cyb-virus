@@ -1,9 +1,8 @@
-const cyberjsBuilder = require('@litvintech/cyberjs/builder');
-const cyberjsCodec = require('@litvintech/cyberjs/codec');
-const cyberjsConstants = require('@litvintech/cyberjs/constants');
+const cosmosBuilder = require('../cosmos-sdk/builder');
 const axios = require('axios');
+const { importPrivateKey, weiToDecimals } = require('../cosmos-sdk/utils/common');
 
-const { weiToDecimals } = require('../cosmos-sdk/utils/common');
+const encoding = require('../cosmos-sdk/utils/encoding');
 
 export default class Cosmos {
   rpc: string;
@@ -70,35 +69,35 @@ export default class Cosmos {
     return addressInfo.data.value;
   }
 
-  async transfer(txOptions, addressTo, mAmount) {
+  async transfer(txOptions, addressTo, gAmount) {
     const chainId = await this.getNetworkId();
     const account = await this.getAccountInfo(txOptions.address);
 
-    const acc = {
-      address: account.address,
-      chain_id: chainId,
-      account_number: parseInt(account.account_number, 10),
-      sequence: parseInt(account.sequence, 10),
-    };
+    const amount = parseFloat(gAmount) * 10 ** 9;
 
-    const amount = parseFloat(mAmount) * 10 ** 6;
+    const keyPair = encoding(this.constants.NetConfig).importAccount(txOptions.privateKey);
 
-    const sendRequest = {
-      acc,
+    const requestData = {
+      account: {
+        address: keyPair.address,
+        publicKey: keyPair.publicKey,
+        privateKey: keyPair.privateKey,
+        accountNumber: parseInt(account.account_number, 10),
+        sequence: parseInt(account.sequence, 10),
+      },
+      chainId: chainId,
       amount,
       from: account.address,
-      // to: cyberjsCodec.bech32.toBech32(cyberjsConstants.CyberdNetConfig.PREFIX_BECH32_ACCADDR, addressTo),
       to: addressTo,
-      type: 'send',
+      coin: 'cyb',
+      memo: 'elonmusk',
     };
 
-    const txRequest = cyberjsBuilder.buildAndSignTxRequest(sendRequest, txOptions.privateKey, chainId);
-    const signedSendHex = cyberjsCodec.hex.stringToHex(JSON.stringify(txRequest));
+    const txRequest = cosmosBuilder.sendRequest(this.constants.CyberdNetConfig, requestData);
+    console.log('txRequest', txRequest);
 
-    return axios({
-      method: 'get',
-      url: `${this.rpc}/submit_signed_send?data="${signedSendHex}"`,
-    })
+    return axios
+      .post(`${this.rpc}/txs`, txRequest.json)
       .then(res => {
         if (!res.data) {
           throw new Error('Empty data');
