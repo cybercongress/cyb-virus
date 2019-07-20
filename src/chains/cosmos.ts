@@ -99,7 +99,7 @@ export default class Cosmos {
       memo: '',
     };
 
-    const txRequest = this.cosmosBuilder.sendRequest(requestData);
+    const txRequest = this.cosmosBuilder.callMethod('sendRequest')(requestData);
     console.log(
       'txRequest',
       JSON.stringify({

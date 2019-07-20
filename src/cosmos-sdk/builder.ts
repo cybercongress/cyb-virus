@@ -151,6 +151,11 @@ export default class CosmosBuilder {
   setMethod(methodName, func) {
     this[methodName] = func;
   }
+
+  callMethod(methodName) {
+    let methodArgs = _.map(arguments, arg => arg).slice(1);
+    return this[methodName].bind(this);
+  }
   // buildLinkRequest() {},
   // }
 }

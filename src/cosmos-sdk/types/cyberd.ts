@@ -5,22 +5,22 @@ let { TypeFactory, Types } = require('js-amino');
 let CyberDMsgLink = TypeFactory.create('CyberDMsgLink', [
   {
     name: 'address',
-    type: Types.ByteSlice,
+    type: Types.String,
   },
   {
     name: 'links',
-    type: Types.Struct,
+    type: Types.ArrayStruct,
   },
 ]);
 
 let CyberDMsgLinkData = TypeFactory.create('CyberDMsgLinkData', [
   {
     name: 'from',
-    type: Types.ByteSlice,
+    type: Types.String,
   },
   {
     name: 'to',
-    type: Types.ByteSlice,
+    type: Types.String,
   },
 ]);
 

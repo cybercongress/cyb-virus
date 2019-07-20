@@ -1,14 +1,12 @@
 export {};
 
 const axios = require('axios');
-const cyberjsBuilder = require('@litvintech/cyberjs/builder');
-import CosmosBuilder from '../cosmos-sdk/builder';
 const CosmosCodec = require('../cosmos-sdk/codec');
 const encoding = require('../cosmos-sdk/utils/encoding');
 const { stringToHex, hexToBytes } = require('../cosmos-sdk/utils/hex');
-const { sign, sortObject } = require('../cosmos-sdk/utils/common');
+const { sign } = require('../cosmos-sdk/utils/common');
 const { bech32ToAddress } = require('../cosmos-sdk/utils/bech32');
-const { CyberDTxRequest, CyberDFee, CyberDSignature } = require('../cosmos-sdk/types/cyberd');
+const { CyberDTxRequest, CyberDFee, CyberDSignature, CyberDMsgLink, CyberDMsgLinkData } = require('../cosmos-sdk/types/cyberd');
 const { Coin, Input, Output, Fee } = require('../cosmos-sdk/types/base');
 const { MsgMultiSend } = require('../cosmos-sdk/types/tx');
 
@@ -20,6 +18,8 @@ export default class CyberD extends Cosmos {
 
     const cosmosCodec = new CosmosCodec();
 
+    cosmosCodec.registerConcrete(new CyberDMsgLink(), 'cyberd/Link', {});
+
     this.cosmosBuilder.setCodec(cosmosCodec);
 
     this.cosmosBuilder.setMethod('sendRequest', function(sendOptions) {
@@ -28,6 +28,12 @@ export default class CyberD extends Cosmos {
 
       let msg = new MsgMultiSend([new Input(account.address, [coin])], [new Output(sendOptions.to, [coin])]);
 
+      return this.abstractRequest(sendOptions, msg);
+    });
+
+    this.cosmosBuilder.setMethod('linkRequest', function(sendOptions) {
+      let linkData = new CyberDMsgLinkData(sendOptions.fromCid, sendOptions.toCid);
+      let msg = new CyberDMsgLink(sendOptions.account.address, [linkData]);
       return this.abstractRequest(sendOptions, msg);
     });
 
@@ -126,7 +132,7 @@ export default class CyberD extends Cosmos {
         accountNumber: parseInt(account.account_number, 10),
         sequence: parseInt(account.sequence, 10),
       },
-      chainId: chainId,
+      chainId,
       amount,
       to: addressTo,
       denom: 'cyb',
@@ -137,7 +143,7 @@ export default class CyberD extends Cosmos {
       memo: '',
     };
 
-    const txRequest = this.cosmosBuilder.sendRequest(requestData);
+    const txRequest = this.cosmosBuilder.callMethod('sendRequest')(requestData);
 
     return axios({
       method: 'get',
@@ -162,52 +168,53 @@ export default class CyberD extends Cosmos {
     const chainId = await this.getNetworkId();
     const account = await this.getAccountInfo(txOptions.address);
 
-    const acc = {
-      address: account.address,
-      chain_id: chainId,
-      account_number: parseInt(account.account_number, 10),
-      sequence: parseInt(account.sequence, 10),
-    };
+    const keyPair = encoding(this.constants.NetConfig).importAccount(txOptions.privateKey);
 
-    const sendRequest = {
-      acc,
+    const requestData = {
+      account: {
+        address: keyPair.address,
+        publicKey: keyPair.publicKey,
+        privateKey: keyPair.privateKey,
+        accountNumber: parseInt(account.account_number, 10),
+        sequence: parseInt(account.sequence, 10),
+      },
+      fee: {
+        denom: '',
+        amount: '0',
+      },
+      chainId,
       fromCid: keywordHash,
       toCid: contentHash,
-      type: 'link',
+      memo: '',
     };
 
-    // const txRequest = this.cosmosBuilder.buildSendRequest(sendRequest, txOptions.privateKey, chainId);
-    // const signedSendHex = stringToHex(JSON.stringify(txRequest));
+    // requestData['acc'] = requestData.account;
+    // requestData['acc']['account_number'] = requestData.account.accountNumber;
+    // requestData['from'] = requestData.account.address;
+    // requestData['type'] = 'link';
 
-    // let websocket = new WebSocket('ws://earth.cybernode.ai:34657/websocket');
-    // websocket.onmessage = function(msg) {
-    //   console.log('onmessage', msg);
-    // };
-    // websocket.send(
-    //   JSON.stringify({
-    //     method: 'subscribe',
-    //     params: ["tm.event='NewBlockHeader'"],
-    //     id: '1',
-    //     jsonrpc: '2.0',
-    //   })
-    // );
+    // const cyberTxRequest = cyberjsBuilder.buildAndSignTxRequest(requestData, txOptions.privateKey, chainId);
+    // console.log('cyber request', JSON.stringify(cyberTxRequest));
+    // const signedSendHex = stringToHex(JSON.stringify(cyberTxRequest));
 
-    // return axios({
-    //   method: 'get',
-    //   url: `${this.rpc}/submit_signed_link?data="${signedSendHex}"`,
-    // })
-    //   .then(res => {
-    //     if (!res.data) {
-    //       throw new Error('Empty data');
-    //     }
-    //     if (res.data.error) {
-    //       throw res.data.error;
-    //     }
-    //     return res.data;
-    //   })
-    //   .catch(error => {
-    //     console.error('Link error', error);
-    //     throw error;
-    //   });
+    const txRequest = this.cosmosBuilder.callMethod('linkRequest')(requestData);
+
+    return axios({
+      method: 'get',
+      url: `${this.rpc}/submit_signed_link?data="${this.prepareRequestData(txRequest)}"`,
+    })
+      .then(res => {
+        if (!res.data) {
+          throw new Error('Empty data');
+        }
+        if (res.data.error) {
+          throw res.data.error;
+        }
+        return res.data;
+      })
+      .catch(error => {
+        console.error('Link error', error);
+        throw error;
+      });
   }
 }
