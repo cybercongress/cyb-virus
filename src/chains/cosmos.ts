@@ -75,7 +75,7 @@ export default class Cosmos {
 
     const amount = parseFloat(mAmount) * 10 ** 6;
 
-    const keyPair = encoding(this.constants).importAccount(txOptions.privateKey);
+    const keyPair = encoding(this.constants.NetConfig).importAccount(txOptions.privateKey);
 
     const requestData = {
       account: {
@@ -89,9 +89,12 @@ export default class Cosmos {
       amount,
       from: account.address,
       to: addressTo,
-      coin: 'uatom',
-      feeCoin: 'uatom',
-      memo: 'elonmusk',
+      denom: 'uatom',
+      fee: {
+        denom: 'uatom',
+        amount: '500',
+      },
+      memo: '',
     };
 
     const cosmosBuilder = new CosmosBuilder();
@@ -105,23 +108,26 @@ export default class Cosmos {
       })
     );
 
-    return axios
-      .post(`${this.rpc}/txs`, {
-        tx: JSON.parse(txRequest.json),
-        mode: 'sync',
-      })
-      .then(res => {
-        if (!res.data) {
-          throw new Error('Empty data');
-        }
-        if (res.data.error) {
-          throw res.data.error;
-        }
-        return res.data;
-      })
-      .catch(error => {
-        console.error('Transfer error', error);
-        throw error;
-      });
+    return (
+      axios
+        .post(`${this.rpc}/txs`, {
+          tx: JSON.parse(txRequest.json),
+          mode: 'sync',
+        })
+        // .post(`${this.rpc}/txs`, JSON.parse(txRequest.json))
+        .then(res => {
+          if (!res.data) {
+            throw new Error('Empty data');
+          }
+          if (res.data.error) {
+            throw res.data.error;
+          }
+          return res.data;
+        })
+        .catch(error => {
+          console.error('Transfer error', error);
+          throw error;
+        })
+    );
   }
 }

@@ -10,8 +10,8 @@ class NetConfig {
 }
 
 NetConfig.MAXGAS = 200000;
-NetConfig.PREFIX_BECH32_ACCADDR = 'cyber';
-NetConfig.PREFIX_BECH32_ACCPUB = 'cyberpub';
+NetConfig.PREFIX_BECH32_ACCADDR = 'cosmos';
+NetConfig.PREFIX_BECH32_ACCPUB = 'cosmospub';
 NetConfig.ENCODING_BECH32 = 'bech32';
 NetConfig.ENCODING_HEX = 'hex';
 NetConfig.DEFAULT_ENCODING = NetConfig.ENCODING_BECH32;

@@ -142,7 +142,9 @@ module.exports = class CosmosBuilder {
     let { account } = sendOptions;
     let coin = new Coin(sendOptions.denom, sendOptions.amount.toString());
 
-    const msg = new MsgSend(hexToBytes(bech32ToAddress(account.address)), hexToBytes(bech32ToAddress(sendOptions.to)), [coin]);
+    //hexToBytes(bech32ToAddress())
+    console.log('MsgSend', account.address, sendOptions.to, [coin]);
+    const msg = new MsgSend(account.address, sendOptions.to, [coin]);
     return this.abstractRequest(sendOptions, msg);
   }
 

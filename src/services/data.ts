@@ -216,11 +216,11 @@ export class AppWallet {
   }
 
   static getCyberDInstance(): CyberD {
-    return new CyberD(AppWallet.getDefaultEndpoint(NetworkType.CyberD).rpc, cyberDConstants.NetConfig);
+    return new CyberD(AppWallet.getDefaultEndpoint(NetworkType.CyberD).rpc, cyberDConstants);
   }
 
   static getCosmosInstance(): Cosmos {
-    return new Cosmos(AppWallet.getDefaultEndpoint(NetworkType.Cosmos).rpc, cosmosConstants.NetConfig);
+    return new Cosmos(AppWallet.getDefaultEndpoint(NetworkType.Cosmos).rpc, cosmosConstants);
   }
 }
 

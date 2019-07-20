@@ -5,11 +5,11 @@ let { TypeFactory, Types } = require('js-amino');
 let MsgSend = TypeFactory.create('MsgSend', [
   {
     name: 'from_address',
-    type: Types.ByteSlice,
+    type: Types.String,
   },
   {
     name: 'to_address',
-    type: Types.ByteSlice,
+    type: Types.String,
   },
   {
     name: 'amount',
