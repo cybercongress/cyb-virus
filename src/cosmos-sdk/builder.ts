@@ -71,7 +71,7 @@ module.exports = class CosmosBuilder {
   // }
 
   getFee(options) {
-    return new Fee([new Coin(options.coin, '0')], '200000');
+    return new Fee([new Coin(options.fee.denom, options.fee.amount)], '200000');
   }
 
   getSignature(options, signedBytes) {
@@ -140,7 +140,7 @@ module.exports = class CosmosBuilder {
   // return {
   sendRequest(sendOptions) {
     let { account } = sendOptions;
-    let coin = new Coin(sendOptions.coin, sendOptions.amount.toString());
+    let coin = new Coin(sendOptions.denom, sendOptions.amount.toString());
 
     const msg = new MsgSend(hexToBytes(bech32ToAddress(account.address)), hexToBytes(bech32ToAddress(sendOptions.to)), [coin]);
     return this.abstractRequest(sendOptions, msg);

@@ -1,4 +1,4 @@
-const cosmosBuilder = require('../cosmos-sdk/builder');
+const CosmosBuilder = require('../cosmos-sdk/builder');
 const axios = require('axios');
 const { importPrivateKey, weiToDecimals } = require('../cosmos-sdk/utils/common');
 
@@ -18,7 +18,7 @@ export default class Cosmos {
       method: 'get',
       url: `${this.rpc}/bank/balances/${address}`,
     }).then(response => {
-      return response.data ? response.data[0].amount : 0;
+      return response.data && response.data.length ? response.data[0].amount : 0;
     });
   }
 
@@ -46,15 +46,15 @@ export default class Cosmos {
     });
   }
 
-  async getStatus() {
+  async getNodeInfo() {
     return axios({
       method: 'get',
-      url: `${this.rpc}/status`,
-    }).then(response => response.data.result);
+      url: `${this.rpc}/node_info`,
+    }).then(response => response.data);
   }
 
   async getNetworkId() {
-    return this.getStatus().then(data => data.node_info.network);
+    return this.getNodeInfo().then(data => data.network);
   }
 
   async getAccountInfo(address) {
@@ -69,13 +69,13 @@ export default class Cosmos {
     return addressInfo.data.value;
   }
 
-  async transfer(txOptions, addressTo, gAmount) {
+  async transfer(txOptions, addressTo, mAmount) {
     const chainId = await this.getNetworkId();
     const account = await this.getAccountInfo(txOptions.address);
 
-    const amount = parseFloat(gAmount) * 10 ** 9;
+    const amount = parseFloat(mAmount) * 10 ** 6;
 
-    const keyPair = encoding(this.constants.NetConfig).importAccount(txOptions.privateKey);
+    const keyPair = encoding(this.constants).importAccount(txOptions.privateKey);
 
     const requestData = {
       account: {
@@ -89,15 +89,27 @@ export default class Cosmos {
       amount,
       from: account.address,
       to: addressTo,
-      coin: 'cyb',
+      coin: 'uatom',
+      feeCoin: 'uatom',
       memo: 'elonmusk',
     };
 
+    const cosmosBuilder = new CosmosBuilder();
+
     const txRequest = cosmosBuilder.sendRequest(requestData);
-    console.log('txRequest', txRequest);
+    console.log(
+      'txRequest',
+      JSON.stringify({
+        tx: JSON.parse(txRequest.json),
+        mode: 'sync',
+      })
+    );
 
     return axios
-      .post(`${this.rpc}/txs`, txRequest.json)
+      .post(`${this.rpc}/txs`, {
+        tx: JSON.parse(txRequest.json),
+        mode: 'sync',
+      })
       .then(res => {
         if (!res.data) {
           throw new Error('Empty data');

@@ -13,6 +13,7 @@
 
 import { EventBus, ACCOUNT_SELECT_HIDE, ACCOUNT_SELECT_PREVENT_CLOSE, ACCOUNT_SELECT_SHOW, ACCOUNT_SELECT_ITEM } from '../../../../services/events';
 import { StorageVars } from '../../../../enum';
+import { AppWallet } from '../../../../services/data';
 
 export default {
   name: 'account-select-container',
@@ -52,22 +53,11 @@ export default {
     });
   },
   methods: {
-    // async addAccount() {
-    //   let lastIndex = 0;
-    //   this.accountList.forEach(account => {
-    //     if (account.index > lastIndex) {
-    //       lastIndex = account.index;
-    //     }
-    //   });
-    //   const index = lastIndex + 1;
-    //   const newAccount = await AppWallet.generateAccount(this.currentkeyPairType, index);
-    //   console.log('newAccount', index, newAccount);
-    //   //TODO: get StorageVar of accounts from state
-    //   await AppWallet.addAccount(StorageVars.CyberDAccounts, newAccount.address, newAccount.privateKey, { index });
-    //   this.$store.commit(StorageVars.CurrentAccounts, this.$store.state[StorageVars.CyberDAccounts]);
-    //   this.$store.commit(StorageVars.AppAccountGroup, _.last(this.$store.state[StorageVars.CyberDAccounts]));
-    //   this.$router.push(this.currentCabinet);
-    // },
+    async addAccount() {
+      const newGroup = await AppWallet.addAccountGroup('new');
+      await AppWallet.generateBaseCoinsForAccountGroup(newGroup.id);
+      AppWallet.setCurrentAccountGroup(newGroup);
+    },
     getElOffset(el) {
       const rect = el.getBoundingClientRect();
       const docEl = document.documentElement;

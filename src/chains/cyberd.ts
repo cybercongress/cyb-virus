@@ -15,6 +15,17 @@ const { MsgMultiSend } = require('../cosmos-sdk/types/tx');
 import Cosmos from './cosmos';
 
 export default class CyberD extends Cosmos {
+  async getNodeInfo() {
+    return axios({
+      method: 'get',
+      url: `${this.rpc}/status`,
+    }).then(response => response.data.result);
+  }
+
+  async getNetworkId() {
+    return this.getNodeInfo().then(data => data.node_info.network);
+  }
+
   async getBalance(address) {
     return axios({
       method: 'get',
@@ -71,7 +82,11 @@ export default class CyberD extends Cosmos {
       chainId: chainId,
       amount,
       to: addressTo,
-      coin: 'cyb',
+      denom: 'cyb',
+      fee: {
+        denom: '',
+        amount: '0',
+      },
       memo: '',
     };
 
@@ -82,7 +97,7 @@ export default class CyberD extends Cosmos {
 
     cosmosBuilder.setMethod('sendRequest', function(sendOptions) {
       let { account } = sendOptions;
-      let coin = new Coin(sendOptions.coin, sendOptions.amount.toString());
+      let coin = new Coin(sendOptions.denom, sendOptions.amount.toString());
 
       let msg = new MsgMultiSend([new Input(account.address, [coin])], [new Output(sendOptions.to, [coin])]);
 
@@ -95,7 +110,7 @@ export default class CyberD extends Cosmos {
     });
 
     cosmosBuilder.setMethod('getFee', function(options) {
-      return new CyberDFee([new Coin('', '0')], 200000);
+      return new CyberDFee([new Coin(options.fee.denom, options.fee.amount)], 200000);
     });
 
     cosmosBuilder.setMethod('getSignature', function(options, signedBytes) {
