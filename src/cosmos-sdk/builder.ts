@@ -29,46 +29,6 @@ export default class CosmosBuilder {
   setCodec(codec) {
     this.codec = codec;
   }
-  // const encoding = require('./utils/encoding')(constants);
-  //
-  // function signTxRequest(signMsg, privateKey) {
-  //   const objectToSign = signMsg.getSignObject();
-  //   console.log("OBJECTS_TO_SIGN\n", objectToSign);
-  //   const signedBytes = sign(privateKey, objectToSign);
-  //   const keypair = encoding.importAccount(privateKey);
-  //
-  //   const signature = buildSignature(hexToBytes(keypair.publicKey), signedBytes, signMsg.accnum, signMsg.sequence);
-  //   return buildTxRequest(signMsg.msgs, signMsg.fee, signature, signMsg.memo);
-  // }
-
-  // function buildAndSignTxRequest(req, privateKey, chainId) {
-  //   const signMsg = buildSignMsg(req, chainId);
-  //
-  //   return signTxRequest(signMsg, privateKey);
-  // }
-  //
-  // function buildSignMsg(req, chainId) {
-  //   if (isHex(req.acc.address)) {
-  //     req.acc.address = toBech32(constants.CyberdNetConfig.PREFIX_BECH32_ACCADDR, req.acc.address);
-  //   }
-  //
-  //   let msg;
-  //   switch (req.type) {
-  //     case constants.TxType.LINK: {
-  //       msg = buildLinkSignMsg(req.acc, req.fromCid, req.toCid, chainId);
-  //       break;
-  //     }
-  //     case constants.TxType.SEND: {
-  //       msg = buildSendSignMsg(req.acc, req.from, req.to, req.amount.toString(), chainId);
-  //       break;
-  //     }
-  //     default: {
-  //       throw 'not exist tx type';
-  //     }
-  //   }
-  //
-  //   return msg;
-  // }
 
   getFee(options) {
     return new Fee([new Coin(options.fee.denom, options.fee.amount)], '200000');
@@ -98,18 +58,6 @@ export default class CosmosBuilder {
     if (_.isUndefined(options.memo) || _.isNull(options.memo)) {
       options.memo = '';
     }
-
-    // MULTI SEND:
-    // console.log('Input', sendOptions.from, [coin]);
-    // let input = new Input(sendOptions.from, [coin]);
-    // console.log('Output', sendOptions.to, [coin]);
-    // let output = new Output(sendOptions.to, [coin]);
-    // console.log('MsgMultiSend', [input], [output]);
-    // let msg = new MsgMultiSend([input], [output]);
-
-    // SINGLE SEND:
-    // hexToBytes(bech32ToAddress(sendOptions.to))
-
     let fee = this.getFee(options);
 
     const msgForSign = this.getMessageForSign(options, { msgs: [msg], fee });
@@ -118,17 +66,9 @@ export default class CosmosBuilder {
 
     let stdTx = this.getResultTx(options, { msgs: [msg], sigs: [sig], fee });
     const json = this.codec.marshalJson(stdTx);
-    // console.log('sign', this.codec.marshalJson(msgForSign));
-    // console.log('stdTx', stdTx);
-    // console.log('marshalJson', this.codec.marshalJson(stdTx));
 
     let hex = arrToHex(this.codec.marshalBinary(stdTx));
-    // console.log('marshalBinary bytes', JSON.stringify(this.codec.marshalBinary(stdTx)));
-    // console.log('marshalBinary hex', arrToHex(this.codec.marshalBinary(stdTx)));
-    // console.log('unmarshalBinary bytes', JSON.stringify(hexToArr(hex)));
-    // let decodedDataTx = new StdTx();
-    // codec.unMarshalBinary(hexToArr(hex), decodedDataTx);
-    // console.log('unmarshalBinary json', decodedDataTx.JsObject());
+
     if (!_.isString(hex)) {
       hex = hex.toString('base64');
     }
