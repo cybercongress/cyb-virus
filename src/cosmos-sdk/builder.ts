@@ -17,7 +17,7 @@ const encoding = require('./utils/encoding');
 
 const { sign, importPrivateKey } = require('./utils/common');
 
-module.exports = class CosmosBuilder {
+export default class CosmosBuilder {
   codec;
 
   constructor() {
@@ -153,7 +153,7 @@ module.exports = class CosmosBuilder {
   }
   // buildLinkRequest() {},
   // }
-};
+}
 
 function buildLinkSignMsg(acc, cidTo, cidFrom, chainId) {
   const fee = new Fee();

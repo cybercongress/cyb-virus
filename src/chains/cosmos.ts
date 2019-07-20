@@ -1,4 +1,4 @@
-const CosmosBuilder = require('../cosmos-sdk/builder');
+import CosmosBuilder from '../cosmos-sdk/builder';
 const axios = require('axios');
 const { importPrivateKey, weiToDecimals } = require('../cosmos-sdk/utils/common');
 
@@ -7,10 +7,12 @@ const encoding = require('../cosmos-sdk/utils/encoding');
 export default class Cosmos {
   rpc: string;
   constants: any;
+  cosmosBuilder: CosmosBuilder;
 
   constructor(rpc, constants) {
     this.rpc = rpc;
     this.constants = constants;
+    this.cosmosBuilder = new CosmosBuilder();
   }
 
   async getBalance(address) {
@@ -97,9 +99,7 @@ export default class Cosmos {
       memo: '',
     };
 
-    const cosmosBuilder = new CosmosBuilder();
-
-    const txRequest = cosmosBuilder.sendRequest(requestData);
+    const txRequest = this.cosmosBuilder.sendRequest(requestData);
     console.log(
       'txRequest',
       JSON.stringify({

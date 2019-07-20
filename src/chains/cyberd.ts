@@ -2,7 +2,7 @@ export {};
 
 const axios = require('axios');
 const cyberjsBuilder = require('@litvintech/cyberjs/builder');
-const CosmosBuilder = require('../cosmos-sdk/builder');
+import CosmosBuilder from '../cosmos-sdk/builder';
 const CosmosCodec = require('../cosmos-sdk/codec');
 const encoding = require('../cosmos-sdk/utils/encoding');
 const { stringToHex, hexToBytes } = require('../cosmos-sdk/utils/hex');
@@ -15,6 +15,42 @@ const { MsgMultiSend } = require('../cosmos-sdk/types/tx');
 import Cosmos from './cosmos';
 
 export default class CyberD extends Cosmos {
+  constructor(rpc, constants) {
+    super(rpc, constants);
+
+    const cosmosCodec = new CosmosCodec();
+
+    this.cosmosBuilder.setCodec(cosmosCodec);
+
+    this.cosmosBuilder.setMethod('sendRequest', function(sendOptions) {
+      let { account } = sendOptions;
+      let coin = new Coin(sendOptions.denom, sendOptions.amount.toString());
+
+      let msg = new MsgMultiSend([new Input(account.address, [coin])], [new Output(sendOptions.to, [coin])]);
+
+      return this.abstractRequest(sendOptions, msg);
+    });
+
+    this.cosmosBuilder.setMethod('getResultTx', function(options) {
+      let { msgs, fee, sigs, memo } = options;
+      return new CyberDTxRequest(msgs, fee, sigs, memo);
+    });
+
+    this.cosmosBuilder.setMethod('getFee', function(options) {
+      return new CyberDFee([new Coin(options.fee.denom, options.fee.amount)], 200000);
+    });
+
+    this.cosmosBuilder.setMethod('getSignature', function(options, signedBytes) {
+      const { account } = options;
+      return new CyberDSignature(Array.from(hexToBytes(bech32ToAddress(account.publicKey))), Array.from(signedBytes), account.accountNumber, account.sequence);
+    });
+
+    this.cosmosBuilder.setMethod('signMessageJson', function(options, messageJson) {
+      let messageObj = JSON.parse(messageJson);
+      messageObj.fee.gas = messageObj.fee.gas.toString();
+      return sign(options.account.privateKey, JSON.stringify(messageObj));
+    });
+  }
   async getNodeInfo() {
     return axios({
       method: 'get',
@@ -63,6 +99,17 @@ export default class CyberD extends Cosmos {
     return addressInfo.data.result.account;
   }
 
+  prepareRequestData(txRequest) {
+    const jsObject = JSON.parse(txRequest.json);
+    jsObject.signatures.forEach(sign => {
+      sign.pub_key = Array.from(Buffer.from(sign.pub_key, 'base64'));
+      sign.signature = Array.from(Buffer.from(sign.signature, 'base64'));
+    });
+    txRequest.json = JSON.stringify(jsObject);
+
+    return stringToHex(txRequest.json);
+  }
+
   async transfer(txOptions, addressTo, gAmount) {
     const chainId = await this.getNetworkId();
     const account = await this.getAccountInfo(txOptions.address);
@@ -90,53 +137,11 @@ export default class CyberD extends Cosmos {
       memo: '',
     };
 
-    const cosmosBuilder = new CosmosBuilder();
-
-    const cosmosCodec = new CosmosCodec();
-    cosmosBuilder.setCodec(cosmosCodec);
-
-    cosmosBuilder.setMethod('sendRequest', function(sendOptions) {
-      let { account } = sendOptions;
-      let coin = new Coin(sendOptions.denom, sendOptions.amount.toString());
-
-      let msg = new MsgMultiSend([new Input(account.address, [coin])], [new Output(sendOptions.to, [coin])]);
-
-      return this.abstractRequest(sendOptions, msg);
-    });
-
-    cosmosBuilder.setMethod('getResultTx', function(options) {
-      let { msgs, fee, sigs, memo } = options;
-      return new CyberDTxRequest(msgs, fee, sigs, memo);
-    });
-
-    cosmosBuilder.setMethod('getFee', function(options) {
-      return new CyberDFee([new Coin(options.fee.denom, options.fee.amount)], 200000);
-    });
-
-    cosmosBuilder.setMethod('getSignature', function(options, signedBytes) {
-      const { account } = options;
-      return new CyberDSignature(Array.from(hexToBytes(bech32ToAddress(account.publicKey))), Array.from(signedBytes), account.accountNumber, account.sequence);
-    });
-
-    cosmosBuilder.setMethod('signMessageJson', function(options, messageJson) {
-      let messageObj = JSON.parse(messageJson);
-      messageObj.fee.gas = messageObj.fee.gas.toString();
-      return sign(options.account.privateKey, JSON.stringify(messageObj));
-    });
-
-    const txRequest = cosmosBuilder.sendRequest(requestData);
-    const jsObject = JSON.parse(txRequest.json);
-    jsObject.signatures.forEach(sign => {
-      sign.pub_key = Array.from(Buffer.from(sign.pub_key, 'base64'));
-      sign.signature = Array.from(Buffer.from(sign.signature, 'base64'));
-    });
-    txRequest.json = JSON.stringify(jsObject);
-
-    const signedSendHex = stringToHex(txRequest.json);
+    const txRequest = this.cosmosBuilder.sendRequest(requestData);
 
     return axios({
       method: 'get',
-      url: `${this.rpc}/submit_signed_send?data="${signedSendHex}"`,
+      url: `${this.rpc}/submit_signed_send?data="${this.prepareRequestData(txRequest)}"`,
     })
       .then(res => {
         if (!res.data) {
@@ -171,12 +176,8 @@ export default class CyberD extends Cosmos {
       type: 'link',
     };
 
-    const cosmosBuilder = new CosmosBuilder();
-
-    cosmosBuilder.setCodec();
-
-    const txRequest = cosmosBuilder.buildSendRequest(sendRequest, txOptions.privateKey, chainId);
-    const signedSendHex = stringToHex(JSON.stringify(txRequest));
+    // const txRequest = this.cosmosBuilder.buildSendRequest(sendRequest, txOptions.privateKey, chainId);
+    // const signedSendHex = stringToHex(JSON.stringify(txRequest));
 
     // let websocket = new WebSocket('ws://earth.cybernode.ai:34657/websocket');
     // websocket.onmessage = function(msg) {
@@ -191,22 +192,22 @@ export default class CyberD extends Cosmos {
     //   })
     // );
 
-    return axios({
-      method: 'get',
-      url: `${this.rpc}/submit_signed_link?data="${signedSendHex}"`,
-    })
-      .then(res => {
-        if (!res.data) {
-          throw new Error('Empty data');
-        }
-        if (res.data.error) {
-          throw res.data.error;
-        }
-        return res.data;
-      })
-      .catch(error => {
-        console.error('Link error', error);
-        throw error;
-      });
+    // return axios({
+    //   method: 'get',
+    //   url: `${this.rpc}/submit_signed_link?data="${signedSendHex}"`,
+    // })
+    //   .then(res => {
+    //     if (!res.data) {
+    //       throw new Error('Empty data');
+    //     }
+    //     if (res.data.error) {
+    //       throw res.data.error;
+    //     }
+    //     return res.data;
+    //   })
+    //   .catch(error => {
+    //     console.error('Link error', error);
+    //     throw error;
+    //   });
   }
 }
