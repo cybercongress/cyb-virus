@@ -2,20 +2,17 @@ export {};
 
 const _ = require('lodash');
 
-let { MsgSend, MsgMultiSend } = require('./types/tx');
+let { MsgSend } = require('./types/tx');
 
-let { MsgLink, SignMsg } = require('./types/cyberd');
-
-let { Fee, StdTx, Signature, Coin, Input, Output, PubKeySecp256k1, SignatureSecp256k1, MsgForSign, AuthTx } = require('./types/base');
+let { Fee, StdTx, Signature, Coin, PubKeySecp256k1, MsgForSign } = require('./types/base');
 
 const CosmosCodec = require('./codec');
 
-const { hexToBytes, arrToHex, hexToArr } = require('./utils/hex');
+const { hexToBytes, arrToHex } = require('./utils/hex');
 
 const { bech32ToAddress } = require('./utils/bech32');
-const encoding = require('./utils/encoding');
 
-const { sign, importPrivateKey } = require('./utils/common');
+const { sign } = require('./utils/common');
 
 export default class CosmosBuilder {
   codec;
@@ -78,7 +75,6 @@ export default class CosmosBuilder {
     };
   }
 
-  // return {
   sendRequest(sendOptions) {
     let { account } = sendOptions;
     let coin = new Coin(sendOptions.denom, sendOptions.amount.toString());
@@ -94,26 +90,6 @@ export default class CosmosBuilder {
   }
 
   callMethod(methodName) {
-    let methodArgs = _.map(arguments, arg => arg).slice(1);
     return this[methodName].bind(this);
   }
-  // buildLinkRequest() {},
-  // }
-}
-
-function buildLinkSignMsg(acc, cidTo, cidFrom, chainId) {
-  const fee = new Fee();
-  const msg = new MsgLink(acc.address, cidTo, cidFrom);
-
-  return new SignMsg(chainId, acc.account_number, acc.sequence, fee, msg, '');
-}
-
-function buildSendSignMsg(acc, from, to, amount, chainId) {
-  const fee = new Fee();
-  const msg = new MsgSend(from, to, amount);
-  return new SignMsg(chainId, acc.account_number, acc.sequence, fee, msg, '');
-}
-
-function buildSignature(pub_key, signature, accountNumber, sequence) {
-  return new Signature(pub_key, signature, accountNumber, sequence);
 }
