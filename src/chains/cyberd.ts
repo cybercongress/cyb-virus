@@ -37,8 +37,9 @@ export default class CyberD extends Cosmos {
       return this.abstractRequest(sendOptions, msg);
     });
 
-    this.cosmosBuilder.setMethod('getResultTx', function(options) {
-      let { msgs, fee, sigs, memo } = options;
+    this.cosmosBuilder.setMethod('getResultTx', function(options, data) {
+      let { memo } = options;
+      let { msgs, fee, sigs } = data;
       return new CyberDTxRequest(msgs, fee, sigs, memo);
     });
 

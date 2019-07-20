@@ -74,12 +74,19 @@ export default class CosmosBuilder {
     return new Fee([new Coin(options.fee.denom, options.fee.amount)], '200000');
   }
 
+  getMessageForSign(options, data) {
+    let { account, memo } = options;
+    let { msgs, fee } = data;
+    return new MsgForSign(options.chainId.toString(), account.accountNumber.toString(), account.sequence.toString(), fee, msgs, memo);
+  }
+
   getSignature(options, signedBytes) {
     return new Signature(new PubKeySecp256k1(hexToBytes(bech32ToAddress(options.account.publicKey))), signedBytes);
   }
 
-  getResultTx(options) {
-    let { msgs, fee, sigs, memo } = options;
+  getResultTx(options, data) {
+    let { memo } = options;
+    let { msgs, fee, sigs } = data;
     return new StdTx(msgs, fee, sigs, memo);
   }
 
@@ -88,13 +95,9 @@ export default class CosmosBuilder {
   }
 
   abstractRequest(options, msg) {
-    let { account, memo } = options;
-
-    if (_.isUndefined(memo) || _.isNull(memo)) {
-      memo = '';
+    if (_.isUndefined(options.memo) || _.isNull(options.memo)) {
+      options.memo = '';
     }
-
-    let fee = this.getFee(options);
 
     // MULTI SEND:
     // console.log('Input', sendOptions.from, [coin]);
@@ -107,26 +110,24 @@ export default class CosmosBuilder {
     // SINGLE SEND:
     // hexToBytes(bech32ToAddress(sendOptions.to))
 
-    const msgForSign = new MsgForSign(options.chainId.toString(), account.accountNumber.toString(), account.sequence.toString(), fee, [msg], memo);
-    console.log('sign', this.codec.marshalJson(msgForSign));
+    let fee = this.getFee(options);
+
+    const msgForSign = this.getMessageForSign(options, { msgs: [msg], fee });
     const signedBytes = this.signMessageJson(options, this.codec.marshalJson(msgForSign));
-    // console.log('Signature', hexToBytes(bech32ToAddress(account.publicKey)), signedBytes);
     const sig = this.getSignature(options, signedBytes);
 
-    // console.log('StdTx', [msg], fee, [sig], memo);
-    let stdTx = this.getResultTx({ msgs: [msg], sigs: [sig], fee, memo });
-    console.log('stdTx', stdTx);
+    let stdTx = this.getResultTx(options, { msgs: [msg], sigs: [sig], fee });
     const json = this.codec.marshalJson(stdTx);
-    console.log('marshalJson', this.codec.marshalJson(stdTx));
+    // console.log('sign', this.codec.marshalJson(msgForSign));
+    // console.log('stdTx', stdTx);
+    // console.log('marshalJson', this.codec.marshalJson(stdTx));
 
     let hex = arrToHex(this.codec.marshalBinary(stdTx));
-    console.log('marshalBinary bytes', JSON.stringify(this.codec.marshalBinary(stdTx)));
-    console.log('marshalBinary hex', arrToHex(this.codec.marshalBinary(stdTx)));
-    console.log('unmarshalBinary bytes', JSON.stringify(hexToArr(hex)));
-
+    // console.log('marshalBinary bytes', JSON.stringify(this.codec.marshalBinary(stdTx)));
+    // console.log('marshalBinary hex', arrToHex(this.codec.marshalBinary(stdTx)));
+    // console.log('unmarshalBinary bytes', JSON.stringify(hexToArr(hex)));
     // let decodedDataTx = new StdTx();
     // codec.unMarshalBinary(hexToArr(hex), decodedDataTx);
-
     // console.log('unmarshalBinary json', decodedDataTx.JsObject());
     if (!_.isString(hex)) {
       hex = hex.toString('base64');
