@@ -54,22 +54,24 @@ function importPrivateKey(secretKey) {
 }
 
 function sign(privateKey, msgJson, publicKey, nonce) {
+  // console.log('cosmos msgJson', JSON.stringify(sortObject(JSON.parse(msgJson))));
   const hash = crypto
     .createHash('sha256')
-    .update(JSON.stringify(sortObject(msgJson)))
+    .update(JSON.stringify(sortObject(JSON.parse(msgJson))))
     .digest('hex');
   const buf = Buffer.from(hash, 'hex');
   const prikeyArr = Buffer.from(new Uint8Array(hexToBytes(privateKey)));
   let signObj = Secp256k1.sign(buf, prikeyArr);
-  // console.log('')
   return Array.from(signObj.signature);
-  // return Buffer.from(signObj.signature, 'binary').toString('base64');
-  // let signBytes = JSON.stringify(msg.JsObject());
-  // let signHash = crypto.createHash('sha256').update(signBytes).digest('hex');
-  //
-  // const privateKeyArr = Buffer.from(new Uint8Array(hexToBytes(privateKey)));
-  //
-  // return Array.from(Secp256k1.sign(Buffer.from(new Uint8Array(hexToBytes(signHash))), privateKeyArr, { canonical: true }).signature);
+
+  // Alternative way:
+  // const sigByte = Buffer.from(JSON.stringify(sortObject(JSON.parse(msgJson))));
+  // const sig32 = Buffer.from(Sha256(sigByte, {
+  //   asBytes: true
+  // }));
+  // const prikeyArr = Buffer.from(new Uint8Array(hexToBytes(privateKey)));
+  // const sig = Secp256k1.sign(sig32, prikeyArr);
+  // return Array.from(sig.signature);
 }
 
 function weiToDecimals(wei, decimals) {
@@ -125,4 +127,5 @@ module.exports = {
   sign,
   importPrivateKey,
   weiToDecimals,
+  sortObject,
 };

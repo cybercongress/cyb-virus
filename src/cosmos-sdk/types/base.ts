@@ -61,7 +61,7 @@ let Fee = TypeFactory.create('fee', [
   },
   {
     name: 'gas',
-    type: Types.Int64,
+    type: Types.String,
   },
 ]);
 

@@ -82,7 +82,7 @@ export default class Cosmos {
         address: keyPair.address,
         publicKey: keyPair.publicKey,
         privateKey: keyPair.privateKey,
-        accountNumber: parseInt(account.account_number, 10),
+        accountNumber: account.account_number.toString(),
         sequence: parseInt(account.sequence, 10),
       },
       chainId: chainId,
@@ -93,7 +93,7 @@ export default class Cosmos {
       memo: 'elonmusk',
     };
 
-    const txRequest = cosmosBuilder.sendRequest(this.constants.CyberdNetConfig, requestData);
+    const txRequest = cosmosBuilder.sendRequest(requestData);
     console.log('txRequest', txRequest);
 
     return axios

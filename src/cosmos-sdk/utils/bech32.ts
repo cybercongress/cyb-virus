@@ -1,13 +1,13 @@
 const hex = require('./hex');
 const bech32impl = require('bech32');
 
-function fromBech32(bech32Str) {
+function bech32ToAddress(bech32Str) {
   const ownKey = bech32impl.decode(bech32Str);
 
   return hex.bytesToHex(bech32impl.fromWords(ownKey.words)).toUpperCase();
 }
 
-function toBech32(prefix, str) {
+function addressToBech32(prefix, str) {
   const strByte = bech32impl.toWords(Buffer.from(str, 'hex'));
 
   return bech32impl.encode(prefix, strByte);
@@ -31,7 +31,7 @@ function isBech32(prefix, str) {
   }
 
   try {
-    fromBech32(str);
+    bech32ToAddress(str);
     return true;
   } catch (e) {
     return false;
@@ -39,7 +39,7 @@ function isBech32(prefix, str) {
 }
 
 module.exports = {
-  fromBech32,
-  toBech32,
   isBech32,
+  addressToBech32,
+  bech32ToAddress,
 };

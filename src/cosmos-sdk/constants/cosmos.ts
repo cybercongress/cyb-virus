@@ -25,6 +25,6 @@ AminoKey.BIP44Prefix = "44'/118'/";
 AminoKey.FullFundraiserPath = `${AminoKey.BIP44Prefix}0'/0/0`;
 
 module.exports = {
-  CyberdNetConfig: NetConfig,
+  NetConfig,
   AminoKey,
 };

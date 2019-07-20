@@ -13,8 +13,8 @@ const { DAGNode, util: DAGUtil } = require('ipld-dag-pb');
 const cybCrypto = require('../crypto');
 const appConfig = require('../config');
 
-const cyberDconstants = require('./src/cosmos-sdk/constants/cyberd');
-const constants = require('./src/cosmos-sdk/constants/cyberd');
+const cyberDConstants = require('../cosmos-sdk/constants/cyberd');
+const cosmosConstants = require('../cosmos-sdk/constants/cosmos');
 
 export class PermanentStorage {
   static pseudoStorage = {};
@@ -216,11 +216,11 @@ export class AppWallet {
   }
 
   static getCyberDInstance(): CyberD {
-    return new CyberD(AppWallet.getDefaultEndpoint(NetworkType.CyberD).rpc);
+    return new CyberD(AppWallet.getDefaultEndpoint(NetworkType.CyberD).rpc, cyberDConstants.NetConfig);
   }
 
   static getCosmosInstance(): Cosmos {
-    return new Cosmos(AppWallet.getDefaultEndpoint(NetworkType.Cosmos).rpc);
+    return new Cosmos(AppWallet.getDefaultEndpoint(NetworkType.Cosmos).rpc, cosmosConstants.NetConfig);
   }
 }
 

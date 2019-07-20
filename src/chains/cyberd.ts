@@ -2,8 +2,15 @@ export {};
 
 const axios = require('axios');
 const cyberjsBuilder = require('@litvintech/cyberjs/builder');
-const cyberjsCodec = require('@litvintech/cyberjs/codec');
-const cosmosBuilder = require('../cosmos-sdk/builder');
+const CosmosBuilder = require('../cosmos-sdk/builder');
+const CosmosCodec = require('../cosmos-sdk/codec');
+const encoding = require('../cosmos-sdk/utils/encoding');
+const { stringToHex, hexToBytes } = require('../cosmos-sdk/utils/hex');
+const { sign, sortObject } = require('../cosmos-sdk/utils/common');
+const { bech32ToAddress } = require('../cosmos-sdk/utils/bech32');
+const { CyberDTxRequest, CyberDFee, CyberDSignature } = require('../cosmos-sdk/types/cyberd');
+const { Coin, Input, Output, Fee } = require('../cosmos-sdk/types/base');
+const { MsgMultiSend } = require('../cosmos-sdk/types/tx');
 
 import Cosmos from './cosmos';
 
@@ -49,27 +56,68 @@ export default class CyberD extends Cosmos {
     const chainId = await this.getNetworkId();
     const account = await this.getAccountInfo(txOptions.address);
 
-    const acc = {
-      address: account.address,
-      chain_id: chainId,
-      account_number: parseInt(account.account_number, 10),
-      sequence: parseInt(account.sequence, 10),
-    };
-
     const amount = parseFloat(gAmount) * 10 ** 9;
 
-    const sendRequest = {
-      acc,
+    const keyPair = encoding(this.constants.NetConfig).importAccount(txOptions.privateKey);
+
+    const requestData = {
+      account: {
+        address: keyPair.address,
+        publicKey: keyPair.publicKey,
+        privateKey: keyPair.privateKey,
+        accountNumber: parseInt(account.account_number, 10),
+        sequence: parseInt(account.sequence, 10),
+      },
+      chainId: chainId,
       amount,
-      from: account.address,
-      // to: cyberjsCodec.bech32.toBech32(cyberjsConstants.CyberdNetConfig.PREFIX_BECH32_ACCADDR, addressTo),
       to: addressTo,
-      type: 'send',
+      coin: 'cyb',
+      memo: '',
     };
 
-    const txRequest = cyberjsBuilder.buildAndSignTxRequest(sendRequest, txOptions.privateKey, chainId);
-    console.log('JSON.stringify(txRequest)', JSON.stringify(txRequest));
-    const signedSendHex = cyberjsCodec.hex.stringToHex(JSON.stringify(txRequest));
+    const cosmosBuilder = new CosmosBuilder();
+
+    const cosmosCodec = new CosmosCodec();
+    cosmosBuilder.setCodec(cosmosCodec);
+
+    cosmosBuilder.setMethod('sendRequest', function(sendOptions) {
+      let { account } = sendOptions;
+      let coin = new Coin(sendOptions.coin, sendOptions.amount.toString());
+
+      let msg = new MsgMultiSend([new Input(account.address, [coin])], [new Output(sendOptions.to, [coin])]);
+
+      return this.abstractRequest(sendOptions, msg);
+    });
+
+    cosmosBuilder.setMethod('getResultTx', function(options) {
+      let { msgs, fee, sigs, memo } = options;
+      return new CyberDTxRequest(msgs, fee, sigs, memo);
+    });
+
+    cosmosBuilder.setMethod('getFee', function(options) {
+      return new CyberDFee([new Coin('', '0')], 200000);
+    });
+
+    cosmosBuilder.setMethod('getSignature', function(options, signedBytes) {
+      const { account } = options;
+      return new CyberDSignature(Array.from(hexToBytes(bech32ToAddress(account.publicKey))), Array.from(signedBytes), account.accountNumber, account.sequence);
+    });
+
+    cosmosBuilder.setMethod('signMessageJson', function(options, messageJson) {
+      let messageObj = JSON.parse(messageJson);
+      messageObj.fee.gas = messageObj.fee.gas.toString();
+      return sign(options.account.privateKey, JSON.stringify(messageObj));
+    });
+
+    const txRequest = cosmosBuilder.sendRequest(requestData);
+    const jsObject = JSON.parse(txRequest.json);
+    jsObject.signatures.forEach(sign => {
+      sign.pub_key = Array.from(Buffer.from(sign.pub_key, 'base64'));
+      sign.signature = Array.from(Buffer.from(sign.signature, 'base64'));
+    });
+    txRequest.json = JSON.stringify(jsObject);
+
+    const signedSendHex = stringToHex(txRequest.json);
 
     return axios({
       method: 'get',
@@ -108,8 +156,12 @@ export default class CyberD extends Cosmos {
       type: 'link',
     };
 
+    const cosmosBuilder = new CosmosBuilder();
+
+    cosmosBuilder.setCodec();
+
     const txRequest = cosmosBuilder.buildSendRequest(sendRequest, txOptions.privateKey, chainId);
-    const signedSendHex = cyberjsCodec.hex.stringToHex(JSON.stringify(txRequest));
+    const signedSendHex = stringToHex(JSON.stringify(txRequest));
 
     // let websocket = new WebSocket('ws://earth.cybernode.ai:34657/websocket');
     // websocket.onmessage = function(msg) {

@@ -2,7 +2,7 @@ export {};
 
 let { TypeFactory, Types } = require('js-amino');
 
-let CyberDMsgLink = TypeFactory.create('cyberd/Link', [
+let CyberDMsgLink = TypeFactory.create('CyberDMsgLink', [
   {
     name: 'address',
     type: Types.ByteSlice,
@@ -13,7 +13,7 @@ let CyberDMsgLink = TypeFactory.create('cyberd/Link', [
   },
 ]);
 
-let CyberDMsgLinkData = TypeFactory.create('links', [
+let CyberDMsgLinkData = TypeFactory.create('CyberDMsgLinkData', [
   {
     name: 'from',
     type: Types.ByteSlice,
@@ -24,7 +24,7 @@ let CyberDMsgLinkData = TypeFactory.create('links', [
   },
 ]);
 
-let CyberDTxRequest = TypeFactory.create('TxRequest', [
+let CyberDTxRequest = TypeFactory.create('CyberDTxRequest', [
   {
     name: 'msgs',
     type: Types.ArrayStruct,
@@ -34,8 +34,8 @@ let CyberDTxRequest = TypeFactory.create('TxRequest', [
     type: Types.Struct,
   },
   {
-    name: 'signature',
-    type: Types.Struct,
+    name: 'signatures',
+    type: Types.ArrayStruct,
   },
   {
     name: 'memo',
@@ -43,8 +43,40 @@ let CyberDTxRequest = TypeFactory.create('TxRequest', [
   },
 ]);
 
+let CyberDFee = TypeFactory.create('CyberDFee', [
+  {
+    name: 'amount',
+    type: Types.ArrayStruct,
+  },
+  {
+    name: 'gas',
+    type: Types.Int32,
+  },
+]);
+
+let CyberDSignature = TypeFactory.create('CyberDSignature', [
+  {
+    name: 'pub_key',
+    type: Types.ByteSlice,
+  },
+  {
+    name: 'signature',
+    type: Types.ByteSlice,
+  },
+  {
+    name: 'account_number',
+    type: Types.Int32,
+  },
+  {
+    name: 'sequence',
+    type: Types.Int32,
+  },
+]);
+
 module.exports = {
   CyberDMsgLink,
   CyberDMsgLinkData,
   CyberDTxRequest,
+  CyberDFee,
+  CyberDSignature,
 };

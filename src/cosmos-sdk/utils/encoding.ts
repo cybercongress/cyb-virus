@@ -2,7 +2,7 @@ export {};
 
 const { importPrivateKey } = require('./common');
 const { isHex } = require('./hex');
-const { toBech32 } = require('./bech32');
+const { addressToBech32 } = require('./bech32');
 const _ = require('lodash');
 
 module.exports = function(constants) {
@@ -30,11 +30,11 @@ module.exports = function(constants) {
     switch (defaultCoding) {
       case constants.ENCODING_BECH32: {
         if (isHex(acc.address)) {
-          acc.address = toBech32(constants.PREFIX_BECH32_ACCADDR, acc.address);
+          acc.address = addressToBech32(constants.PREFIX_BECH32_ACCADDR, acc.address);
         }
 
         if (isHex(acc.publicKey)) {
-          acc.publicKey = toBech32(constants.PREFIX_BECH32_ACCPUB, acc.publicKey);
+          acc.publicKey = addressToBech32(constants.PREFIX_BECH32_ACCPUB, acc.publicKey);
         }
         break;
       }

@@ -8,18 +8,27 @@ let { MsgLink, SignMsg } = require('./types/cyberd');
 
 let { Fee, StdTx, Signature, Coin, Input, Output, PubKeySecp256k1, SignatureSecp256k1, MsgForSign, AuthTx } = require('./types/base');
 
-const codec = require('./codec');
+const CosmosCodec = require('./codec');
 
 const { hexToBytes, arrToHex, hexToArr } = require('./utils/hex');
 
-const { fromBech32 } = require('./utils/bech32');
+const { bech32ToAddress } = require('./utils/bech32');
 const encoding = require('./utils/encoding');
 
 const { sign, importPrivateKey } = require('./utils/common');
 
-let { addressToBech32, bech32ToAddress } = require('shr-keys');
+module.exports = class CosmosBuilder {
+  codec;
 
-module.exports = {
+  constructor() {
+    this.codec = new CosmosCodec();
+    this.codec.applyTendermint();
+    this.codec.applyCosmos();
+  }
+
+  setCodec(codec) {
+    this.codec = codec;
+  }
   // const encoding = require('./utils/encoding')(constants);
   //
   // function signTxRequest(signMsg, privateKey) {
@@ -61,17 +70,31 @@ module.exports = {
   //   return msg;
   // }
 
-  // return {
-  sendRequest(constants, sendOptions) {
-    let { account, memo } = sendOptions;
+  getFee(options) {
+    return new Fee([new Coin(options.coin, '0')], '200000');
+  }
+
+  getSignature(options, signedBytes) {
+    return new Signature(new PubKeySecp256k1(hexToBytes(bech32ToAddress(options.account.publicKey))), signedBytes);
+  }
+
+  getResultTx(options) {
+    let { msgs, fee, sigs, memo } = options;
+    return new StdTx(msgs, fee, sigs, memo);
+  }
+
+  signMessageJson(options, messageJson) {
+    return sign(options.account.privateKey, messageJson);
+  }
+
+  abstractRequest(options, msg) {
+    let { account, memo } = options;
 
     if (_.isUndefined(memo) || _.isNull(memo)) {
       memo = '';
     }
 
-    let coin = new Coin(sendOptions.coin, sendOptions.amount.toString());
-    console.log('Fee', [new Coin(sendOptions.coin, '0')], '200000');
-    let fee = new Fee([new Coin(sendOptions.coin, '0')], '200000');
+    let fee = this.getFee(options);
 
     // MULTI SEND:
     // console.log('Input', sendOptions.from, [coin]);
@@ -79,29 +102,26 @@ module.exports = {
     // console.log('Output', sendOptions.to, [coin]);
     // let output = new Output(sendOptions.to, [coin]);
     // console.log('MsgMultiSend', [input], [output]);
-    // let sendMsg = new MsgMultiSend([input], [output]);
+    // let msg = new MsgMultiSend([input], [output]);
 
     // SINGLE SEND:
     // hexToBytes(bech32ToAddress(sendOptions.to))
-    const sendMsg = new MsgSend(hexToBytes(bech32ToAddress(account.address)), hexToBytes(bech32ToAddress(sendOptions.to)), [coin]);
 
-    console.log('MsgForSign', sendOptions.chainId, account.accountNumber, account.sequence, fee, [sendMsg]);
+    const msgForSign = new MsgForSign(options.chainId.toString(), account.accountNumber.toString(), account.sequence.toString(), fee, [msg], memo);
+    console.log('sign', this.codec.marshalJson(msgForSign));
+    const signedBytes = this.signMessageJson(options, this.codec.marshalJson(msgForSign));
+    // console.log('Signature', hexToBytes(bech32ToAddress(account.publicKey)), signedBytes);
+    const sig = this.getSignature(options, signedBytes);
 
-    const msgForSign = new MsgForSign(sendOptions.chainId, account.accountNumber, account.sequence, fee, [sendMsg], memo);
-    console.log('sign', account.privateKey, codec.marshalJson(msgForSign));
-    const signedBytes = sign(account.privateKey, codec.marshalJson(msgForSign));
-    console.log('Signature', hexToBytes(account.publicKey), signedBytes);
-    const sig = new Signature(new PubKeySecp256k1(hexToBytes(account.publicKey)), signedBytes);
-
-    console.log('StdTx', [sendMsg], fee, [sig], memo);
-    let stdTx = new StdTx([sendMsg], fee, [sig], memo);
+    // console.log('StdTx', [msg], fee, [sig], memo);
+    let stdTx = this.getResultTx({ msgs: [msg], sigs: [sig], fee, memo });
     console.log('stdTx', stdTx);
-    const json = codec.marshalJson(stdTx);
-    console.log('marshalJson', codec.marshalJson(stdTx));
+    const json = this.codec.marshalJson(stdTx);
+    console.log('marshalJson', this.codec.marshalJson(stdTx));
 
-    let hex = arrToHex(codec.marshalBinary(stdTx));
-    console.log('marshalBinary bytes', JSON.stringify(codec.marshalBinary(stdTx)));
-    console.log('marshalBinary hex', arrToHex(codec.marshalBinary(stdTx)));
+    let hex = arrToHex(this.codec.marshalBinary(stdTx));
+    console.log('marshalBinary bytes', JSON.stringify(this.codec.marshalBinary(stdTx)));
+    console.log('marshalBinary hex', arrToHex(this.codec.marshalBinary(stdTx)));
     console.log('unmarshalBinary bytes', JSON.stringify(hexToArr(hex)));
 
     // let decodedDataTx = new StdTx();
@@ -115,8 +135,21 @@ module.exports = {
       json,
       hex,
     };
-  },
-  buildLinkRequest() {},
+  }
+
+  // return {
+  sendRequest(sendOptions) {
+    let { account } = sendOptions;
+    let coin = new Coin(sendOptions.coin, sendOptions.amount.toString());
+
+    const msg = new MsgSend(hexToBytes(bech32ToAddress(account.address)), hexToBytes(bech32ToAddress(sendOptions.to)), [coin]);
+    return this.abstractRequest(sendOptions, msg);
+  }
+
+  setMethod(methodName, func) {
+    this[methodName] = func;
+  }
+  // buildLinkRequest() {},
   // }
 };
 
