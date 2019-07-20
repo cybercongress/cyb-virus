@@ -1,62 +1,18 @@
 export {};
 
 const axios = require('axios');
-const CosmosCodec = require('../cosmos-sdk/codec');
-const encoding = require('../cosmos-sdk/utils/encoding');
-const { stringToHex, hexToBytes } = require('../cosmos-sdk/utils/hex');
-const { sign } = require('../cosmos-sdk/utils/common');
-const { bech32ToAddress } = require('../cosmos-sdk/utils/bech32');
-const { CyberDTxRequest, CyberDFee, CyberDSignature, CyberDMsgLink, CyberDMsgLinkData } = require('../cosmos-sdk/types/cyberd');
-const { Coin, Input, Output, Fee } = require('../cosmos-sdk/types/base');
-const { MsgMultiSend } = require('../cosmos-sdk/types/tx');
+const encoding = require('../utils/encoding');
+const { stringToHex } = require('../utils/hex');
 
-import Cosmos from './cosmos';
+import CosmosSdkRpc from './cosmosSdkRpc';
+import CyberDBuilder from '../builders/cyberDBuilder';
 
-export default class CyberD extends Cosmos {
+export default class CyberdRpc extends CosmosSdkRpc {
+  cosmosBuilder: CyberDBuilder;
+
   constructor(rpc, constants) {
     super(rpc, constants);
-
-    const cosmosCodec = new CosmosCodec();
-
-    cosmosCodec.registerConcrete(new CyberDMsgLink(), 'cyberd/Link', {});
-
-    this.cosmosBuilder.setCodec(cosmosCodec);
-
-    this.cosmosBuilder.setMethod('sendRequest', function(sendOptions) {
-      let { account } = sendOptions;
-      let coin = new Coin(sendOptions.denom, sendOptions.amount.toString());
-
-      let msg = new MsgMultiSend([new Input(account.address, [coin])], [new Output(sendOptions.to, [coin])]);
-
-      return this.abstractRequest(sendOptions, msg);
-    });
-
-    this.cosmosBuilder.setMethod('linkRequest', function(sendOptions) {
-      let linkData = new CyberDMsgLinkData(sendOptions.fromCid, sendOptions.toCid);
-      let msg = new CyberDMsgLink(sendOptions.account.address, [linkData]);
-      return this.abstractRequest(sendOptions, msg);
-    });
-
-    this.cosmosBuilder.setMethod('getResultTx', function(options, data) {
-      let { memo } = options;
-      let { msgs, fee, sigs } = data;
-      return new CyberDTxRequest(msgs, fee, sigs, memo);
-    });
-
-    this.cosmosBuilder.setMethod('getFee', function(options) {
-      return new CyberDFee([new Coin(options.fee.denom, options.fee.amount)], 200000);
-    });
-
-    this.cosmosBuilder.setMethod('getSignature', function(options, signedBytes) {
-      const { account } = options;
-      return new CyberDSignature(Array.from(hexToBytes(bech32ToAddress(account.publicKey))), Array.from(signedBytes), account.accountNumber, account.sequence);
-    });
-
-    this.cosmosBuilder.setMethod('signMessageJson', function(options, messageJson) {
-      let messageObj = JSON.parse(messageJson);
-      messageObj.fee.gas = messageObj.fee.gas.toString();
-      return sign(options.account.privateKey, JSON.stringify(messageObj));
-    });
+    this.cosmosBuilder = new CyberDBuilder();
   }
   async getNodeInfo() {
     return axios({
@@ -144,7 +100,7 @@ export default class CyberD extends Cosmos {
       memo: '',
     };
 
-    const txRequest = this.cosmosBuilder.callMethod('sendRequest')(requestData);
+    const txRequest = this.cosmosBuilder.sendRequest(requestData);
 
     return axios({
       method: 'get',
@@ -189,16 +145,7 @@ export default class CyberD extends Cosmos {
       memo: '',
     };
 
-    // requestData['acc'] = requestData.account;
-    // requestData['acc']['account_number'] = requestData.account.accountNumber;
-    // requestData['from'] = requestData.account.address;
-    // requestData['type'] = 'link';
-
-    // const cyberTxRequest = cyberjsBuilder.buildAndSignTxRequest(requestData, txOptions.privateKey, chainId);
-    // console.log('cyber request', JSON.stringify(cyberTxRequest));
-    // const signedSendHex = stringToHex(JSON.stringify(cyberTxRequest));
-
-    const txRequest = this.cosmosBuilder.callMethod('linkRequest')(requestData);
+    const txRequest = this.cosmosBuilder.linkRequest(requestData);
 
     return axios({
       method: 'get',

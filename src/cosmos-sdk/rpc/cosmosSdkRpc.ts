@@ -1,18 +1,18 @@
-import CosmosBuilder from '../cosmos-sdk/builder';
+import CosmosSdkBuilder from '../builders/cosmosSdkBuilder';
 const axios = require('axios');
-const { importPrivateKey, weiToDecimals } = require('../cosmos-sdk/utils/common');
+const { weiToDecimals } = require('../utils/common');
 
-const encoding = require('../cosmos-sdk/utils/encoding');
+const encoding = require('../utils/encoding');
 
-export default class Cosmos {
+export default class CosmosSdkRpc {
   rpc: string;
   constants: any;
-  cosmosBuilder: CosmosBuilder;
+  cosmosBuilder: CosmosSdkBuilder;
 
   constructor(rpc, constants) {
     this.rpc = rpc;
     this.constants = constants;
-    this.cosmosBuilder = new CosmosBuilder();
+    this.cosmosBuilder = new CosmosSdkBuilder();
   }
 
   async getBalance(address) {
@@ -99,7 +99,7 @@ export default class Cosmos {
       memo: '',
     };
 
-    const txRequest = this.cosmosBuilder.callMethod('sendRequest')(requestData);
+    const txRequest = this.cosmosBuilder.sendRequest(requestData);
     console.log(
       'txRequest',
       JSON.stringify({

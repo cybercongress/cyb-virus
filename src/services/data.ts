@@ -1,8 +1,8 @@
 import Helper from '@galtproject/frontend-core/services/helper';
 import { AppAccount, AppAccountGroup } from '../interface';
 import { KeyPairType, NetworkType, StorageVars } from '../enum';
-import CyberD from '../chains/cyberd';
-import Cosmos from '../chains/cosmos';
+import CyberdRpc from '../cosmos-sdk/rpc/cyberdRpc';
+import CosmosSdkRpc from '../cosmos-sdk/rpc/cosmosSdkRpc';
 
 const _ = require('lodash');
 const pIteration = require('p-iteration');
@@ -215,12 +215,12 @@ export class AppWallet {
     return appConfig.defaultEndpointByNetworkName[networkType];
   }
 
-  static getCyberDInstance(): CyberD {
-    return new CyberD(AppWallet.getDefaultEndpoint(NetworkType.CyberD).rpc, cyberDConstants);
+  static getCyberDInstance(): CyberdRpc {
+    return new CyberdRpc(AppWallet.getDefaultEndpoint(NetworkType.CyberD).rpc, cyberDConstants);
   }
 
-  static getCosmosInstance(): Cosmos {
-    return new Cosmos(AppWallet.getDefaultEndpoint(NetworkType.Cosmos).rpc, cosmosConstants);
+  static getCosmosInstance(): CosmosSdkRpc {
+    return new CosmosSdkRpc(AppWallet.getDefaultEndpoint(NetworkType.Cosmos).rpc, cosmosConstants);
   }
 }
 

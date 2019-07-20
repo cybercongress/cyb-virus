@@ -2,19 +2,19 @@ export {};
 
 const _ = require('lodash');
 
-let { MsgSend } = require('./types/tx');
+let { MsgSend } = require('../types/tx');
 
-let { Fee, StdTx, Signature, Coin, PubKeySecp256k1, MsgForSign } = require('./types/base');
+let { Fee, StdTx, Signature, Coin, PubKeySecp256k1, MsgForSign } = require('../types/base');
 
-const CosmosCodec = require('./codec');
+const CosmosCodec = require('../codec');
 
-const { hexToBytes, arrToHex } = require('./utils/hex');
+const { hexToBytes, arrToHex } = require('../utils/hex');
 
-const { bech32ToAddress } = require('./utils/bech32');
+const { bech32ToAddress } = require('../utils/bech32');
 
-const { sign } = require('./utils/common');
+const { sign } = require('../utils/common');
 
-export default class CosmosBuilder {
+export default class CosmosSdkBuilder {
   codec;
 
   constructor() {
