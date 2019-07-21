@@ -196,8 +196,6 @@ onMessage(async (request, sender, sendResponse) => {
   await waitForInit();
   await fetchCurrentTab();
 
-  const ipfsNode = await promiseMeJsIpfs();
-
   if (request.type === 'page-action') {
     setAction(request);
     return;
@@ -256,6 +254,12 @@ onMessage(async (request, sender, sendResponse) => {
   if (request.type === BackgroundRequest.GetContentByHash) {
     databaseService.getContentByHash(request.data).then(data => {
       sendPopupMessage({ type: BackgroundResponse.GetContentByHash, data });
+    });
+    return;
+  }
+  if (request.type === BackgroundRequest.GetContentDataByHash) {
+    ipfsService.getContent(request.data).then(data => {
+      sendPopupMessage({ type: BackgroundResponse.GetContentDataByHash, data });
     });
     return;
   }

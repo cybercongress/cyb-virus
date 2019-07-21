@@ -8,9 +8,23 @@ import 'vue-material/dist/theme/black-green-dark.css';
 
 Vue.prototype.$browser = (global as any).browser;
 
+import VueRouter from 'vue-router';
+import IpfsContentPage from './IpfsContentPage/IpfsContentPage';
+
+Vue.use(VueRouter);
+
+const router = new VueRouter({
+  routes: [
+    {
+      path: '/:ipfsHash',
+      component: IpfsContentPage,
+    },
+  ],
+});
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
-  // router,
-  // render: h => h(App),
+  router,
+  template: '<router-view></router-view>',
 });

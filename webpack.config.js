@@ -14,7 +14,7 @@ const config = {
     background: './background.ts',
     contentScript: './contentScript.ts',
     'popup/popup': './popup/popup.ts',
-    // 'tab-page/index': './tab-page/index.ts',
+    'tab-page/index': './tab-page/index.ts',
     'workers/ipfsResource': './workers/ipfsResource.ts',
     'options/options': './options/options.ts',
   },
@@ -123,7 +123,7 @@ const config = {
       { from: '../node_modules/font-awesome/webfonts', to: 'popup/webfonts' },
       { from: 'popup/popup.html', to: 'popup/popup.html', transform: transformHtml },
       { from: 'popup/popup.html', to: 'popup/index.html', transform: transformHtml },
-      // { from: 'tab-page/index.html', to: 'tab-page/index.html', transform: transformHtml },
+      { from: 'tab-page/index.html', to: 'tab-page/index.html', transform: transformHtml },
       { from: 'options/options.html', to: 'options/options.html', transform: transformHtml },
       {
         from: 'manifest.json',

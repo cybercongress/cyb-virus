@@ -1,13 +1,14 @@
 console.log('ipfsResource start');
 
 self.addEventListener('fetch', function(event: any) {
-  (self as any).clients.matchAll().then(function(clients) {
+  console.log('fetch');
+
+  const reponsePromise = (self as any).clients.matchAll().then(function(clients) {
     const ipfsHash = event.request.url.split('/ipfs/')[1];
     console.log('fetch ipfsHash', ipfsHash);
     const response = new Response('Ipfs hash: ' + ipfsHash, {
       headers: { 'Content-Type': 'text/html' },
     });
-    (event as any).respondWith(response);
 
     let client = clients[0];
 
@@ -17,5 +18,9 @@ self.addEventListener('fetch', function(event: any) {
     };
 
     client.postMessage('ipfsResource request', [messageChannel.port2]);
+
+    return response;
   });
+
+  (event as any).respondWith(reponsePromise);
 });

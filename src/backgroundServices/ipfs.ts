@@ -1,3 +1,4 @@
+export {};
 import { JsIpfsService } from '@galtproject/geesome-libs/src/JsIpfsService';
 const pull = require('pull-stream');
 let ipfs;
@@ -8,7 +9,7 @@ const extensionIpns = 'cybvirusex';
 module.exports = {
   init(ipfsNode) {
     ipfs = ipfsNode;
-    ipfsService = new JsIpfsService(ipfs);
+    ipfsService = new JsIpfsService(ipfsNode);
   },
   id() {
     return ipfs.id();

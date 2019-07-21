@@ -23,6 +23,7 @@ export enum BackgroundRequest {
   SaveContentToList = 'save-content-to-list:request',
   GetContentList = 'get-content-list:request',
   GetContentByHash = 'get-content-by-hash:request',
+  GetContentDataByHash = 'get-content-data-by-hash:request',
   GetPeersList = 'get-peers-list:request',
   GetSettings = 'get-settings:request',
   SetSettings = 'set-settings:request',
@@ -36,6 +37,7 @@ export enum BackgroundResponse {
   SaveContentToList = 'save-content-to-list:response',
   GetContentList = 'get-content-list:response',
   GetContentByHash = 'get-content-by-hash:response',
+  GetContentDataByHash = 'get-content-data-by-hash:response',
   GetPeersList = 'get-peers-list:response',
   GetSettings = 'get-settings:response',
   SetSettings = 'set-settings:response',
@@ -65,6 +67,14 @@ export function getContentByHash(hash) {
   const resultPromise = onMessagePromise(BackgroundResponse.GetContentByHash);
 
   sendMessage({ type: BackgroundRequest.GetContentByHash, data: hash });
+
+  return resultPromise;
+}
+
+export function getContentDataByHash(hash) {
+  const resultPromise = onMessagePromise(BackgroundResponse.GetContentDataByHash);
+
+  sendMessage({ type: BackgroundRequest.GetContentDataByHash, data: hash });
 
   return resultPromise;
 }
