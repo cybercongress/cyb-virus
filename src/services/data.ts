@@ -1,8 +1,8 @@
 import Helper from '@galtproject/frontend-core/services/helper';
 import { AppAccount, AppAccountGroup } from '../interface';
 import { KeyPairType, NetworkType, StorageVars } from '../enum';
-import CyberdRpc from 'cosmos-js/build/rpc/cyberdRpc';
-import CosmosSdkRpc from 'cosmos-js/build/rpc/cosmosSdkRpc';
+import CyberdRpc from 'cosmos-js/dist/rpc/cyberdRpc';
+import CosmosSdkRpc from 'cosmos-js/dist/rpc/cosmosSdkRpc';
 
 const _ = require('lodash');
 const pIteration = require('p-iteration');
@@ -13,8 +13,8 @@ const { DAGNode, util: DAGUtil } = require('ipld-dag-pb');
 const cybCrypto = require('../crypto');
 const appConfig = require('../config');
 
-const cyberDConstants = require('cosmos-js/build/constants/cyberd');
-const cosmosConstants = require('cosmos-js/build/constants/cosmos');
+const cyberDConstants = require('cosmos-js/dist/constants/cyberd');
+const cosmosConstants = require('cosmos-js/dist/constants/cosmos');
 
 export class PermanentStorage {
   static pseudoStorage = {};

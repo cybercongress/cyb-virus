@@ -8,8 +8,8 @@ const Secp256k1 = require('secp256k1');
 const Sha256 = require('sha256');
 const RIPEMD160 = require('ripemd160');
 
-const { marshalBinary } = require('cosmos-js/build/utils/common');
-const { hexToBytes } = require('cosmos-js/build/utils/hex');
+const { marshalBinary } = require('cosmos-js/dist/utils/common');
+const { hexToBytes } = require('cosmos-js/dist/utils/hex');
 
 module.exports = {
   async getCosmosKeypairByMnemonic(mnemonic, index, prefix, chainIndex = '118') {
