@@ -15,7 +15,6 @@ const config = {
     contentScript: './contentScript.ts',
     'popup/popup': './popup/popup.ts',
     'tab-page/index': './tab-page/index.ts',
-    'workers/ipfsResource': './workers/ipfsResource.ts',
     'options/options': './options/options.ts',
   },
   output: {
@@ -160,16 +159,6 @@ if (process.env.HMR === 'true') {
     }),
   ]);
 }
-
-config.plugins.push({
-  apply: compiler => {
-    compiler.hooks.afterEmit.tap('AfterEmitPlugin', () => {
-      const appPath = `${__dirname}/dist/workers/ipfsResource.js`;
-      const jsContent = fs.readFileSync(appPath).toString();
-      fs.writeFile(appPath, `var self = this;var window = {};${jsContent}`, () => {});
-    });
-  },
-});
 
 function transformHtml(content) {
   return ejs.render(content.toString(), {

@@ -4,7 +4,6 @@ const ipfsService = require('./backgroundServices/ipfs');
 const base36Trie = require('@galtproject/geesome-libs/src/base36Trie');
 const cheerio = require('cheerio');
 const IPFS = require('ipfs');
-const axios = require('axios');
 // const ipfsClient = require('ipfs-http-client');
 
 import { BackgroundRequest, BackgroundResponse } from './services/backgroundGateway';
@@ -22,25 +21,6 @@ function initServices() {
     console.log('ipfs id', await ipfsService.id());
     init = true;
   });
-}
-
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker
-    .register('/workers/ipfsResource.js', { scope: '/workers/ipfs/' })
-    .then(async reg => {
-      // регистрация сработала
-      console.log('Registration succeeded. Scope is ' + reg.scope);
-      await navigator.serviceWorker.ready;
-      navigator.serviceWorker.controller.postMessage('ipfs-background');
-    })
-    .catch(function(error) {
-      console.error('Registration failed with ' + error);
-    });
-
-  navigator.serviceWorker.onmessage = function(event) {
-    console.log('background message', event);
-    event.ports[0].postMessage('background response');
-  };
 }
 
 // setInterval(async () => {
