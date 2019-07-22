@@ -4,6 +4,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const ExtensionReloader = require('webpack-extension-reloader');
 const { VueLoaderPlugin } = require('vue-loader');
+const fs = require('fs');
 const { version } = require('./package.json');
 
 const config = {
@@ -13,6 +14,7 @@ const config = {
     background: './background.ts',
     contentScript: './contentScript.ts',
     'popup/popup': './popup/popup.ts',
+    'tab-page/index': './tab-page/index.ts',
     'options/options': './options/options.ts',
   },
   output: {
@@ -120,6 +122,7 @@ const config = {
       { from: '../node_modules/font-awesome/webfonts', to: 'popup/webfonts' },
       { from: 'popup/popup.html', to: 'popup/popup.html', transform: transformHtml },
       { from: 'popup/popup.html', to: 'popup/index.html', transform: transformHtml },
+      { from: 'tab-page/index.html', to: 'tab-page/index.html', transform: transformHtml },
       { from: 'options/options.html', to: 'options/options.html', transform: transformHtml },
       {
         from: 'manifest.json',

@@ -3,6 +3,8 @@ const pIteration = require('p-iteration');
 const ipfsService = require('./backgroundServices/ipfs');
 const base36Trie = require('@galtproject/geesome-libs/src/base36Trie');
 const cheerio = require('cheerio');
+const IPFS = require('ipfs');
+// const ipfsClient = require('ipfs-http-client');
 
 import { BackgroundRequest, BackgroundResponse } from './services/backgroundGateway';
 import { Settings } from './backgroundServices/types';
@@ -14,8 +16,27 @@ const databaseService = require('./backgroundServices/database');
 let init = false;
 function initServices() {
   return databaseService.getSetting(Settings.StorageNodeAddress).then(async address => {
-    await ipfsService.init(address);
+    // await ipfsService.init(ipfsClient(address));
+    await ipfsService.init(await promiseMeJsIpfs());
+    console.log('ipfs id', await ipfsService.id());
     init = true;
+  });
+}
+
+// setInterval(async () => {
+//   console.log('worker response', await axios.get('/workers/ipfs/lala'));
+// }, 5000)
+
+function promiseMeJsIpfs() {
+  return new Promise((resolve, reject) => {
+    const ipfs = IPFS.createNode({
+      EXPERIMENTAL: {
+        pubsub: true,
+        ipnsPubsub: true,
+      },
+    });
+    ipfs.once('ready', () => resolve(ipfs));
+    ipfs.once('error', err => reject(err));
   });
 }
 
@@ -213,6 +234,12 @@ onMessage(async (request, sender, sendResponse) => {
   if (request.type === BackgroundRequest.GetContentByHash) {
     databaseService.getContentByHash(request.data).then(data => {
       sendPopupMessage({ type: BackgroundResponse.GetContentByHash, data });
+    });
+    return;
+  }
+  if (request.type === BackgroundRequest.GetContentDataByHash) {
+    ipfsService.getContent(request.data).then(data => {
+      sendPopupMessage({ type: BackgroundResponse.GetContentDataByHash, data });
     });
     return;
   }

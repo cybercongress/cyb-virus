@@ -41,9 +41,10 @@ Vue.use(storePlugin, {
   [StorageVars.CurrentAccounts]: null,
   [StorageVars.CyberDAccounts]: null,
   [StorageVars.GeesomeAccounts]: null,
-  [StorageVars.IpfsUrl]: null,
+  [StorageVars.IpfsUrl]: '/workers/ipfs/',
   [StorageVars.CurrentCabinetRoute]: null,
   [StorageVars.Settings]: null,
+  [StorageVars.ExtensionTabPageUrl]: 'chrome-extension://' + (global as any).chrome.runtime.id + '/tab-page/index.html',
 });
 
 export default {
@@ -159,7 +160,7 @@ export default {
       this.init();
     },
     nodeIp() {
-      this.$store.commit(StorageVars.IpfsUrl, 'http://' + this.nodeIp + ':8080/ipfs/');
+      // this.$store.commit(StorageVars.IpfsUrl, 'http://' + this.nodeIp + ':8080/ipfs/');
     },
   },
 
