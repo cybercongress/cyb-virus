@@ -2,7 +2,8 @@ export {};
 
 const ethers = require('ethers');
 const bip39 = require('bip39');
-const cyberjsCrypto = require('@litvintech/cyberjs/crypto');
+const jsCosmosEncoding = require('js-cosmos/dist/utils/encoding');
+const cyberDConfig = require('js-cosmos/dist/config/cyberd');
 const sjcl = require('sjcl');
 
 const common = require('./common');
@@ -53,7 +54,7 @@ module.exports = {
     };
   },
   async getCyberKeypairByPrivateKey(privateKey) {
-    return cyberjsCrypto.importAccount(privateKey);
+    return jsCosmosEncoding(cyberDConfig).importAccount(privateKey);
   },
 
   common,
