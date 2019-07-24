@@ -3,13 +3,18 @@
     <h3>Accounts</h3>
 
     <div class="accounts-list">
-      <div v-for="(account, index) in accountListDisplay" :class="{'active': account.address === currentAccount.address}">
-        <a href @click.prevent="selectAccountByIndex(index)">{{account.prettyAddress}}</a>
+      <div v-for="(accountGroup, index) in accountGroupsList" :class="{'active': accountGroup.id === currentAccount.id}">
+        <a href @click.prevent="selectAccountGroupById(accountGroup.id)">{{accountGroup.title}}</a>
       </div>
     </div>
 
     <div class="add-new-account">
-      <router-link tag="button" :to="{name: 'cabinet-cyberd-import'}">Import account</router-link>
+      <div style="margin: 15px 0;">
+        <a href @click.prevent="addAccount()"><md-icon class="fas fa-plus"></md-icon> Add account</a>
+      </div>
+      <div>
+        <router-link tag="button" :to="{name: 'cabinet-cyberd-import'}">Import account</router-link>
+      </div>
     </div>
   </div>
   <div class="background" v-if="showContainer"></div>

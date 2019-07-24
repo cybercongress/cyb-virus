@@ -1,5 +1,5 @@
 import { getContentList } from '../../../../../services/backgroundGateway';
-import { StorageVars } from '../../../../../services/data';
+import { StorageVars } from '../../../../../enum';
 
 export default {
   template: require('./SavedContent.html'),

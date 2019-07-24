@@ -12,9 +12,8 @@
  */
 
 import { EventBus, ACCOUNT_SELECT_HIDE, ACCOUNT_SELECT_PREVENT_CLOSE, ACCOUNT_SELECT_SHOW, ACCOUNT_SELECT_ITEM } from '../../../../services/events';
-import { StorageVars } from '../../../../services/data';
-import EthData from '@galtproject/frontend-core/libs/EthData';
-const _ = require('lodash');
+import { StorageVars } from '../../../../enum';
+import { AppWallet } from '../../../../services/data';
 
 export default {
   name: 'account-select-container',
@@ -54,6 +53,11 @@ export default {
     });
   },
   methods: {
+    async addAccount() {
+      const newGroup = await AppWallet.addAccountGroup('new');
+      await AppWallet.generateBaseCoinsForAccountGroup(newGroup.id);
+      AppWallet.setCurrentAccountGroup(newGroup);
+    },
     getElOffset(el) {
       const rect = el.getBoundingClientRect();
       const docEl = document.documentElement;
@@ -71,25 +75,18 @@ export default {
     preventClose() {
       EventBus.$emit(ACCOUNT_SELECT_PREVENT_CLOSE, { uniqId: this.uniqId });
     },
-    selectAccountByIndex(index) {
-      EventBus.$emit(ACCOUNT_SELECT_ITEM, { uniqId: this.uniqId, account: this.accountList[index] });
+    selectAccountGroupById(id) {
+      EventBus.$emit(ACCOUNT_SELECT_ITEM, { uniqId: this.uniqId, groupId: id });
       this.$router.push(this.currentCabinet);
     },
   },
   watch: {},
   computed: {
     currentAccount() {
-      return this.$store.state[StorageVars.Account];
+      return this.$store.state[StorageVars.CurrentAccountGroup];
     },
-    accountList() {
-      return this.$store.state[StorageVars.CurrentAccounts] || [];
-    },
-    accountListDisplay() {
-      return this.accountList.map(account => {
-        account = _.clone(account);
-        account.prettyAddress = EthData.cutHex(account.address);
-        return account;
-      });
+    accountGroupsList() {
+      return this.$store.state[StorageVars.AccountsGroups] || [];
     },
     currentCabinet() {
       return this.$store.state[StorageVars.CurrentCabinetRoute];

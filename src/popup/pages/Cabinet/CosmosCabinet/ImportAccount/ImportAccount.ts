@@ -6,13 +6,9 @@ export default {
   methods: {
     async importAccount() {
       if (this.importMethod === 'privateKey') {
-        const account = await AppWallet.getAccountByPrivateKey(KeyPairType.Cyber, this.privateKey);
-        await AppWallet.addAccount(this.currentAccountGroup.id, NetworkType.CyberD, KeyPairType.Cyber, account.address, account.privateKey);
-
-        // refresh current accounts
-        await AppWallet.setCurrentAccountGroup(this.currentAccountGroup);
-
-        this.$router.push({ name: 'cabinet-cyberd' });
+        const account = await AppWallet.getAccountByPrivateKey(KeyPairType.Cosmos, this.privateKey);
+        await AppWallet.addAccount(this.currentAccountGroup.id, NetworkType.Cosmos, KeyPairType.Cosmos, account.address, account.privateKey);
+        this.$router.push({ name: 'cabinet-cosmos' });
       }
     },
   },

@@ -1,0 +1,12 @@
+<div style="text-align: center;">
+  <!--<p>CyberD</p>-->
+
+  <h3 v-if="currentAccount"><pretty-hex :hex="currentAccount.address"></pretty-hex></h3>
+  <h3>Balance:</h3>
+  <h2>
+    {{balanceStr}} ATOM
+    <md-button class="md-icon-button small-button" @click="getBalance"><md-icon class="fas fa-sync"></md-icon></md-button>
+  </h2>
+
+  <router-link :to="{name: 'cabinet-cosmos-transfer', query: {from: 'cabinet-cyberd'}}" tag="button">Send ATOM</router-link>
+</div>

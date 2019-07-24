@@ -12,7 +12,7 @@
  */
 
 import { EventBus, ACCOUNT_SELECT_HIDE, ACCOUNT_SELECT_PREVENT_CLOSE, ACCOUNT_SELECT_SHOW, ACCOUNT_SELECT_ITEM } from '../../../../services/events';
-import { StorageVars } from '../../../../services/data';
+import { AppWallet } from '../../../../services/data';
 
 export default {
   name: 'account-select-input',
@@ -32,7 +32,7 @@ export default {
     EventBus.$on(ACCOUNT_SELECT_ITEM, item => {
       if (this.uniqId != item.uniqId) return;
 
-      this.$store.commit(StorageVars.Account, item.account);
+      AppWallet.setCurrentAccountGroupById(item.groupId);
       this.showList = false;
       EventBus.$emit(ACCOUNT_SELECT_HIDE, { uniqId: this.uniqId });
     });
@@ -84,11 +84,7 @@ export default {
       EventBus.$emit(ACCOUNT_SELECT_HIDE, { uniqId: this.uniqId });
     },
   },
-  computed: {
-    currentNetwork() {
-      return this.$store.state[StorageVars.Network];
-    },
-  },
+  computed: {},
   data() {
     return {
       avatarImage:

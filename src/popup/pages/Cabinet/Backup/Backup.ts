@@ -1,7 +1,6 @@
 import { getSettingData, Settings } from '../../../../backgroundServices/types';
-import { getSettings, setSettings } from '../../../../services/backgroundGateway';
 import EthData from '@galtproject/frontend-core/libs/EthData';
-import { StorageVars } from '../../../../services/data';
+import { StorageVars } from '../../../../enum';
 
 export default {
   template: require('./Backup.html'),

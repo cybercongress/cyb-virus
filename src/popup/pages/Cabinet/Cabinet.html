@@ -1,4 +1,14 @@
 <div>
   <toolbar></toolbar>
+
+  <div>
+    <md-field class="center-select-text" style="margin: 0 auto 20px;">
+      <label>Wallet</label>
+      <md-select v-model="accountAddress">
+        <md-option v-for="account in accounts" :value="account.address">{{account.networkName}}</md-option>
+      </md-select>
+    </md-field>
+  </div>
+
   <router-view></router-view>
 </div>

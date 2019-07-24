@@ -1,5 +1,4 @@
-import { getIpfsHash } from '../../../../../services/data';
-import { CyberD } from '../../../../../services/cyberd';
+import { AppWallet, getIpfsHash } from '../../../../../services/data';
 import EthData from '@galtproject/frontend-core/libs/EthData';
 
 const _ = require('lodash');
@@ -7,6 +6,8 @@ const _ = require('lodash');
 export default {
   template: require('./Search.html'),
   created() {
+    this.$cyberD = AppWallet.getCyberDInstance();
+
     this.debounceRunSearch = _.debounce(() => {
       this.loading = true;
       this.runSearch();
@@ -21,7 +22,7 @@ export default {
         this.loading = false;
         return;
       }
-      this.searchResults = await CyberD.search(await getIpfsHash(this.search));
+      this.searchResults = await this.$cyberD.search(await getIpfsHash(this.search));
       this.searchResults = this.searchResults.map(item => {
         item.rank = EthData.roundToDecimal(item.rank, 6);
         return item;

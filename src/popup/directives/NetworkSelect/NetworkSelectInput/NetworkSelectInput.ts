@@ -11,8 +11,7 @@
  * [Basic Agreement](http://cyb.ai/QmaCiXUmSrP16Gz8Jdzq6AJESY1EAANmmwha15uR3c1bsS:ipfs)).
  */
 
-import { ACCOUNT_SELECT_HIDE, EventBus, NETWORK_SELECT_HIDE, NETWORK_SELECT_PREVENT_CLOSE, NETWORK_SELECT_SHOW } from '../../../../services/events';
-import { StorageVars } from '../../../../services/data';
+import { EventBus, NETWORK_SELECT_HIDE, NETWORK_SELECT_PREVENT_CLOSE, NETWORK_SELECT_SHOW } from '../../../../services/events';
 
 export default {
   name: 'network-select-input',
@@ -76,11 +75,7 @@ export default {
       EventBus.$emit(NETWORK_SELECT_HIDE, { uniqId: this.uniqId });
     },
   },
-  computed: {
-    currentNetwork() {
-      return this.$store.state[StorageVars.Network];
-    },
-  },
+  computed: {},
   data() {
     return {};
   },

@@ -1,5 +1,6 @@
 import { restoreBackup } from '../../../../services/backgroundGateway';
-import { PermanentStorage, StorageVars } from '../../../../services/data';
+import { PermanentStorage } from '../../../../services/data';
+import { StorageVars } from '../../../../enum';
 
 export default {
   template: require('./AskRestoreBackup.html'),
@@ -20,9 +21,11 @@ export default {
           this.$store.commit(StorageVars.EncryptedSeed, await PermanentStorage.getValue(StorageVars.EncryptedSeed));
 
           try {
-            const cyberDAccounts = JSON.parse((await PermanentStorage.getValue(StorageVars.CyberDAccounts)) as any);
-            console.log('cyberDAccounts', cyberDAccounts);
-            this.$store.commit(StorageVars.CyberDAccounts, cyberDAccounts);
+            const allAccounts = JSON.parse((await PermanentStorage.getValue(StorageVars.AllAccounts)) as any);
+            this.$store.commit(StorageVars.AllAccounts, allAccounts);
+
+            const accountsGroups = JSON.parse((await PermanentStorage.getValue(StorageVars.AccountsGroups)) as any);
+            this.$store.commit(StorageVars.AccountsGroups, accountsGroups);
           } catch (e) {}
 
           this.$router.push({ name: 'login', query: { from: 'restore' } });

@@ -2,7 +2,7 @@ import Vue from 'vue';
 import storePlugin from '../services/permanentStore.plugin';
 
 import { MdElevation, MdCheckbox, MdButton, MdIcon, MdField, MdMenu, MdList, MdDrawer } from 'vue-material/dist/components';
-import { AppWallet, CoinType, Network, PermanentStorage, StorageVars } from '../services/data';
+import { AppWallet, PermanentStorage } from '../services/data';
 import NetworkSelectContainer from './directives/NetworkSelect/NetworkSelectContainer/NetworkSelectContainer';
 import AccountSelectContainer from './directives/AccountSelect/AccountSelectContainer/AccountSelectContainer';
 import PrettyHex from '@galtproject/frontend-core/directives/PrettyHex/PrettyHex';
@@ -12,6 +12,7 @@ import Loading from './directives/Loading/Loading';
 import '@galtproject/frontend-core/filters';
 import { getIsBackupExists, getSettings } from '../services/backgroundGateway';
 import { Settings } from '../backgroundServices/types';
+import { StorageVars } from '../enum';
 
 Vue.use(Notifications);
 
@@ -27,20 +28,22 @@ Vue.component('pretty-hex', PrettyHex);
 Vue.component('pretty-hash', PrettyHash);
 Vue.component('loading', Loading);
 
-const _ = require('lodash');
 const ipRegex = require('ip-regex');
 
 Vue.use(storePlugin, {
   [StorageVars.Ready]: false,
-  [StorageVars.CoinType]: CoinType.Cosmos,
-  [StorageVars.Network]: Network.CyberD,
-  [StorageVars.NetworkList]: [{ title: 'CyberD', value: Network.CyberD }, { title: 'Geesome', value: Network.Geesome }],
-  [StorageVars.Account]: null,
+
+  [StorageVars.AccountsGroups]: null,
+  [StorageVars.AllAccounts]: null,
+
+  [StorageVars.CurrentAccountGroup]: null,
+  [StorageVars.CurrentAccountList]: null,
+  [StorageVars.CurrentAccountItem]: null,
+
   [StorageVars.Path]: null,
   [StorageVars.EncryptedSeed]: null,
-  [StorageVars.CurrentAccounts]: null,
-  [StorageVars.CyberDAccounts]: null,
-  [StorageVars.GeesomeAccounts]: null,
+  // [StorageVars.CurrentAccounts]: null,
+  // [StorageVars.NetworkList]: appConfig.baseNetworks.map((name) => ({name, title: EthData.humanizeKey(name)})),
   [StorageVars.IpfsUrl]: null,
   [StorageVars.CurrentCabinetRoute]: null,
   [StorageVars.Settings]: null,
@@ -96,6 +99,9 @@ export default {
         this.loadingBackup = true;
         getIsBackupExists()
           .then(ipld => {
+            if (this.loadingBackup == false) {
+              return;
+            }
             this.loading = false;
             this.loadingBackup = false;
             if (ipld) {
@@ -112,20 +118,6 @@ export default {
         return;
         // return (global as any).chrome.tabs.create({url: (global as any).extension.getURL('popup.html#window')});
       }
-    },
-    setNetwork() {
-      this.networkList.some(network => {
-        if (_.includes(this.$route.name, network.value)) {
-          this.$store.commit(StorageVars.Network, network.value);
-          let coinType = null;
-          if (network.value === 'cyberd') {
-            coinType = CoinType.Cosmos;
-          }
-          this.$store.commit(StorageVars.CoinType, coinType);
-          return true;
-        }
-        return false;
-      });
     },
     getSettings() {
       getSettings([
@@ -147,14 +139,12 @@ export default {
         this.loadingBackup = false;
         this.loading = false;
       }
-      this.setNetwork();
       PermanentStorage.setValue(StorageVars.Path, this.$route.fullPath);
       this.getSettings();
     },
     '$route.query'() {
       PermanentStorage.setValue(StorageVars.Query, JSON.stringify(this.$route.query));
     },
-    currentNetwork() {},
     ready() {
       this.init();
     },
@@ -164,12 +154,6 @@ export default {
   },
 
   computed: {
-    currentNetwork() {
-      return this.$store.state[StorageVars.Network];
-    },
-    networkList() {
-      return this.$store.state[StorageVars.NetworkList];
-    },
     ready() {
       return this.$store.state[StorageVars.Ready];
     },
