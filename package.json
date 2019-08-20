@@ -32,6 +32,7 @@
     "font-awesome": "https://github.com/FortAwesome/Font-Awesome.git",
     "hdkey": "^1.1.1",
     "ip-regex": "^4.1.0",
+    "ipfs": "^0.35.0",
     "ipfs-http-client": "^32.0.1",
     "ipfs-unixfs": "0.1.16",
     "ipld-dag-pb": "0.15.3",
