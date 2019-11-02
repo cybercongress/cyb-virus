@@ -13,6 +13,7 @@ const config = {
   entry: {
     background: './background.ts',
     contentScript: './contentScript.ts',
+    inpage: './inpage.ts',
     'popup/popup': './popup/popup.ts',
     'tab-page/index': './tab-page/index.ts',
     'options/options': './options/options.ts',
@@ -119,6 +120,9 @@ const config = {
       { from: 'singlefile', to: 'singlefile' },
       { from: '_locales', to: '_locales' },
       { from: 'popup/assets', to: 'popup/assets' },
+      { from: 'inpage.css', to: 'inpage.css' },
+      { from: '../node_modules/tingle.js/dist/tingle.css', to: 'tingle.css' },
+      { from: '../node_modules/toastify-js/src/toastify.css', to: 'toastify.css' },
       { from: '../node_modules/font-awesome/webfonts', to: 'popup/webfonts' },
       { from: 'popup/popup.html', to: 'popup/popup.html', transform: transformHtml },
       { from: 'popup/popup.html', to: 'popup/index.html', transform: transformHtml },

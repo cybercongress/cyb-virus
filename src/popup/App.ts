@@ -63,6 +63,8 @@ export default {
         this.loading = false;
       } else if (request.type === 'page-action' && request.method === 'save-and-link') {
         this.$router.push({ name: 'cabinet-cyberd-save-and-link', query: request.data });
+      } else if (request.type === 'page-action' && request.method === 'link') {
+        this.$router.push({ name: 'cabinet-cyberd-link', query: request.data });
       }
     });
 
@@ -97,6 +99,9 @@ export default {
         this.loadingBackup = true;
         getIsBackupExists()
           .then(ipld => {
+            if (!this.loadingBackup) {
+              return;
+            }
             this.loading = false;
             this.loadingBackup = false;
             if (ipld) {

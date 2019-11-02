@@ -1,6 +1,7 @@
 export {};
 import { JsIpfsService } from '@galtproject/geesome-libs/src/JsIpfsService';
 const pull = require('pull-stream');
+const regex = require('../services/regex');
 let ipfs;
 let ipfsService;
 
@@ -15,6 +16,9 @@ module.exports = {
     return ipfs.id();
   },
   saveContent(content) {
+    if (content.match(regex.base64)) {
+      content = new Buffer(content.replace(regex.base64, ''), 'base64');
+    }
     return ipfsService.saveFileByData(content);
   },
   getContent(content) {
@@ -48,8 +52,8 @@ module.exports = {
     });
 
     objToSave.content = contentObj.contentHash;
-    if (contentObj.previewHash) {
-      objToSave.preview = contentObj.previewHash;
+    if (contentObj.iconHash) {
+      objToSave.icon = contentObj.iconHash;
     }
     console.log('objToSave', objToSave);
 

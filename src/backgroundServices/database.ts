@@ -28,13 +28,20 @@ const databaseService = {
     db = new Dexie.default('CybExtensionDatabase');
 
     db.version(1).stores({
-      content: '++id,contentHash,manifestHash,description,keywords,size,mimeType,previewHash,previewMimeType,view,extension,previewExtension,createdAt,updatedAt',
+      content:
+        '++id,contentHash,manifestHash,description,keywords,size,mimeType,previewHash,previewMimeType,iconHash,iconMimeType,view,extension,previewExtension,fullText,createdAt,updatedAt',
       settings: 'name,value',
     });
   },
   async saveContent(contentObj) {
     const existingContent = await this.getContentByHash(contentObj.contentHash);
+
+    contentObj.fullText = (contentObj.description || (existingContent || {}).description || '').split(/[ ,.]+/);
+    contentObj.fullText = contentObj.fullText.concat(contentObj.keywords || (existingContent || {}).keywords || []);
+    contentObj.fullText = contentObj.fullText.filter(item => !item.match(/^[ ,.\-_/\\\(\)"'?]$/) && item != '');
+
     if (existingContent) {
+      console.log('updateContentByHash', contentObj.contentHash, contentObj);
       return this.updateContentByHash(contentObj.contentHash, contentObj).then(() => this.getContentByHash(contentObj.contentHash));
     }
     contentObj.createdAt = Helper.now();
