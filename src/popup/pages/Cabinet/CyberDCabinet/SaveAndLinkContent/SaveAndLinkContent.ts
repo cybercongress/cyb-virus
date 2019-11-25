@@ -1,3 +1,4 @@
+const _ = require('lodash');
 import { AppWallet, StorageVars } from '../../../../../services/data';
 import { CyberD } from '../../../../../services/cyberd';
 import { addIpfsContentArray, saveContent } from '../../../../../services/backgroundGateway';
@@ -87,7 +88,6 @@ export default {
       inputDescription: '',
       inputKeywordsStr: '',
       linkKeywords: false,
-      saveToGeesome: false,
     };
   },
 };

@@ -1,6 +1,7 @@
 export {};
 import { JsIpfsService } from '@galtproject/geesome-libs/src/JsIpfsService';
 const pull = require('pull-stream');
+const _ = require('lodash');
 const regex = require('../services/regex');
 let ipfs;
 let ipfsService;
@@ -96,24 +97,3 @@ module.exports = {
     return ipfsService.getObjectRef(id);
   },
 };
-
-// geesome.saveData(request.content, request.filename).then(ipfsHash => {
-//   setAction({ type: 'page-action', method: 'link', data: { contentHash: ipfsHash, keywords: null } });
-//
-// (global as any).chrome.runtime.sendMessage({
-//   type: 'loading-end',
-// });
-//   (global as any).chrome.runtime.sendMessage(
-//     {
-//       type: 'page-action',
-//       method: 'link',
-//       data: {
-//         contentHash: ipfsHash,
-//         keywords: null,
-//       },
-//     },
-//     response => {
-//       setAction(null);
-//     }
-//   );
-// });

@@ -15,8 +15,6 @@ export default {
       let cabinetRoute;
       if (this.currentNetwork === 'cyberd') {
         cabinetRoute = { name: 'cabinet-cyberd', query: { search: '' } };
-      } else if (this.currentNetwork === 'geesome') {
-        cabinetRoute = { name: 'cabinet-geesome', query: { search: '' } };
       }
       this.$store.commit(StorageVars.CurrentCabinetRoute, cabinetRoute);
     },

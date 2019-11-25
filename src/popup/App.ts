@@ -34,13 +34,12 @@ Vue.use(storePlugin, {
   [StorageVars.Ready]: false,
   [StorageVars.CoinType]: CoinType.Cosmos,
   [StorageVars.Network]: Network.CyberD,
-  [StorageVars.NetworkList]: [{ title: 'CyberD', value: Network.CyberD }, { title: 'Geesome', value: Network.Geesome }],
+  [StorageVars.NetworkList]: [{ title: 'CyberD', value: Network.CyberD }],
   [StorageVars.Account]: null,
   [StorageVars.Path]: null,
   [StorageVars.EncryptedSeed]: null,
   [StorageVars.CurrentAccounts]: null,
   [StorageVars.CyberDAccounts]: null,
-  [StorageVars.GeesomeAccounts]: null,
   [StorageVars.IpfsUrl]: '/workers/ipfs/',
   [StorageVars.CurrentCabinetRoute]: null,
   [StorageVars.Settings]: null,
@@ -136,6 +135,7 @@ export default {
     getSettings() {
       getSettings([
         Settings.StorageNodeAddress,
+        Settings.StorageCyberAddress,
         Settings.StorageNodeType,
         Settings.StorageExtensionIpld,
         Settings.StorageExtensionIpldUpdatedAt,

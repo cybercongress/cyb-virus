@@ -15,7 +15,6 @@ export enum CoinType {
 }
 
 export enum Network {
-  Geesome = 'geesome',
   CyberD = 'cyberd',
 }
 
@@ -30,7 +29,6 @@ export enum StorageVars {
   Account = 'account',
   CurrentAccounts = 'current:accounts',
   CyberDAccounts = 'cyberd:accounts',
-  GeesomeAccounts = 'geesome:accounts',
   IpfsUrl = 'ipfs:url',
   CurrentCabinetRoute = 'current:cabinet',
   Settings = 'settings',

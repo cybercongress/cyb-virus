@@ -10,11 +10,7 @@ export default {
   },
   computed: {
     link() {
-      if (this.hash.length > 46) {
-        return 'http://geesome.galtproject.io/#/content/' + this.hash;
-      } else {
-        return this.ipfsUrl + this.hash;
-      }
+      return this.ipfsUrl + this.hash;
     },
     ipfsUrl() {
       return this.$store.state[StorageVars.ExtensionTabPageUrl] + '#/';

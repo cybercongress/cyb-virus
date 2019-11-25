@@ -1,5 +1,6 @@
 export enum Settings {
   StorageNodeType = 'storage-node-type',
+  StorageCyberAddress = 'storage-cyber-address',
   StorageNodeAddress = 'storage-node-address',
   StorageNodeKey = 'storage-node-key',
   StorageExtensionIpld = 'storage-extension-ipld',
@@ -17,10 +18,6 @@ export function getSettingData(name) {
           title: 'IPFS',
           value: 'ipfs',
         },
-        {
-          title: 'GeeSome',
-          value: 'geesome',
-        },
       ],
     };
   }
@@ -32,6 +29,11 @@ export function getSettingData(name) {
   if (name === Settings.StorageExtensionIpld) {
     return {
       type: 'hash',
+    };
+  }
+  if (name === Settings.StorageCyberAddress) {
+    return {
+      type: 'string',
     };
   }
 

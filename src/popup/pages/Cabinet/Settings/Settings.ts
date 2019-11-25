@@ -52,7 +52,7 @@ export default {
   },
   data() {
     return {
-      names: [Settings.StorageNodeType, Settings.StorageNodeAddress],
+      names: [Settings.StorageNodeType, Settings.StorageNodeAddress, Settings.StorageCyberAddress],
     };
   },
 };

@@ -1,14 +1,15 @@
 import EthData from '@galtproject/frontend-core/libs/EthData';
+import { Settings } from '../backgroundServices/types';
 
 const cyberjsBuilder = require('@litvintech/cyberjs/builder');
 const cyberjsCodec = require('@litvintech/cyberjs/codec');
 const cyberjsConstants = require('@litvintech/cyberjs/constants');
 const axios = require('axios');
-const node = 'http://titan.cybernode.ai:26657';
-const indexedNode = 'http://titan.cybernode.ai:26657';
+const databaseService = require('../backgroundServices/database');
 
 export class CyberD {
   static async getBalance(address) {
+    const node = await databaseService.getSetting(Settings.StorageNodeAddress);
     return axios({
       method: 'get',
       url: `${node}/account?address="${address}"`,
@@ -28,6 +29,7 @@ export class CyberD {
   }
 
   static async getBandwidth(address) {
+    const node = await databaseService.getSetting(Settings.StorageNodeAddress);
     return axios({
       method: 'get',
       url: `${node}/account_bandwidth?address="${address}"`,
@@ -35,6 +37,7 @@ export class CyberD {
   }
 
   static async getStatus() {
+    const node = await databaseService.getSetting(Settings.StorageNodeAddress);
     return axios({
       method: 'get',
       url: `${node}/status`,
@@ -42,9 +45,10 @@ export class CyberD {
   }
 
   static async search(keywordHash) {
+    const node = await databaseService.getSetting(Settings.StorageNodeAddress);
     return axios({
       method: 'get',
-      url: `${indexedNode}/search?cid=%22${keywordHash}%22&page=0&perPage=10`,
+      url: `${node}/search?cid=%22${keywordHash}%22&page=0&perPage=10`,
     }).then(response => (response.data.result ? response.data.result.cids : []));
   }
 
@@ -53,6 +57,7 @@ export class CyberD {
   }
 
   static async link(txOptions, keywordHash, contentHash) {
+    const node = await databaseService.getSetting(Settings.StorageNodeAddress);
     const chainId = await this.getNetworkId();
     const addressInfo = await axios({
       method: 'get',
@@ -117,6 +122,7 @@ export class CyberD {
   }
 
   static async transfer(txOptions, addressTo, gAmount) {
+    const node = await databaseService.getSetting(Settings.StorageNodeAddress);
     const chainId = await this.getNetworkId();
     const addressInfo = await axios({
       method: 'get',

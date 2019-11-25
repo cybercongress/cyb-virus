@@ -1,7 +1,6 @@
 import Overview from '../pages/Cabinet/Overview/Overview';
 import Cabinet from '../pages/Cabinet/Cabinet';
 import CyberDCabinet from '../pages/Cabinet/CyberDCabinet/CyberDCabinet';
-import GeesomeCabinet from '../pages/Cabinet/GeesomeCabinet/GeesomeCabinet';
 import Login from '../pages/Cabinet/Login/Login';
 import NewWallet from '../pages/NewWallet/NewWallet';
 import Welcome from '../pages/NewWallet/Welcome/Welcome';
@@ -78,11 +77,6 @@ export default [
         path: '/backup',
         name: 'cabinet-backup',
         component: Backup,
-      },
-      {
-        path: '/geesome',
-        name: 'cabinet-geesome',
-        component: GeesomeCabinet,
       },
     ],
   },
