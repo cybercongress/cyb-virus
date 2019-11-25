@@ -107,6 +107,13 @@ export class AppWallet {
     // }
   }
 
+  static async getAccountByMnenomic(coinType, mnemonic) {
+    if (coinType === CoinType.Cosmos) {
+      return cyberjsCrypto.recover(mnemonic, 'en');
+    }
+    return null;
+  }
+
   static async getAccountByPrivateKey(coinType, privateKey) {
     if (coinType === CoinType.Ether) {
       const wallet = new ethers.Wallet(privateKey);

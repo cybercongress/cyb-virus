@@ -14,4 +14,11 @@
 
     <button style="margin-top: 15px;" @click="importAccount()">Add new account</button>
   </div>
+
+  <div v-if="importMethod === 'mnemonic'">
+    <div><label>Input mnemonic</label></div>
+    <input v-model="mnemonic" />
+
+    <button style="margin-top: 15px;" @click="importAccount()">Add new account</button>
+  </div>
 </div>
