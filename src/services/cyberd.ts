@@ -4,8 +4,8 @@ const cyberjsBuilder = require('@litvintech/cyberjs/builder');
 const cyberjsCodec = require('@litvintech/cyberjs/codec');
 const cyberjsConstants = require('@litvintech/cyberjs/constants');
 const axios = require('axios');
-const node = 'http://88.198.36.117:26657';
-const indexedNode = 'http://88.198.36.117:26657';
+const node = 'http://titan.cybernode.ai:26657';
+const indexedNode = 'http://titan.cybernode.ai:26657';
 
 export class CyberD {
   static async getBalance(address) {
