@@ -19,10 +19,10 @@
     }
   },
   "dependencies": {
-    "@cybercongress/js-amino": "git+ssh://git@github.com:cybercongress/js-amino.git",
-    "@galtproject/frontend-core": "git://github.com/galtspace/galtproject-frontend-core.git#20f6013",
-    "@galtproject/geesome-libs": "git://github.com/galtspace/geesome-libs.git#1a98093",
-    "@litvintech/cyberjs": "git://github.com/litvintech/cyberjs.git",
+    "@cybercongress/js-amino": "https://github.com/cybercongress/js-amino.git",
+    "@galtproject/frontend-core": "https://github.com/galtspace/galtproject-frontend-core.git#20f6013",
+    "@galtproject/geesome-libs": "https://github.com/galtspace/geesome-libs.git#1a98093",
+    "@litvintech/cyberjs": "https://github.com/litvintech/cyberjs.git",
     "autoprefixer": "^9.6.0",
     "axios": "^0.19.0",
     "bip39": "^3.0.2",
