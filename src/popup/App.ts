@@ -164,7 +164,7 @@ export default {
       this.init();
     },
     nodeIp() {
-      // this.$store.commit(StorageVars.IpfsUrl, 'http://' + this.nodeIp + ':8080/ipfs/');
+      this.$store.commit(StorageVars.IpfsUrl, 'http://' + this.nodeIp + ':8080/ipfs/');
     },
   },
 
