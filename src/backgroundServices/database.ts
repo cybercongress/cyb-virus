@@ -100,8 +100,7 @@ const databaseService = {
 
 const defaultSettingsValues = {
   [Settings.StorageNodeAddress]: '/ip4/127.0.0.1/tcp/5001',
-  [Settings.StorageNodeType]: 'ipfs',
-  [Settings.StorageCyberAddress]: 'https://titan.cybernode.ai:26657',
+  [Settings.StorageCyberAddress]: 'http://titan.cybernode.ai:26657',
 };
 
 module.exports = databaseService;

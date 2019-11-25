@@ -136,7 +136,6 @@ export default {
       getSettings([
         Settings.StorageNodeAddress,
         Settings.StorageCyberAddress,
-        Settings.StorageNodeType,
         Settings.StorageExtensionIpld,
         Settings.StorageExtensionIpldUpdatedAt,
         Settings.StorageExtensionIpnsUpdatedAt,

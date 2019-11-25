@@ -13,8 +13,8 @@ export default {
       return this.ipfsUrl + this.hash;
     },
     ipfsUrl() {
-      return this.$store.state[StorageVars.ExtensionTabPageUrl] + '#/';
-      // return this.$store.state[StorageVars.IpfsUrl];
+      // return this.$store.state[StorageVars.ExtensionTabPageUrl] + '#/';
+      return this.$store.state[StorageVars.IpfsUrl];
     },
   },
   data() {

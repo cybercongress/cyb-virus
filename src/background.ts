@@ -90,7 +90,7 @@ async function saveContentToIpfs(content, description, mimeType) {
 async function saveExtensionDataAndBindToIpns() {
   console.log('saveExtensionDataAndBindToIpns start');
   const settings = {};
-  await pIteration.forEach([Settings.StorageNodeAddress, Settings.StorageNodeKey, Settings.StorageNodeType, Settings.StorageCyberAddress], async settingName => {
+  await pIteration.forEach([Settings.StorageNodeAddress, Settings.StorageNodeKey, Settings.StorageCyberAddress], async settingName => {
     settings[settingName] = await databaseService.getSetting(settingName);
     if (_.isUndefined(settings[settingName])) {
       settings[settingName] = null;
@@ -152,7 +152,7 @@ async function restoreExtensionDataFromIpld(backupIpld) {
   console.log('restoreExtensionDataFromIpld');
   const backupData = await ipfsService.getObject(backupIpld);
   console.log('backupData', backupData);
-  await pIteration.forEach([Settings.StorageNodeAddress, Settings.StorageNodeKey, Settings.StorageNodeType, Settings.StorageCyberAddress], async settingName => {
+  await pIteration.forEach([Settings.StorageNodeAddress, Settings.StorageNodeKey, Settings.StorageCyberAddress], async settingName => {
     return databaseService.setSetting(settingName, backupData.settings[settingName]);
   });
 
