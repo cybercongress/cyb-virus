@@ -1,22 +1,16 @@
 # cyb-virus
 
 ## Mission
+
 Help you fuckgoogle rigth from Chrome!
 
 ## Features
-1. Create Account, Import Account (mnemonic)
+1. Create accounts and save mnemonic
 2. Import Account with private key or mnemonic
-3. Get cyber balance and bandwdith
-4. Create cyberlinks between CIDs (with keywords also)
-5. Transfer Cyber network tokens
-6. Search in Cyber
-7. Download web2 page and save in IPFS, get CID
-8. Bookmarks of saved to IPFS and linked in Cyber content
-9. Backups
-
-## Node configurations
-1. IPFS endpoint
-2. Cyber endpoint
+3. Display and transfer CYB tokens
+4. Create cyberlinks and display bandwidth
+6. Primitive search in Cyber protocol
+7. Node config
 
 
 ## Dev environment
@@ -32,4 +26,3 @@ yarn run build:dev
 
 ## Add to Chrome from build
 Go to `chrome://extensions/` and install extension by folder ./dist 
-
