@@ -1,0 +1,21 @@
+<div id="import-account" class="padding-container">
+  <div class="back" v-if="$route.query.from" style="margin-left: 0">
+    <router-link :to="{name: $route.query.from}">< Back</router-link>
+  </div>
+
+  <h2>Send EUL</h2>
+
+  <div>
+    <h3>To address:</h3>
+    <input v-model="addressTo" />
+  </div>
+
+  <div>
+    <h3>Amount: (GEUL)</h3>
+    <input type="number" v-model="amount" />
+  </div>
+
+  <div class="button-container">
+    <button @click="transfer()" :disabled="disableTransfer">{{'Send'}}</button>
+  </div>
+</div>

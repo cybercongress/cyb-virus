@@ -1,4 +1,8 @@
 <div id="import-account" class="padding-container">
+  <div class="back" v-if="$route.query.from" style="margin-left: 0">
+    <router-link :to="{name: $route.query.from}">< Back</router-link>
+  </div>
+
   <h2>Link Content</h2>
 
   <div v-if="contentHash">
@@ -18,16 +22,6 @@
     <h3>Keywords: (separate by comma)</h3>
     <input type="text" v-model="inputKeywordsStr" />
   </div>
-
-  <!--<div>-->
-  <!--<md-checkbox v-model="saveToGeesome">Save to personal channel in GeeSome</md-checkbox>-->
-  <!--<div v-if="saveToGeesome">-->
-  <!--<h3>Content name</h3>-->
-  <!--<input type="text" v-model="inputKeywordsStr"/>-->
-  <!--</div>-->
-  <!--&lt;!&ndash;<h3>Keywords:</h3>&ndash;&gt;-->
-  <!--&lt;!&ndash;<div>{{keywordsStr}}</div>&ndash;&gt;-->
-  <!--</div>-->
 
   <div class="button-container">
     <button @click="link()" :disabled="disableLink">{{'Link'}}</button>

@@ -2,6 +2,7 @@ const sjcl = require('sjcl');
 const _ = require('lodash');
 const ethers = require('ethers');
 const bip39 = require('bip39');
+const regex = require('./regex');
 
 const Unixfs = require('ipfs-unixfs');
 const { DAGNode, util: DAGUtil } = require('ipld-dag-pb');
@@ -14,7 +15,6 @@ export enum CoinType {
 }
 
 export enum Network {
-  Geesome = 'geesome',
   CyberD = 'cyberd',
 }
 
@@ -29,9 +29,10 @@ export enum StorageVars {
   Account = 'account',
   CurrentAccounts = 'current:accounts',
   CyberDAccounts = 'cyberd:accounts',
-  GeesomeAccounts = 'geesome:accounts',
   IpfsUrl = 'ipfs:url',
   CurrentCabinetRoute = 'current:cabinet',
+  Settings = 'settings',
+  ExtensionTabPageUrl = 'extension-tab-page-url',
 }
 
 export class PermanentStorage {
@@ -106,6 +107,13 @@ export class AppWallet {
     // }
   }
 
+  static async getAccountByMnenomic(coinType, mnemonic) {
+    if (coinType === CoinType.Cosmos) {
+      return cyberjsCrypto.recover(mnemonic, 'en');
+    }
+    return null;
+  }
+
   static async getAccountByPrivateKey(coinType, privateKey) {
     if (coinType === CoinType.Ether) {
       const wallet = new ethers.Wallet(privateKey);
@@ -167,6 +175,9 @@ export class AppWallet {
 }
 
 export function getIpfsHash(string) {
+  if (string.match(regex.base64)) {
+    string = new Buffer(string.replace(regex.base64, ''), 'base64');
+  }
   return new Promise((resolve, reject) => {
     const unixFsFile = new Unixfs('file', Buffer.from(string));
     const buffer = unixFsFile.marshal();

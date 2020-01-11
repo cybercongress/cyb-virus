@@ -34,15 +34,16 @@ Vue.use(storePlugin, {
   [StorageVars.Ready]: false,
   [StorageVars.CoinType]: CoinType.Cosmos,
   [StorageVars.Network]: Network.CyberD,
-  [StorageVars.NetworkList]: [{ title: 'CyberD', value: Network.CyberD }, { title: 'Geesome', value: Network.Geesome }],
+  [StorageVars.NetworkList]: [{ title: 'CyberD', value: Network.CyberD }],
   [StorageVars.Account]: null,
   [StorageVars.Path]: null,
   [StorageVars.EncryptedSeed]: null,
   [StorageVars.CurrentAccounts]: null,
   [StorageVars.CyberDAccounts]: null,
-  [StorageVars.GeesomeAccounts]: null,
-  [StorageVars.IpfsUrl]: null,
+  [StorageVars.IpfsUrl]: '/workers/ipfs/',
   [StorageVars.CurrentCabinetRoute]: null,
+  [StorageVars.Settings]: null,
+  [StorageVars.ExtensionTabPageUrl]: 'chrome-extension://' + (global as any).chrome.runtime.id + '/tab-page/index.html',
 });
 
 export default {
@@ -61,6 +62,8 @@ export default {
         this.loading = false;
       } else if (request.type === 'page-action' && request.method === 'save-and-link') {
         this.$router.push({ name: 'cabinet-cyberd-save-and-link', query: request.data });
+      } else if (request.type === 'page-action' && request.method === 'link') {
+        this.$router.push({ name: 'cabinet-cyberd-link', query: request.data });
       }
     });
 
@@ -95,6 +98,9 @@ export default {
         this.loadingBackup = true;
         getIsBackupExists()
           .then(ipld => {
+            if (!this.loadingBackup) {
+              return;
+            }
             this.loading = false;
             this.loadingBackup = false;
             if (ipld) {
@@ -127,8 +133,15 @@ export default {
       });
     },
     getSettings() {
-      getSettings([Settings.StorageNodeAddress]).then(settings => {
-        this.nodeAddress = settings[Settings.StorageNodeAddress];
+      getSettings([
+        Settings.StorageNodeAddress,
+        Settings.StorageCyberAddress,
+        Settings.StorageExtensionIpld,
+        Settings.StorageExtensionIpldUpdatedAt,
+        Settings.StorageExtensionIpnsUpdatedAt,
+        Settings.StorageExtensionIpldError,
+      ]).then(settings => {
+        this.$store.commit(StorageVars.Settings, settings);
       });
     },
   },
@@ -166,14 +179,16 @@ export default {
       return this.$store.state[StorageVars.Ready];
     },
     nodeIp() {
-      return this.nodeAddress.match(ipRegex());
+      return this.settings && this.settings[Settings.StorageNodeAddress].match(ipRegex());
+    },
+    settings() {
+      return this.$store.state[StorageVars.Settings];
     },
   },
   data() {
     return {
       loading: false,
       loadingBackup: false,
-      nodeAddress: '',
     };
   },
 };

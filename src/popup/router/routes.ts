@@ -1,7 +1,6 @@
 import Overview from '../pages/Cabinet/Overview/Overview';
 import Cabinet from '../pages/Cabinet/Cabinet';
 import CyberDCabinet from '../pages/Cabinet/CyberDCabinet/CyberDCabinet';
-import GeesomeCabinet from '../pages/Cabinet/GeesomeCabinet/GeesomeCabinet';
 import Login from '../pages/Cabinet/Login/Login';
 import NewWallet from '../pages/NewWallet/NewWallet';
 import Welcome from '../pages/NewWallet/Welcome/Welcome';
@@ -17,6 +16,7 @@ import LinkContent from '../pages/Cabinet/CyberDCabinet/LinkContent/LinkContent'
 import Backup from '../pages/Cabinet/Backup/Backup';
 import AskRestoreBackup from '../pages/NewWallet/AskRestoreBackup/AskRestoreBackup';
 import LogIn from '../pages/NewWallet/LogIn/LogIn';
+import TransferCyb from '../pages/Cabinet/CyberDCabinet/TransferCyb/TransferCyb';
 
 export default [
   {
@@ -49,6 +49,11 @@ export default [
         component: LinkContent,
       },
       {
+        path: '/cyberd/transfer',
+        name: 'cabinet-cyberd-transfer',
+        component: TransferCyb,
+      },
+      {
         path: '/cyberd/save-and-link',
         name: 'cabinet-cyberd-save-and-link',
         component: SaveAndLinkContent,
@@ -72,11 +77,6 @@ export default [
         path: '/backup',
         name: 'cabinet-backup',
         component: Backup,
-      },
-      {
-        path: '/geesome',
-        name: 'cabinet-geesome',
-        component: GeesomeCabinet,
       },
     ],
   },

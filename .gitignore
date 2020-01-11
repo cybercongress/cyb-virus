@@ -3,3 +3,5 @@
 /dist
 /dist-zip
 .idea
+.DS_Store
+dist.zip

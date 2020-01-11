@@ -1,3 +1,4 @@
+const _ = require('lodash');
 import { AppWallet, StorageVars } from '../../../../../services/data';
 import { CyberD } from '../../../../../services/cyberd';
 import { addIpfsContentArray, saveContent } from '../../../../../services/backgroundGateway';
@@ -21,29 +22,36 @@ export default {
         mimeType: this.$route.query.mimeType,
       });
 
-      if (this.linkKeywords) {
-        const keywordHashes = await addIpfsContentArray(this.resultKeywords);
+      try {
+        if (this.linkKeywords) {
+          const keywordHashes = await addIpfsContentArray(this.resultKeywords);
 
-        const results = await pIteration.mapSeries(keywordHashes, async keywordHash => {
-          return CyberD.link(
-            {
-              address: this.currentAccount.address,
-              privateKey: await AppWallet.decryptByPassword(this.currentAccount.encryptedPrivateKey),
-            },
-            keywordHash,
-            this.resultContentHash
-          );
+          const results = await pIteration.mapSeries(keywordHashes, async keywordHash => {
+            return CyberD.link(
+              {
+                address: this.currentAccount.address,
+                privateKey: await AppWallet.decryptByPassword(this.currentAccount.encryptedPrivateKey),
+              },
+              keywordHash,
+              this.resultContentHash
+            );
+          });
+
+          console.log('link results', results);
+        }
+
+        this.$notify({
+          type: 'success',
+          text: this.linkKeywords ? 'Successfully saved and linked' : 'Successfully saved',
         });
-
-        console.log('link results', results);
+        this.$router.push({ name: 'cabinet-cyberd' });
+      } catch (e) {
+        this.$notify({
+          type: 'error',
+          title: e && e.message ? e.message : e || 'Unknown error',
+          text: e && e.data ? e.data : '',
+        });
       }
-
-      this.$notify({
-        type: 'success',
-        text: this.linkKeywords ? 'Successfully saved and linked' : 'Successfully saved',
-      });
-
-      this.$router.push({ name: 'cabinet-cyberd' });
     },
   },
   computed: {
@@ -51,13 +59,13 @@ export default {
       return this.contentHash || this.inputContentHash;
     },
     resultKeywords() {
-      return this.keywords || this.inputKeywordsStr.split(/[ ,]+/);
+      return this.inputKeywordsStr.split(/[ ,]+/);
     },
     contentHash() {
       return this.$route.query.contentHash;
     },
     keywords() {
-      return this.$route.query.keywords;
+      return _.isArray(this.$route.query.keywords) ? this.$route.query.keywords : this.$route.query.keywords ? this.$route.query.keywords.split(/[ ,]+/) : null;
     },
     keywordsStr() {
       return this.keywords ? this.keywords.join(', ') : '';
@@ -80,7 +88,6 @@ export default {
       inputDescription: '',
       inputKeywordsStr: '',
       linkKeywords: false,
-      saveToGeesome: false,
     };
   },
 };

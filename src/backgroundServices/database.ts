@@ -1,15 +1,3 @@
-/*
- * Copyright ©️ 2018 Galt•Space Society Construction and Terraforming Company
- * (Founded by [Nikolai Popeka](https://github.com/npopeka),
- * [Dima Starodubcev](https://github.com/xhipster),
- * [Valery Litvin](https://github.com/litvintech) by
- * [Basic Agreement](http://cyb.ai/QmSAWEG5u5aSsUyMNYuX2A2Eaz4kEuoYWUkVBRdmu9qmct:ipfs)).
- * ​
- * Copyright ©️ 2018 Galt•Core Blockchain Company
- * (Founded by [Nikolai Popeka](https://github.com/npopeka) and
- * Galt•Space Society Construction and Terraforming Company by
- * [Basic Agreement](http://cyb.ai/QmaCiXUmSrP16Gz8Jdzq6AJESY1EAANmmwha15uR3c1bsS:ipfs)).
- */
 import Helper from '@galtproject/frontend-core/services/helper';
 import { Settings } from './types';
 
@@ -28,13 +16,20 @@ const databaseService = {
     db = new Dexie.default('CybExtensionDatabase');
 
     db.version(1).stores({
-      content: '++id,contentHash,manifestHash,description,keywords,size,mimeType,previewHash,previewMimeType,view,extension,previewExtension,createdAt,updatedAt',
+      content:
+        '++id,contentHash,manifestHash,description,keywords,size,mimeType,previewHash,previewMimeType,iconHash,iconMimeType,view,extension,previewExtension,fullText,createdAt,updatedAt',
       settings: 'name,value',
     });
   },
   async saveContent(contentObj) {
     const existingContent = await this.getContentByHash(contentObj.contentHash);
+
+    contentObj.fullText = (contentObj.description || (existingContent || {}).description || '').split(/[ ,.]+/);
+    contentObj.fullText = contentObj.fullText.concat(contentObj.keywords || (existingContent || {}).keywords || []);
+    contentObj.fullText = contentObj.fullText.filter(item => !item.match(/^[ ,.\-_/\\\(\)"'?]$/) && item != '');
+
     if (existingContent) {
+      console.log('updateContentByHash', contentObj.contentHash, contentObj);
       return this.updateContentByHash(contentObj.contentHash, contentObj).then(() => this.getContentByHash(contentObj.contentHash));
     }
     contentObj.createdAt = Helper.now();
@@ -93,7 +88,7 @@ const databaseService = {
 
 const defaultSettingsValues = {
   [Settings.StorageNodeAddress]: '/ip4/127.0.0.1/tcp/5001',
-  [Settings.StorageNodeType]: 'ipfs',
+  [Settings.StorageCyberAddress]: 'http://titan.cybernode.ai:26657',
 };
 
 module.exports = databaseService;

@@ -1,17 +1,25 @@
+export {};
 import { JsIpfsService } from '@galtproject/geesome-libs/src/JsIpfsService';
-const ipfsClient = require('ipfs-http-client');
 const pull = require('pull-stream');
+const _ = require('lodash');
+const regex = require('../services/regex');
 let ipfs;
 let ipfsService;
 
 const extensionIpns = 'cybvirusex';
 
 module.exports = {
-  init(options) {
-    ipfs = ipfsClient(options);
-    ipfsService = new JsIpfsService(ipfs);
+  init(ipfsNode) {
+    ipfs = ipfsNode;
+    ipfsService = new JsIpfsService(ipfsNode);
+  },
+  id() {
+    return ipfs.id();
   },
   saveContent(content) {
+    if (content.match(regex.base64)) {
+      content = new Buffer(content.replace(regex.base64, ''), 'base64');
+    }
     return ipfsService.saveFileByData(content);
   },
   getContent(content) {
@@ -45,8 +53,8 @@ module.exports = {
     });
 
     objToSave.content = contentObj.contentHash;
-    if (contentObj.previewHash) {
-      objToSave.preview = contentObj.previewHash;
+    if (contentObj.iconHash) {
+      objToSave.icon = contentObj.iconHash;
     }
     console.log('objToSave', objToSave);
 
@@ -89,24 +97,3 @@ module.exports = {
     return ipfsService.getObjectRef(id);
   },
 };
-
-// geesome.saveData(request.content, request.filename).then(ipfsHash => {
-//   setAction({ type: 'page-action', method: 'link', data: { contentHash: ipfsHash, keywords: null } });
-//
-// (global as any).chrome.runtime.sendMessage({
-//   type: 'loading-end',
-// });
-//   (global as any).chrome.runtime.sendMessage(
-//     {
-//       type: 'page-action',
-//       method: 'link',
-//       data: {
-//         contentHash: ipfsHash,
-//         keywords: null,
-//       },
-//     },
-//     response => {
-//       setAction(null);
-//     }
-//   );
-// });

@@ -84,6 +84,8 @@ singlefile.extension.ui.bg.menus = (() => {
   }
 
   async function createMenus(tab) {
+    // disable single page menus
+    return;
     const config = singlefile.extension.core.bg.config;
     const [profiles, tabsData] = await Promise.all([config.getProfiles(), singlefile.extension.core.bg.tabsData.get()]);
     const options = await config.getOptions(tab && tab.url);
