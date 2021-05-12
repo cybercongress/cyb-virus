@@ -588,9 +588,10 @@
     lodash "^4.17.11"
     to-fast-properties "^2.0.0"
 
-"@cybercongress/js-amino@git+ssh://git@github.com:cybercongress/js-amino.git":
+"@cybercongress/js-amino@https://github.com/cybercongress/js-amino.git":
   version "1.0.0"
-  resolved "git+ssh://git@github.com:cybercongress/js-amino.git#36fac876bc81240affc14cf7798565cfb3c31477"
+  uid de18f307bec1c1162d7975c6e146558f21183199
+  resolved "https://github.com/cybercongress/js-amino.git#de18f307bec1c1162d7975c6e146558f21183199"
   dependencies:
     int53 "^0.2.4"
     js-sha256 "^0.9.0"
@@ -616,9 +617,10 @@
     reflect-metadata "^0.1.12"
     tslib "^1.8.1"
 
-"@galtproject/frontend-core@git://github.com/galtspace/galtproject-frontend-core.git#1bd1cc7":
+"@galtproject/frontend-core@https://github.com/galtspace/galtproject-frontend-core.git#20f6013":
   version "0.1.0"
-  resolved "git://github.com/galtspace/galtproject-frontend-core.git#1bd1cc70b212b5e7cfcce936050a55f4578d8d60"
+  uid "20f6013b48e6d52d94b587e3267073337f7ca846"
+  resolved "https://github.com/galtspace/galtproject-frontend-core.git#20f6013b48e6d52d94b587e3267073337f7ca846"
   dependencies:
     "@galtproject/utils" "git://github.com/galtspace/galtproject-utils-js.git"
     "@sentry/browser" "^4.4.2"
@@ -649,9 +651,10 @@
     vuex "^3.0.1"
     web3 "1.0.0-beta.52"
 
-"@galtproject/geesome-libs@git://github.com/galtspace/geesome-libs.git#1a98093":
+"@galtproject/geesome-libs@https://github.com/galtspace/geesome-libs.git#1a98093":
   version "1.0.0"
-  resolved "git://github.com/galtspace/geesome-libs.git#1a98093a19a5f8746e1d83f8d7f03cb95e293fb8"
+  uid "1a98093a19a5f8746e1d83f8d7f03cb95e293fb8"
+  resolved "https://github.com/galtspace/geesome-libs.git#1a98093a19a5f8746e1d83f8d7f03cb95e293fb8"
   dependencies:
     cids "^0.7.1"
     lodash "^4.17.11"
@@ -683,9 +686,10 @@
   version "6.2.4"
   resolved "https://registry.yarnpkg.com/@hapi/hoek/-/hoek-6.2.4.tgz#4b95fbaccbfba90185690890bdf1a2fbbda10595"
 
-"@litvintech/cyberjs@git://github.com/litvintech/cyberjs.git":
+"@litvintech/cyberjs@https://github.com/litvintech/cyberjs.git":
   version "1.0.0"
-  resolved "git://github.com/litvintech/cyberjs.git#909885582622e41ee7a136e4dfab19e8e33309fd"
+  uid fe8446bdcb52d3d455cab71c95393ba333a58b87
+  resolved "https://github.com/litvintech/cyberjs.git#fe8446bdcb52d3d455cab71c95393ba333a58b87"
   dependencies:
     axios "^0.18.0"
     bech32 "^1.1.3"
@@ -8005,8 +8009,8 @@ mississippi@^3.0.0:
     through2 "^2.0.0"
 
 mixin-deep@^1.2.0:
-  version "1.3.1"
-  resolved "https://registry.yarnpkg.com/mixin-deep/-/mixin-deep-1.3.1.tgz#a49e7268dce1a0d9698e45326c5626df3543d0fe"
+  version "1.3.2"
+  resolved "https://registry.yarnpkg.com/mixin-deep/-/mixin-deep-1.3.2.tgz#1120b43dc359a785dce65b55b82e257ccf479566"
   dependencies:
     for-in "^1.0.2"
     is-extendable "^1.0.1"
@@ -9537,8 +9541,9 @@ pull-write@^1.1.4:
     pull-cat "^1.1.11"
     pull-stream "^3.4.5"
 
-"pull-ws@github:hugomrdias/pull-ws#fix/bundle-size":
+pull-ws@hugomrdias/pull-ws#fix/bundle-size:
   version "3.3.1"
+  uid "8e2ce0bb3b1cd6804828316e937fff8e0bef6225"
   resolved "https://codeload.github.com/hugomrdias/pull-ws/tar.gz/8e2ce0bb3b1cd6804828316e937fff8e0bef6225"
   dependencies:
     iso-url "^0.4.4"
@@ -11144,6 +11149,10 @@ timestamp-nano@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/timestamp-nano/-/timestamp-nano-1.0.0.tgz#03bf0b43c2bdcb913a6a02fbaae6f97d68650f3a"
 
+tingle.js@^0.15.1:
+  version "0.15.2"
+  resolved "https://registry.yarnpkg.com/tingle.js/-/tingle.js-0.15.2.tgz#db752cd205d748c6ab38e6dceb074aec88d85eee"
+
 tiny-each-async@2.0.3:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/tiny-each-async/-/tiny-each-async-2.0.3.tgz#8ebbbfd6d6295f1370003fbb37162afe5a0a51d1"
@@ -11213,6 +11222,10 @@ to-regex@^3.0.1, to-regex@^3.0.2:
     extend-shallow "^3.0.2"
     regex-not "^1.0.2"
     safe-regex "^1.1.0"
+
+toastify-js@^1.5.0:
+  version "1.6.1"
+  resolved "https://registry.yarnpkg.com/toastify-js/-/toastify-js-1.6.1.tgz#2ec20654925d6f83f935d5a6907c146e6bcb67d6"
 
 toidentifier@1.0.0:
   version "1.0.0"
